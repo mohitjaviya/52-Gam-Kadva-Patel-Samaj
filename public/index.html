@@ -59,6 +59,34 @@
         </div>
     </section>
 
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-users" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.8"></i>
+                    <span class="stat-number" id="statMembers">--</span>
+                    <span class="stat-label">Members</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-graduation-cap" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.8"></i>
+                    <span class="stat-number" id="statStudents">--</span>
+                    <span class="stat-label">Students</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-briefcase" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.8"></i>
+                    <span class="stat-number" id="statProfessionals">--</span>
+                    <span class="stat-label">Professionals</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-map-marker-alt" style="font-size:2rem;margin-bottom:0.5rem;opacity:0.8"></i>
+                    <span class="stat-number" id="statVillages">78</span>
+                    <span class="stat-label">Villages</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
@@ -202,15 +230,22 @@
                 const response = await fetch('/api/data/public-stats');
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.success) {
-                        document.getElementById('statMembers').textContent = data.stats.totalUsers || 0;
-                        document.getElementById('statStudents').textContent = data.stats.totalStudents || 0;
-                        document.getElementById('statProfessionals').textContent = (data.stats.totalJobProfessionals || 0) + (data.stats.totalBusinessOwners || 0);
-                        document.getElementById('statVillages').textContent = data.stats.totalVillages || 78;
+                    console.log('Stats loaded:', data);
+                    if (data.success && data.stats) {
+                        const el1 = document.getElementById('statMembers');
+                        const el2 = document.getElementById('statStudents');
+                        const el3 = document.getElementById('statProfessionals');
+                        const el4 = document.getElementById('statVillages');
+                        if (el1) el1.textContent = data.stats.totalUsers || 0;
+                        if (el2) el2.textContent = data.stats.totalStudents || 0;
+                        if (el3) el3.textContent = (data.stats.totalJobProfessionals || 0) + (data.stats.totalBusinessOwners || 0);
+                        if (el4) el4.textContent = data.stats.totalVillages || 78;
                     }
+                } else {
+                    console.log('Stats API returned:', response.status);
                 }
             } catch (error) {
-                console.log('Stats not available');
+                console.log('Stats error:', error);
             }
         }
         loadStats();
