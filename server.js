@@ -26,13 +26,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Trust proxy for Render/Heroku (needed for secure cookies behind HTTPS)
+app.set('trust proxy', 1);
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'dev-only-change-in-production',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Set to true only when using HTTPS
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
