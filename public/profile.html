@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>My Profile - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 5rem 1rem 2rem;
+        }
+
+        .profile-header-card {
+            background: linear-gradient(135deg, #FFFBEB 0%, #fef3c7 40%, #d1fae5 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(22, 163, 74, 0.15);
+            border: 1px solid rgba(22, 163, 74, 0.12);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(22, 163, 74, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .profile-header-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .profile-header-info h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-header-info p {
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-badges .badge {
+            background: rgba(22, 163, 74, 0.12);
+            color: var(--primary-dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .profile-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .profile-header-actions .btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+        .profile-header-actions .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .profile-card-header {
+            background: #FFFBEB;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-card-header h2 {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 0.75rem;
+            background: #FFFBEB;
+            border-radius: var(--radius);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item span {
+            font-size: 1rem;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .info-item input,
+        .info-item textarea,
+        .info-item select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .info-item.editing span {
+            display: none;
+        }
+
+        .info-item.editing input,
+        .info-item.editing textarea,
+        .info-item.editing select {
+            display: block;
+        }
+
+        .edit-actions {
+            display: none;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .edit-actions.show {
+            display: flex;
+        }
+
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        .verification-badge.verified {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .verification-badge.not-verified {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+
+        .occupation-option {
+            cursor: pointer;
+        }
+
+        .occupation-option:hover .occupation-card {
+            border-color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.35rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 0 auto;
+                padding: 4.5rem 0.5rem 2rem;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .profile-header-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .profile-header-info {
+                min-width: unset;
+                width: 100%;
+            }
+
+            .profile-header-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .profile-card {
+                width: 100%;
+            }
+
+            .profile-card-header {
+                padding: 0.875rem 1rem;
+            }
+
+            .profile-card-body {
+                padding: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-item {
+                padding: 0.625rem;
+            }
+
+            .info-item label {
+                font-size: 0.7rem;
+            }
+
+            .info-item span {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-header-info h1 {
+                font-size: 1.25rem;
+            }
+
+            .profile-badges .badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+
+            .profile-card-header h2 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/search">Search</a>
+                <a href="/profile" class="active">Profile</a>
+                <a href="/admin" id="adminLink" style="display: none;">Admin</a>
+                <a href="#" onclick="logout()">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header-card">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-header-info">
+                <h1 id="profileName">Loading...</h1>
+                <p id="profileVillage"><i class="fas fa-map-marker-alt"></i> Loading...</p>
+                <div class="profile-badges">
+                    <span class="badge" id="occupationBadge">-</span>
+                    <span class="badge" id="approvalBadge">-</span>
+                </div>
+            </div>
+            <div class="profile-header-actions">
+                <button class="btn" id="editBtn" onclick="toggleEditMode()">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <h2><i class="fas fa-user"></i> Personal Details</h2>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-grid">
+                    <div class="info-item" id="firstNameItem">
+                        <label>First Name</label>
+                        <span id="firstName">-</span>
+                        <input type="text" id="editFirstName">
+                    </div>
+                    <div class="info-item" id="middleNameItem">
+                        <label>Middle Name</label>
+                        <span id="middleName">-</span>
+                        <input type="text" id="editMiddleName">
+                    </div>
+                    <div class="info-item" id="lastNameItem">
+                        <label>Last Name</label>
+                        <span id="lastName">-</span>
+                        <input type="text" id="editLastName">
+                    </div>
+                    <div class="info-item">
+                        <label>Gender</label>
+                        <span id="gender">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Village</label>
+                        <span id="village">-</span>
+                    </div>
+                    <div class="info-item" id="addressItem" style="grid-column: 1 / -1;">
+                        <label>Current Address</label>
+                        <span id="currentAddress">-</span>
+                        <textarea id="editCurrentAddress" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <h2><i class="fas fa-address-book"></i> Contact Details</h2>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <span id="phone">-</span>
+                        <span class="verification-badge" id="phoneStatus"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email Address</label>
+                        <span id="email">-</span>
+                        <span class="verification-badge" id="emailStatus"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Occupation Details -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <h2><i class="fas fa-briefcase"></i> Occupation Details</h2>
+                <button class="btn btn-sm" onclick="showEditOccupationModal()"
+                    style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-grid" id="occupationDetails">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Actions -->
+        <div class="edit-actions" id="editActions">
+            <button class="btn btn-success" onclick="saveProfile()">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button class="btn btn-secondary" onclick="cancelEdit()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Occupation Modal -->
+    <div id="occupationModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closeOccupationModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-briefcase"></i> Edit Occupation</h2>
+
+            <form id="editOccupationForm">
+                <!-- Occupation Type Selection -->
+                <div class="form-group">
+                    <label>Occupation Type</label>
+                    <div class="occupation-selector" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <label class="occupation-option" style="flex: 1; min-width: 100px;">
+                            <input type="radio" name="occupationType" value="student"
+                                onchange="showOccupationFields('student')">
+                            <div class="occupation-card"
+                                style="padding: 0.75rem; text-align: center; border: 2px solid var(--gray-300); border-radius: var(--radius); cursor: pointer;">
+                                <i class="fas fa-graduation-cap"
+                                    style="font-size: 1.5rem; color: var(--info-color);"></i>
+                                <div style="font-weight: 500; margin-top: 0.25rem;">Student</div>
+                            </div>
+                        </label>
+                        <label class="occupation-option" style="flex: 1; min-width: 100px;">
+                            <input type="radio" name="occupationType" value="job"
+                                onchange="showOccupationFields('job')">
+                            <div class="occupation-card"
+                                style="padding: 0.75rem; text-align: center; border: 2px solid var(--gray-300); border-radius: var(--radius); cursor: pointer;">
+                                <i class="fas fa-briefcase" style="font-size: 1.5rem; color: var(--success-color);"></i>
+                                <div style="font-weight: 500; margin-top: 0.25rem;">Job</div>
+                            </div>
+                        </label>
+                        <label class="occupation-option" style="flex: 1; min-width: 100px;">
+                            <input type="radio" name="occupationType" value="business"
+                                onchange="showOccupationFields('business')">
+                            <div class="occupation-card"
+                                style="padding: 0.75rem; text-align: center; border: 2px solid var(--gray-300); border-radius: var(--radius); cursor: pointer;">
+                                <i class="fas fa-store" style="font-size: 1.5rem; color: var(--warning-color);"></i>
+                                <div style="font-weight: 500; margin-top: 0.25rem;">Business</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Student Fields -->
+                <div id="studentFields" class="occupation-fields" style="display: none;">
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Course/Department *</label>
+                            <select id="editCourse" class="form-control">
+                                <option value="">Select course</option>
+                            </select>
+                            <input type="text" id="editCourseOther" class="form-control other-input"
+                                placeholder="Enter your course/department" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="form-group">
+                            <label>Specialization *</label>
+                            <select id="editSpecialization" class="form-control">
+                                <option value="">Select specialization</option>
+                            </select>
+                            <input type="text" id="editSpecializationOther" class="form-control other-input"
+                                placeholder="Enter specialization" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>College City *</label>
+                            <select id="editStudentCity" class="form-control">
+                                <option value="">Select city</option>
+                            </select>
+                            <input type="text" id="editStudentCityOther" class="form-control other-input"
+                                placeholder="Enter city name" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="form-group">
+                            <label>College Name *</label>
+                            <select id="editCollegeName" class="form-control">
+                                <option value="">Select college</option>
+                            </select>
+                            <input type="text" id="editCollegeNameOther" class="form-control other-input"
+                                placeholder="Enter college name" style="display: none; margin-top: 0.5rem;">
+                            <small class="form-hint" style="font-size: 0.75rem; color: var(--gray-500);">Select city
+                                first to see colleges</small>
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Year of Study</label>
+                            <select id="editYearOfStudy" class="form-control">
+                                <option value="">Select year</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="5th Year">5th Year</option>
+                                <option value="6th Year">6th Year</option>
+                                <option value="Final Year">Final Year</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Expected Graduation</label>
+                            <input type="text" id="editExpectedGraduation" class="form-control" placeholder="e.g. 2026">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Info</label>
+                        <textarea id="editStudentAdditionalInfo" class="form-control" rows="2"
+                            placeholder="Any additional information"></textarea>
+                    </div>
+                </div>
+
+                <!-- Job Fields -->
+                <div id="jobFields" class="occupation-fields" style="display: none;">
+                    <div
+                        style="background: var(--gray-100); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--gray-700);"><i
+                                class="fas fa-graduation-cap"></i> Graduation Details</h4>
+                        <div class="form-row"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div class="form-group">
+                                <label>Course/Degree</label>
+                                <select id="editJobDegree" class="form-control">
+                                    <option value="">Select course</option>
+                                </select>
+                                <input type="text" id="editJobDegreeOther" class="form-control other-input"
+                                    placeholder="Enter course" style="display: none; margin-top: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>Graduation Year</label>
+                                <input type="text" id="editGradYear" class="form-control" placeholder="e.g. 2022">
+                            </div>
+                        </div>
+                        <div class="form-row"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div class="form-group">
+                                <label>College City</label>
+                                <select id="editJobCollegeCity" class="form-control">
+                                    <option value="">Select city</option>
+                                </select>
+                                <input type="text" id="editJobCollegeCityOther" class="form-control other-input"
+                                    placeholder="Enter city" style="display: none; margin-top: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>College Name</label>
+                                <select id="editJobCollegeName" class="form-control">
+                                    <option value="">Select college</option>
+                                </select>
+                                <input type="text" id="editJobCollegeNameOther" class="form-control other-input"
+                                    placeholder="Enter college" style="display: none; margin-top: 0.5rem;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input type="text" id="editCompanyName" class="form-control" placeholder="Company name">
+                        </div>
+                        <div class="form-group">
+                            <label>Designation *</label>
+                            <input type="text" id="editDesignation" class="form-control" placeholder="Your role">
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Job Field *</label>
+                            <select id="editJobField" class="form-control">
+                                <option value="">Select field</option>
+                            </select>
+                            <input type="text" id="editJobFieldOther" class="form-control other-input"
+                                placeholder="Enter job field" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="form-group">
+                            <label>Working City *</label>
+                            <select id="editWorkingCity" class="form-control">
+                                <option value="">Select city</option>
+                            </select>
+                            <input type="text" id="editWorkingCityOther" class="form-control other-input"
+                                placeholder="Enter city" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Experience (Years)</label>
+                            <input type="number" id="editExperienceYears" class="form-control" min="0" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Info</label>
+                        <textarea id="editJobAdditionalInfo" class="form-control" rows="2"
+                            placeholder="Any additional information"></textarea>
+                    </div>
+                </div>
+
+                <!-- Business Fields -->
+                <div id="businessFields" class="occupation-fields" style="display: none;">
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Business Name *</label>
+                            <input type="text" id="editBusinessName" class="form-control" placeholder="Business name">
+                        </div>
+                        <div class="form-group">
+                            <label>Business Type *</label>
+                            <select id="editBusinessType" class="form-control">
+                                <option value="">Select type</option>
+                            </select>
+                            <input type="text" id="editBusinessTypeOther" class="form-control other-input"
+                                placeholder="Enter business type" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Business Field *</label>
+                            <select id="editBusinessField" class="form-control">
+                                <option value="">Select field</option>
+                            </select>
+                            <input type="text" id="editBusinessFieldOther" class="form-control other-input"
+                                placeholder="Enter business field" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                        <div class="form-group">
+                            <label>Business City *</label>
+                            <select id="editBusinessCity" class="form-control">
+                                <option value="">Select city</option>
+                            </select>
+                            <input type="text" id="editBusinessCityOther" class="form-control other-input"
+                                placeholder="Enter city" style="display: none; margin-top: 0.5rem;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Business Address</label>
+                        <textarea id="editBusinessAddress" class="form-control" rows="2"
+                            placeholder="Business address"></textarea>
+                    </div>
+                    <div class="form-row"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Years in Business</label>
+                            <input type="number" id="editYearsInBusiness" class="form-control" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Employees</label>
+                            <input type="number" id="editEmployeesCount" class="form-control" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="editBusinessWebsite" class="form-control" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Info</label>
+                        <textarea id="editBusinessAdditionalInfo" class="form-control" rows="2"
+                            placeholder="Any additional information"></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeOccupationModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let isEditMode = false;
+        let currentUser = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check admin
+            const user = await checkSession();
+            if (user && user.isAdmin) {
+                document.getElementById('adminLink').style.display = 'block';
+            }
+
+            loadProfile();
+        });
+
+        // Load profile
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/users/profile');
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    displayProfile(data.user);
+                } else {
+                    showNotification(data.message || 'Failed to load profile', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to load profile', 'error');
+            }
+        }
+
+        // Display profile
+        function displayProfile(user) {
+            // Header
+            const fullName = [user.first_name, user.middle_name, user.last_name].filter(Boolean).join(' ');
+            document.getElementById('profileName').textContent = fullName || 'User';
+            document.getElementById('profileVillage').innerHTML =
+                `<i class="fas fa-map-marker-alt"></i> ${user.village_name || 'Not set'}`;
+
+            // Badges
+            document.getElementById('occupationBadge').innerHTML = getOccupationIcon(user.occupation_type);
+            document.getElementById('approvalBadge').innerHTML = user.is_approved
+                ? '<i class="fas fa-check-circle"></i> Approved'
+                : '<i class="fas fa-clock"></i> Pending';
+
+            // Personal Details
+            document.getElementById('firstName').textContent = user.first_name || '-';
+            document.getElementById('middleName').textContent = user.middle_name || '-';
+            document.getElementById('lastName').textContent = user.last_name || '-';
+            document.getElementById('gender').textContent = user.gender || '-';
+            document.getElementById('village').textContent = user.village_name || '-';
+            document.getElementById('currentAddress').textContent = user.current_address || '-';
+
+            // Contact Details
+            document.getElementById('phone').textContent = user.phone || '-';
+            document.getElementById('email').textContent = user.email || '-';
+
+            document.getElementById('phoneStatus').innerHTML = user.phone_verified
+                ? '<i class="fas fa-check-circle"></i> Verified'
+                : '<i class="fas fa-exclamation-circle"></i> Not Verified';
+            document.getElementById('phoneStatus').className = 'verification-badge ' +
+                (user.phone_verified ? 'verified' : 'not-verified');
+
+            document.getElementById('emailStatus').innerHTML = user.email_verified
+                ? '<i class="fas fa-check-circle"></i> Verified'
+                : '<i class="fas fa-exclamation-circle"></i> Not Verified';
+            document.getElementById('emailStatus').className = 'verification-badge ' +
+                (user.email_verified ? 'verified' : 'not-verified');
+
+            // Occupation Details
+            displayOccupationDetails(user);
+
+            // Setup edit inputs
+            document.getElementById('editFirstName').value = user.first_name || '';
+            document.getElementById('editMiddleName').value = user.middle_name || '';
+            document.getElementById('editLastName').value = user.last_name || '';
+            document.getElementById('editCurrentAddress').value = user.current_address || '';
+        }
+
+        // Get occupation icon
+        function getOccupationIcon(type) {
+            const icons = {
+                student: '<i class="fas fa-graduation-cap"></i> Student',
+                job: '<i class="fas fa-briefcase"></i> Job',
+                business: '<i class="fas fa-store"></i> Business'
+            };
+            return icons[type] || '-';
+        }
+
+        // Display occupation details
+        function displayOccupationDetails(user) {
+            const container = document.getElementById('occupationDetails');
+
+            if (!user.occupationDetails) {
+                container.innerHTML = '<p style="color: var(--gray-500);">No occupation details available</p>';
+                return;
+            }
+
+            const details = user.occupationDetails;
+            let html = '';
+
+            if (user.occupation_type === 'student') {
+                html = `
+                    <div class="info-item">
+                        <label>Course/Department</label>
+                        <span>${details.department || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Specialization</label>
+                        <span>${details.sub_department || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>College</label>
+                        <span>${details.college_name || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>College City</label>
+                        <span>${details.college_city || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Year of Study</label>
+                        <span>${details.year_of_study || '-'}</span>
+                    </div>
+                    ${details.additional_info ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Additional Info</label>
+                        <span>${details.additional_info}</span>
+                    </div>
+                    ` : ''}
+                `;
+            } else if (user.occupation_type === 'job') {
+                html = `
+                    <div style="grid-column: 1 / -1; background: var(--gray-100); padding: 1rem; border-radius: var(--radius); margin-bottom: 0.5rem;">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--gray-700);"><i class="fas fa-graduation-cap"></i> Graduation Details</h4>
+                        <div class="info-grid" style="gap: 0.75rem;">
+                            <div class="info-item">
+                                <label>Course/Degree</label>
+                                <span>${details.department || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>College</label>
+                                <span>${details.college_name || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>College City</label>
+                                <span>${details.college_city || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Graduation Year</label>
+                                <span>${details.graduation_year || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <label>Company</label>
+                        <span>${details.company_name || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Designation</label>
+                        <span>${details.designation || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Job Field</label>
+                        <span>${details.field || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Working City</label>
+                        <span>${details.working_city || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Experience</label>
+                        <span>${details.experience_years || 0} years</span>
+                    </div>
+                    ${details.additional_info ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Additional Info</label>
+                        <span>${details.additional_info}</span>
+                    </div>
+                    ` : ''}
+                `;
+            } else if (user.occupation_type === 'business') {
+                html = `
+                    <div class="info-item">
+                        <label>Business Name</label>
+                        <span>${details.business_name || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Business Type</label>
+                        <span>${details.business_type || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Business Field</label>
+                        <span>${details.business_field || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Business City</label>
+                        <span>${details.business_city || '-'}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Years in Business</label>
+                        <span>${details.years_in_business || 0} years</span>
+                    </div>
+                    ${details.additional_info ? `
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Additional Info</label>
+                        <span>${details.additional_info}</span>
+                    </div>
+                    ` : ''}
+                `;
+            }
+
+            container.innerHTML = html || '<p style="color: var(--gray-500);">No details available</p>';
+        }
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+
+            const editableItems = ['firstNameItem', 'middleNameItem', 'lastNameItem', 'addressItem'];
+            editableItems.forEach(id => {
+                document.getElementById(id)?.classList.toggle('editing', isEditMode);
+            });
+
+            document.getElementById('editActions').classList.toggle('show', isEditMode);
+            document.getElementById('editBtn').innerHTML = isEditMode
+                ? '<i class="fas fa-times"></i> Cancel'
+                : '<i class="fas fa-edit"></i> Edit';
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            isEditMode = false;
+
+            const editableItems = ['firstNameItem', 'middleNameItem', 'lastNameItem', 'addressItem'];
+            editableItems.forEach(id => {
+                document.getElementById(id)?.classList.remove('editing');
+            });
+
+            document.getElementById('editActions').classList.remove('show');
+            document.getElementById('editBtn').innerHTML = '<i class="fas fa-edit"></i> Edit';
+
+            // Reset values
+            if (currentUser) {
+                document.getElementById('editFirstName').value = currentUser.first_name || '';
+                document.getElementById('editMiddleName').value = currentUser.middle_name || '';
+                document.getElementById('editLastName').value = currentUser.last_name || '';
+                document.getElementById('editCurrentAddress').value = currentUser.current_address || '';
+            }
+        }
+
+        // Save profile
+        async function saveProfile() {
+            const firstName = document.getElementById('editFirstName').value.trim();
+            const lastName = document.getElementById('editLastName').value.trim();
+
+            if (!firstName || !lastName) {
+                showNotification('First name and last name are required', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName: firstName,
+                        middleName: document.getElementById('editMiddleName').value.trim(),
+                        lastName: lastName,
+                        currentAddress: document.getElementById('editCurrentAddress').value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Profile updated successfully', 'success');
+                    cancelEdit();
+                    loadProfile();
+                } else {
+                    showNotification(data.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to update profile', 'error');
+            }
+        }
+
+        // ===== Edit Occupation Functions =====
+        let citiesData = [];
+        let courseBranches = {};
+
+        // Load courses list (from translations.js or define locally)
+        const coursesList = [
+            'B.Tech', 'M.Tech', 'B.E.', 'BCA', 'MCA', 'B.Sc', 'M.Sc', 'B.Com', 'M.Com',
+            'BBA', 'MBA', 'B.Pharm', 'M.Pharm', 'D.Pharm', 'B.Arch', 'M.Arch', 'MBBS',
+            'BDS', 'LLB', 'LLM', 'B.Ed', 'M.Ed', 'BA', 'MA', 'Diploma', 'ITI', 'Nursing',
+            'PhD', '10th', '12th Science', '12th Commerce', '12th Arts'
+        ];
+
+        // Course branches mapping
+        const courseBranchesMap = {
+            'B.Tech': ['Computer Engineering', 'Information Technology', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics & Communication', 'Chemical Engineering', 'Automobile Engineering'],
+            'M.Tech': ['Computer Engineering', 'Information Technology', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics & Communication', 'VLSI Design', 'Power Systems'],
+            'B.E.': ['Computer Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics & Communication', 'Production Engineering'],
+            'BCA': ['Computer Applications', 'Software Development', 'Web Development', 'Data Science'],
+            'MCA': ['Computer Applications', 'Software Engineering', 'Data Science', 'Artificial Intelligence'],
+            'B.Sc': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'Information Technology', 'Biotechnology', 'Microbiology', 'Agriculture', 'Nursing'],
+            'M.Sc': ['Physics', 'Chemistry', 'Mathematics', 'Computer Science', 'Biotechnology', 'Microbiology'],
+            'B.Com': ['Accountancy', 'Banking & Finance', 'Taxation', 'Business Management'],
+            'M.Com': ['Accountancy', 'Banking & Finance', 'Business Administration'],
+            'BBA': ['General Management', 'Finance', 'Marketing', 'Human Resource', 'International Business'],
+            'MBA': ['Finance', 'Marketing', 'Human Resource', 'Operations', 'International Business', 'Information Technology', 'Healthcare Management'],
+            'B.Pharm': ['Pharmaceutical Chemistry', 'Pharmacology', 'Pharmaceutics', 'Pharmacognosy'],
+            'M.Pharm': ['Pharmaceutical Chemistry', 'Pharmacology', 'Pharmaceutics'],
+            'Diploma': ['Computer Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics', 'Automobile Engineering'],
+            'ITI': ['Fitter', 'Turner', 'Electrician', 'Welder', 'Mechanic', 'COPA', 'Plumber'],
+            'BA': ['English', 'Hindi', 'Gujarati', 'History', 'Political Science', 'Economics', 'Psychology', 'Sociology'],
+            'MA': ['English', 'Hindi', 'Gujarati', 'History', 'Political Science', 'Economics', 'Psychology'],
+            'LLB': ['General Law', 'Corporate Law', 'Criminal Law', 'Civil Law'],
+            'B.Ed': ['Primary Education', 'Secondary Education', 'Special Education']
+        };
+
+        // Job fields
+        const jobFields = [
+            'Software/IT', 'Marketing', 'Sales', 'Finance/Accounting', 'HR/Admin',
+            'Engineering', 'Healthcare', 'Education', 'Legal', 'Manufacturing',
+            'Banking', 'Insurance', 'Consulting', 'Retail', 'Hospitality',
+            'Media/Entertainment', 'Government', 'Defense', 'Agriculture', 'Others'
+        ];
+
+        // Helper function to get value with "Other" support
+        function getValueWithOther(selectId, otherId) {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (select && select.value === 'Other' && other) {
+                return other.value.trim();
+            }
+            return select ? select.value : '';
+        }
+
+        // Setup "Other" handlers for a select
+        function setupOtherHandler(selectId, otherId) {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (select && other) {
+                select.addEventListener('change', () => {
+                    if (select.value === 'Other') {
+                        other.style.display = 'block';
+                    } else {
+                        other.style.display = 'none';
+                        other.value = '';
+                    }
+                });
+            }
+        }
+
+        // Load all dropdown data
+        async function loadAllDropdownData() {
+            await Promise.all([
+                loadCitiesForOccupation(),
+                loadBusinessTypes(),
+                loadBusinessFields()
+            ]);
+            loadCourses('editCourse');
+            loadCourses('editJobDegree');
+            loadJobFields();
+            setupEventHandlers();
+        }
+
+        // Load courses into dropdown
+        function loadCourses(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Select course</option>';
+            coursesList.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course;
+                option.textContent = course;
+                select.appendChild(option);
+            });
+            // Add "Other" option
+            const otherOption = document.createElement('option');
+            otherOption.value = 'Other';
+            otherOption.textContent = '-- Other (Enter manually) --';
+            select.appendChild(otherOption);
+        }
+
+        // Load specializations based on course
+        function loadSpecializations(course, selectId, otherId) {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Select specialization</option>';
+            if (other) {
+                other.style.display = 'none';
+                other.value = '';
+            }
+
+            if (course && course !== 'Other' && courseBranchesMap[course]) {
+                courseBranchesMap[course].forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch;
+                    option.textContent = branch;
+                    select.appendChild(option);
+                });
+            }
+            // Always add "Other"
+            const otherOption = document.createElement('option');
+            otherOption.value = 'Other';
+            otherOption.textContent = '-- Other (Enter manually) --';
+            select.appendChild(otherOption);
+        }
+
+        // Load job fields
+        function loadJobFields() {
+            const select = document.getElementById('editJobField');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Select field</option>';
+            jobFields.forEach(field => {
+                const option = document.createElement('option');
+                option.value = field;
+                option.textContent = field;
+                select.appendChild(option);
+            });
+            const otherOption = document.createElement('option');
+            otherOption.value = 'Other';
+            otherOption.textContent = '-- Other (Enter manually) --';
+            select.appendChild(otherOption);
+        }
+
+        // Load cities for dropdowns
+        async function loadCitiesForOccupation() {
+            try {
+                const response = await fetch('/api/data/cities');
+                const data = await response.json();
+                if (data.success) {
+                    citiesData = data.cities;
+                    const citySelects = ['editStudentCity', 'editJobCollegeCity', 'editWorkingCity', 'editBusinessCity'];
+                    citySelects.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            select.innerHTML = '<option value="">Select city</option>';
+                            data.cities.forEach(c => {
+                                const option = document.createElement('option');
+                                option.value = c.name;
+                                option.textContent = c.name;
+                                select.appendChild(option);
+                            });
+                            // Add "Other"
+                            const otherOption = document.createElement('option');
+                            otherOption.value = 'Other';
+                            otherOption.textContent = '-- Other (Enter manually) --';
+                            select.appendChild(otherOption);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+
+        // Load colleges based on city
+        async function loadColleges(cityName, selectId, otherId, courseName = '') {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Select college</option>';
+            if (other) {
+                other.style.display = 'none';
+                other.value = '';
+            }
+
+            if (!cityName || cityName === 'Other') {
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                select.appendChild(otherOption);
+                if (cityName === 'Other') {
+                    select.value = 'Other';
+                    if (other) other.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                let url = `/api/data/colleges?cityName=${encodeURIComponent(cityName)}`;
+                if (courseName && courseName !== 'Other') {
+                    url += `&course=${encodeURIComponent(courseName)}`;
+                }
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.success && data.colleges.length > 0) {
+                    data.colleges.forEach(college => {
+                        const option = document.createElement('option');
+                        option.value = college.name;
+                        option.textContent = college.name;
+                        select.appendChild(option);
+                    });
+                }
+                // Always add "Other"
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                select.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+            }
+        }
+
+        // Load business types
+        async function loadBusinessTypes() {
+            try {
+                const response = await fetch('/api/data/business-types');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('editBusinessType');
+                    if (select) {
+                        select.innerHTML = '<option value="">Select type</option>';
+                        data.types.forEach(type => {
+                            const option = document.createElement('option');
+                            option.value = type;
+                            option.textContent = type;
+                            select.appendChild(option);
+                        });
+                        const otherOption = document.createElement('option');
+                        otherOption.value = 'Other';
+                        otherOption.textContent = '-- Other (Enter manually) --';
+                        select.appendChild(otherOption);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading business types:', error);
+            }
+        }
+
+        // Load business fields
+        async function loadBusinessFields() {
+            try {
+                const response = await fetch('/api/data/business-fields');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('editBusinessField');
+                    if (select) {
+                        select.innerHTML = '<option value="">Select field</option>';
+                        data.fields.forEach(field => {
+                            const option = document.createElement('option');
+                            option.value = field;
+                            option.textContent = field;
+                            select.appendChild(option);
+                        });
+                        const otherOption = document.createElement('option');
+                        otherOption.value = 'Other';
+                        otherOption.textContent = '-- Other (Enter manually) --';
+                        select.appendChild(otherOption);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading business fields:', error);
+            }
+        }
+
+        // Setup event handlers for dropdowns
+        function setupEventHandlers() {
+            // Student course change -> load specializations
+            document.getElementById('editCourse')?.addEventListener('change', (e) => {
+                const course = e.target.value;
+                loadSpecializations(course, 'editSpecialization', 'editSpecializationOther');
+                // Also reload colleges based on course
+                const city = document.getElementById('editStudentCity')?.value;
+                if (city) {
+                    loadColleges(city, 'editCollegeName', 'editCollegeNameOther', course);
+                }
+                // Handle course "Other"
+                const courseOther = document.getElementById('editCourseOther');
+                if (course === 'Other' && courseOther) {
+                    courseOther.style.display = 'block';
+                } else if (courseOther) {
+                    courseOther.style.display = 'none';
+                }
+            });
+
+            // Student city change -> load colleges
+            document.getElementById('editStudentCity')?.addEventListener('change', (e) => {
+                const city = e.target.value;
+                const course = document.getElementById('editCourse')?.value;
+                loadColleges(city, 'editCollegeName', 'editCollegeNameOther', course);
+                // Handle city "Other"
+                const cityOther = document.getElementById('editStudentCityOther');
+                if (city === 'Other' && cityOther) {
+                    cityOther.style.display = 'block';
+                } else if (cityOther) {
+                    cityOther.style.display = 'none';
+                }
+            });
+
+            // Job degree change
+            document.getElementById('editJobDegree')?.addEventListener('change', (e) => {
+                const course = e.target.value;
+                const other = document.getElementById('editJobDegreeOther');
+                if (course === 'Other' && other) {
+                    other.style.display = 'block';
+                } else if (other) {
+                    other.style.display = 'none';
+                }
+                // Reload colleges if city is selected
+                const city = document.getElementById('editJobCollegeCity')?.value;
+                if (city) {
+                    loadColleges(city, 'editJobCollegeName', 'editJobCollegeNameOther', course);
+                }
+            });
+
+            // Job college city change
+            document.getElementById('editJobCollegeCity')?.addEventListener('change', (e) => {
+                const city = e.target.value;
+                const course = document.getElementById('editJobDegree')?.value;
+                loadColleges(city, 'editJobCollegeName', 'editJobCollegeNameOther', course);
+                const cityOther = document.getElementById('editJobCollegeCityOther');
+                if (city === 'Other' && cityOther) {
+                    cityOther.style.display = 'block';
+                } else if (cityOther) {
+                    cityOther.style.display = 'none';
+                }
+            });
+
+            // Setup all "Other" handlers
+            setupOtherHandler('editSpecialization', 'editSpecializationOther');
+            setupOtherHandler('editCollegeName', 'editCollegeNameOther');
+            setupOtherHandler('editJobCollegeName', 'editJobCollegeNameOther');
+            setupOtherHandler('editWorkingCity', 'editWorkingCityOther');
+            setupOtherHandler('editJobField', 'editJobFieldOther');
+            setupOtherHandler('editBusinessType', 'editBusinessTypeOther');
+            setupOtherHandler('editBusinessField', 'editBusinessFieldOther');
+            setupOtherHandler('editBusinessCity', 'editBusinessCityOther');
+        }
+
+        // Show occupation fields based on type
+        function showOccupationFields(type) {
+            document.querySelectorAll('.occupation-fields').forEach(el => el.style.display = 'none');
+            const fieldsId = type + 'Fields';
+            const fields = document.getElementById(fieldsId);
+            if (fields) {
+                fields.style.display = 'block';
+            }
+
+            // Update visual selection
+            document.querySelectorAll('.occupation-option .occupation-card').forEach(card => {
+                card.style.borderColor = 'var(--gray-300)';
+                card.style.background = 'white';
+            });
+            const selectedRadio = document.querySelector(`input[name="occupationType"][value="${type}"]`);
+            if (selectedRadio) {
+                const card = selectedRadio.closest('.occupation-option').querySelector('.occupation-card');
+                if (card) {
+                    card.style.borderColor = 'var(--primary-color)';
+                    card.style.background = 'rgba(99, 102, 241, 0.05)';
+                }
+            }
+        }
+
+        // Pre-fill value in select or show in "Other" input
+        function setSelectValue(selectId, otherId, value) {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (!select || !value) return;
+
+            // Check if value exists in select options
+            const options = Array.from(select.options).map(o => o.value);
+            if (options.includes(value)) {
+                select.value = value;
+            } else if (value && other) {
+                // Value not in list, set as "Other"
+                select.value = 'Other';
+                other.value = value;
+                other.style.display = 'block';
+            }
+        }
+
+        // Show edit occupation modal
+        async function showEditOccupationModal() {
+            await loadAllDropdownData();
+            document.getElementById('occupationModal').classList.add('show');
+
+            // Pre-fill current occupation data
+            if (currentUser) {
+                const type = currentUser.occupation_type;
+                const radio = document.querySelector(`input[name="occupationType"][value="${type}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    showOccupationFields(type);
+                }
+
+                const details = currentUser.occupationDetails || {};
+
+                if (type === 'student') {
+                    // Set course first, then load specializations
+                    setSelectValue('editCourse', 'editCourseOther', details.department);
+                    setTimeout(() => {
+                        loadSpecializations(details.department, 'editSpecialization', 'editSpecializationOther');
+                        setTimeout(() => {
+                            setSelectValue('editSpecialization', 'editSpecializationOther', details.sub_department);
+                        }, 100);
+                    }, 100);
+
+                    // Set city and load colleges
+                    setSelectValue('editStudentCity', 'editStudentCityOther', details.college_city);
+                    setTimeout(() => {
+                        loadColleges(details.college_city, 'editCollegeName', 'editCollegeNameOther', details.department);
+                        setTimeout(() => {
+                            setSelectValue('editCollegeName', 'editCollegeNameOther', details.college_name);
+                        }, 300);
+                    }, 300);
+
+                    document.getElementById('editYearOfStudy').value = details.year_of_study || '';
+                    document.getElementById('editExpectedGraduation').value = details.expected_graduation || '';
+                    document.getElementById('editStudentAdditionalInfo').value = details.additional_info || '';
+                } else if (type === 'job') {
+                    // Graduation details
+                    setSelectValue('editJobDegree', 'editJobDegreeOther', details.department);
+                    document.getElementById('editGradYear').value = details.graduation_year || '';
+
+                    setSelectValue('editJobCollegeCity', 'editJobCollegeCityOther', details.college_city);
+                    setTimeout(() => {
+                        loadColleges(details.college_city, 'editJobCollegeName', 'editJobCollegeNameOther', details.department);
+                        setTimeout(() => {
+                            setSelectValue('editJobCollegeName', 'editJobCollegeNameOther', details.college_name);
+                        }, 300);
+                    }, 300);
+
+                    // Job details
+                    document.getElementById('editCompanyName').value = details.company_name || '';
+                    document.getElementById('editDesignation').value = details.designation || '';
+                    setSelectValue('editJobField', 'editJobFieldOther', details.field);
+                    setSelectValue('editWorkingCity', 'editWorkingCityOther', details.working_city);
+                    document.getElementById('editExperienceYears').value = details.experience_years || '';
+                    document.getElementById('editJobAdditionalInfo').value = details.additional_info || '';
+                } else if (type === 'business') {
+                    document.getElementById('editBusinessName').value = details.business_name || '';
+                    setSelectValue('editBusinessType', 'editBusinessTypeOther', details.business_type);
+                    setSelectValue('editBusinessField', 'editBusinessFieldOther', details.business_field);
+                    setSelectValue('editBusinessCity', 'editBusinessCityOther', details.business_city);
+                    document.getElementById('editBusinessAddress').value = details.business_address || '';
+                    document.getElementById('editYearsInBusiness').value = details.years_in_business || '';
+                    document.getElementById('editEmployeesCount').value = details.employees_count || '';
+                    document.getElementById('editBusinessWebsite').value = details.website || '';
+                    document.getElementById('editBusinessAdditionalInfo').value = details.additional_info || '';
+                }
+            }
+        }
+
+        // Close occupation modal
+        function closeOccupationModal() {
+            document.getElementById('occupationModal').classList.remove('show');
+            document.getElementById('editOccupationForm').reset();
+            document.querySelectorAll('.occupation-fields').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.other-input').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.occupation-option .occupation-card').forEach(card => {
+                card.style.borderColor = 'var(--gray-300)';
+                card.style.background = 'white';
+            });
+        }
+
+        // Handle occupation form submit
+        document.getElementById('editOccupationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const selectedType = document.querySelector('input[name="occupationType"]:checked')?.value;
+            if (!selectedType) {
+                showNotification('Please select an occupation type', 'error');
+                return;
+            }
+
+            let payload = { newOccupationType: selectedType };
+
+            if (selectedType === 'student') {
+                const course = getValueWithOther('editCourse', 'editCourseOther');
+                const specialization = getValueWithOther('editSpecialization', 'editSpecializationOther');
+                const city = getValueWithOther('editStudentCity', 'editStudentCityOther');
+                const college = getValueWithOther('editCollegeName', 'editCollegeNameOther');
+
+                if (!course || !specialization || !city || !college) {
+                    showNotification('Please fill in Course, Specialization, College City, and College Name', 'error');
+                    return;
+                }
+
+                payload.studentDetails = {
+                    department: course,
+                    subDepartment: specialization,
+                    collegeCity: city,
+                    collegeName: college,
+                    yearOfStudy: document.getElementById('editYearOfStudy').value,
+                    expectedGraduation: document.getElementById('editExpectedGraduation').value.trim(),
+                    additionalInfo: document.getElementById('editStudentAdditionalInfo').value.trim()
+                };
+            } else if (selectedType === 'job') {
+                const company = document.getElementById('editCompanyName').value.trim();
+                const designation = document.getElementById('editDesignation').value.trim();
+                const field = getValueWithOther('editJobField', 'editJobFieldOther');
+                const workingCity = getValueWithOther('editWorkingCity', 'editWorkingCityOther');
+
+                if (!company || !designation || !field || !workingCity) {
+                    showNotification('Please fill in Company, Designation, Field, and Working City', 'error');
+                    return;
+                }
+
+                payload.jobDetails = {
+                    graduationYear: document.getElementById('editGradYear').value.trim(),
+                    collegeCity: getValueWithOther('editJobCollegeCity', 'editJobCollegeCityOther'),
+                    collegeName: getValueWithOther('editJobCollegeName', 'editJobCollegeNameOther'),
+                    department: getValueWithOther('editJobDegree', 'editJobDegreeOther'),
+                    workingCity: workingCity,
+                    companyName: company,
+                    designation: designation,
+                    field: field,
+                    experienceYears: parseInt(document.getElementById('editExperienceYears').value) || 0,
+                    additionalInfo: document.getElementById('editJobAdditionalInfo').value.trim()
+                };
+            } else if (selectedType === 'business') {
+                const businessName = document.getElementById('editBusinessName').value.trim();
+                const businessType = getValueWithOther('editBusinessType', 'editBusinessTypeOther');
+                const businessField = getValueWithOther('editBusinessField', 'editBusinessFieldOther');
+                const businessCity = getValueWithOther('editBusinessCity', 'editBusinessCityOther');
+
+                if (!businessName || !businessType || !businessField || !businessCity) {
+                    showNotification('Please fill in Business Name, Type, Field, and City', 'error');
+                    return;
+                }
+
+                payload.businessDetails = {
+                    businessName: businessName,
+                    businessType: businessType,
+                    businessField: businessField,
+                    businessCity: businessCity,
+                    businessAddress: document.getElementById('editBusinessAddress').value.trim(),
+                    yearsInBusiness: parseInt(document.getElementById('editYearsInBusiness').value) || 0,
+                    employeesCount: parseInt(document.getElementById('editEmployeesCount').value) || 0,
+                    website: document.getElementById('editBusinessWebsite').value.trim(),
+                    additionalInfo: document.getElementById('editBusinessAdditionalInfo').value.trim()
+                };
+            }
+
+            try {
+                const response = await fetch('/api/users/change-occupation', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Occupation updated successfully', 'success');
+                    closeOccupationModal();
+                    loadProfile();
+                } else {
+                    showNotification(data.message || 'Failed to update occupation', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating occupation:', error);
+                showNotification('Failed to update occupation', 'error');
+            }
+        });
+
+        // Close occupation modal on outside click
+        document.getElementById('occupationModal').addEventListener('click', (e) => {
+            if (e.target.id === 'occupationModal') {
+                closeOccupationModal();
+            }
+        });
+
+        // Hide radio buttons but keep labels clickable
+        document.querySelectorAll('.occupation-option input[type="radio"]').forEach(radio => {
+            radio.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title data-i18n="reg_title">Complete Registration - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+    <style>
+        .other-input {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .other-input.show {
+            display: block;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        /* Mobile-specific register styles */
+        @media (max-width: 768px) {
+            .auth-container {
+                max-width: 100% !important;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .auth-card {
+                border-radius: var(--radius-lg) !important;
+                margin: 0 auto;
+                width: calc(100% - 1rem);
+            }
+
+            .progress-steps {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding: 1rem 0.5rem;
+                gap: 0.25rem;
+            }
+
+            .step {
+                min-width: 70px;
+                flex-shrink: 0;
+            }
+
+            .step-label {
+                font-size: 0.6rem;
+                white-space: nowrap;
+            }
+
+            .step::after {
+                width: calc(100% - 20px);
+            }
+
+            .form-step {
+                padding: 1rem;
+            }
+
+            .form-step h2 {
+                font-size: 1.1rem;
+            }
+
+            .occupation-option .option-card {
+                padding: 0.875rem;
+            }
+
+            .occupation-option .option-card i {
+                font-size: 1.25rem;
+            }
+
+            .occupation-option .option-card span {
+                font-size: 0.9rem;
+            }
+
+            .summary-section h4 {
+                font-size: 0.95rem;
+            }
+
+            .summary-row {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-section {
+                padding-top: 4rem;
+                width: 100%;
+            }
+
+            .auth-card {
+                padding: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .auth-header {
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                margin: 0 auto;
+                width: calc(100% - 1rem);
+            }
+
+            .progress-steps {
+                background: var(--white);
+                margin: 0 auto;
+                width: calc(100% - 1rem);
+                border-radius: 0;
+            }
+
+            .form-step {
+                background: var(--white);
+                margin: 0 auto;
+                width: calc(100% - 1rem);
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/register" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/register" class="active" data-i18n="nav_register">Complete Profile</a>
+                <a href="#" onclick="logout()" data-i18n="nav_logout">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container" style="max-width: 800px;">
+                <div class="auth-card" style="width: 100%;">
+                    <div class="auth-header">
+                        <div class="auth-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h2 data-i18n="reg_title">Complete Your Profile</h2>
+                        <p>Please fill in your details to complete registration</p>
+                    </div>
+
+                    <!-- Progress Steps -->
+                    <div class="progress-steps" style="margin-bottom: 2rem;">
+                        <div class="step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label" data-i18n="reg_personal_info">Personal</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label" data-i18n="reg_occupation">Occupation</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label" data-i18n="btn_submit">Submit</span>
+                        </div>
+                    </div>
+
+                    <form id="registrationForm" class="auth-form">
+                        <!-- Step 1: Personal Information -->
+                        <div class="form-step active" data-step="1">
+                            <div class="form-group">
+                                <label for="village"><i class="fas fa-map-marker-alt"></i> <span
+                                        data-i18n="reg_village">Village</span> <span class="required">*</span></label>
+                                <select id="village" name="villageId" required>
+                                    <option value="">Select your village</option>
+                                    <optgroup label="Amreli Taluka">
+                                        <option value="1">અમરેલી (Amreli)</option>
+                                        <option value="2">વરસડા (Varsada)</option>
+                                        <option value="3">હરીપુરા (Haripura)</option>
+                                        <option value="4">શેડુભાર (Shedubhar)</option>
+                                        <option value="5">નાના માચિયાળા (Nana Machiyala)</option>
+                                        <option value="6">મોટા માચિયાળા (Mota Machiyala)</option>
+                                        <option value="7">વેણીવદર (Venivader)</option>
+                                        <option value="8">વરુડી (Varudi)</option>
+                                        <option value="9">સાંગાડેરી (Sangaderi)</option>
+                                        <option value="10">નાના આંકડીયા (Nana Ankadiya)</option>
+                                        <option value="11">લાલાવદર (Lalavader)</option>
+                                        <option value="12">કેરીયાનાગસ (Keriyangas)</option>
+                                        <option value="13">ઈશ્વરીયા (Ishwariya)</option>
+                                        <option value="14">કમીગઢ (Kamigadh)</option>
+                                    </optgroup>
+                                    <optgroup label="Babra Taluka">
+                                        <option value="15">બાબરા (Babra)</option>
+                                        <option value="16">વલારડી (Valardi)</option>
+                                        <option value="17">પીર ખીજડીયા (Pir Khijadiya)</option>
+                                        <option value="18">વાલપુર અમર (Valpur Amar)</option>
+                                        <option value="19">કુંવરગઢ (Kunvargadh)</option>
+                                        <option value="20">નવાણીયા (Navaniya)</option>
+                                        <option value="21">ખંભાળા (Khambhala)</option>
+                                        <option value="22">ખાખરીયા (Khakhariya)</option>
+                                        <option value="23">બરવાળા જામ (Barvala Jam)</option>
+                                        <option value="24">ગળકોટડી (Galkotdi)</option>
+                                        <option value="25">રાણપરડા (Ranparda)</option>
+                                        <option value="26">નડાળા (Nadala)</option>
+                                        <option value="27">લોન કોટડા (Lon Kotda)</option>
+                                        <option value="28">મોટા દેવળીયા (Mota Devaliya)</option>
+                                        <option value="29">ખીજડીયા કોટડા (Khijadiya Kotda)</option>
+                                        <option value="30">સારીગપુર (Sarigpur)</option>
+                                    </optgroup>
+                                    <optgroup label="Lathi Taluka">
+                                        <option value="31">લાઠી (Lathi)</option>
+                                        <option value="32">ચાવંડ (Chavand)</option>
+                                        <option value="33">હરસુરપુર દેવળીયા (Harsurpur Devaliya)</option>
+                                        <option value="34">લાઠી કેરીયા (Lathi Keriya)</option>
+                                        <option value="35">કરકોલીયા (Karkoliya)</option>
+                                        <option value="36">ભુરખીયા (Bhurakhiya)</option>
+                                        <option value="37">પ્રતાપગઢ (Pratapgadh)</option>
+                                        <option value="38">મતિરાળા (Matirala)</option>
+                                    </optgroup>
+                                    <optgroup label="Liliya Taluka">
+                                        <option value="39">લીલીયા (Liliya)</option>
+                                        <option value="40">સલડી (Saladi)</option>
+                                        <option value="41">ઉમિયાનગર (Umiyanagar)</option>
+                                        <option value="42">ખારા (Khara)</option>
+                                        <option value="43">સનાળીયા (Sanaliya)</option>
+                                    </optgroup>
+                                    <optgroup label="Kunkavav Taluka">
+                                        <option value="44">રામપુર (Rampur)</option>
+                                        <option value="45">સૂર્યપ્રતાપગઢ (Suryapratapgadh)</option>
+                                        <option value="46">પીપળીયા (Pipliya)</option>
+                                        <option value="47">ખજુરી (Khajuri)</option>
+                                        <option value="48">અનીડા (Anida)</option>
+                                        <option value="49">તરઘરી (Targhari)</option>
+                                        <option value="50">તાલાળી (Talali)</option>
+                                        <option value="51">વાવડી રોડ (Vavdi Road)</option>
+                                        <option value="52">નવા ઉજળા (Nava Ujla)</option>
+                                        <option value="53">નાની કુંકાવાવ (Nani Kunkavav)</option>
+                                        <option value="54">લાખાપાદર (Lakhapadar)</option>
+                                        <option value="55">અમરનગર (Amarnagar)</option>
+                                    </optgroup>
+                                    <optgroup label="Bhavnagar Taluka">
+                                        <option value="56">વાવ (Vav)</option>
+                                        <option value="57">ચુરકા (Churka)</option>
+                                        <option value="58">ધારૂકા (Dharuka)</option>
+                                        <option value="59">લીંબાળી (Limbali)</option>
+                                    </optgroup>
+                                    <optgroup label="Jasdan Taluka">
+                                        <option value="60">જસદણ (Jasdan)</option>
+                                        <option value="61">કાનપર (Kanpar)</option>
+                                        <option value="62">આટકોટ (Atkot)</option>
+                                        <option value="63">કાળાસર (Kalasar)</option>
+                                        <option value="64">માધવીપુર (Madhavipur)</option>
+                                        <option value="65">રાણપર (Ranpar)</option>
+                                        <option value="66">કમળાપુર (Kamlapur)</option>
+                                        <option value="67">સરધાર (Sardhar)</option>
+                                        <option value="68">કરમાળકોટડા (Karmalkotda)</option>
+                                        <option value="69">ગઢકા (Gadhka)</option>
+                                        <option value="70">હરીપર (Haripar)</option>
+                                    </optgroup>
+                                    <optgroup label="Gondal Taluka">
+                                        <option value="71">દેરડી કુંભાજી (Derdi Kumbhaji)</option>
+                                        <option value="72">મેતા ખંભાળીયા (Meta Khambhaliya)</option>
+                                        <option value="73">કમર કોટડા (Kamar Kotda)</option>
+                                        <option value="74">વિંજીવડ (Vinjivad)</option>
+                                        <option value="75">પ્રેમગઢ (Premgadh)</option>
+                                    </optgroup>
+                                    <optgroup label="Junagadh Taluka">
+                                        <option value="76">સરધારપુર (Sardharpur)</option>
+                                        <option value="77">રફાળીયા (Rafaliya)</option>
+                                        <option value="78">કાલસરી (Kalsari)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="firstName"><i class="fas fa-user"></i> <span
+                                        data-i18n="reg_first_name">First Name</span> <span
+                                        class="required">*</span></label>
+                                <input type="text" id="firstName" name="firstName" required
+                                    placeholder="Enter first name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="middleName"><i class="fas fa-user"></i> <span
+                                        data-i18n="reg_middle_name">Middle Name</span></label>
+                                <input type="text" id="middleName" name="middleName" placeholder="Enter middle name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName"><i class="fas fa-user"></i> <span data-i18n="reg_last_name">Last
+                                        Name</span> <span class="required">*</span></label>
+                                <input type="text" id="lastName" name="lastName" required placeholder="Enter last name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender"><i class="fas fa-venus-mars"></i> <span
+                                        data-i18n="reg_gender">Gender</span> <span class="required">*</span></label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select gender</option>
+                                    <option value="Male" data-i18n="reg_male">Male</option>
+                                    <option value="Female" data-i18n="reg_female">Female</option>
+                                    <option value="Other" data-i18n="reg_other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="currentAddress"><i class="fas fa-home"></i> <span
+                                        data-i18n="reg_current_address">Current Address</span> <span
+                                        class="required">*</span></label>
+                                <textarea id="currentAddress" name="currentAddress" required rows="2"
+                                    placeholder="Enter your current address"></textarea>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-block" id="step1NextBtn"
+                                onclick="nextStep()">
+                                <span data-i18n="btn_next">Next</span> <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Step 2: Occupation Details -->
+                        <div class="form-step" data-step="2">
+                            <div class="form-group">
+                                <label><span data-i18n="reg_occupation">What are you currently doing?</span> <span
+                                        class="required">*</span></label>
+                                <div class="occupation-selector">
+                                    <label class="occupation-option">
+                                        <input type="radio" name="occupationType" value="student">
+                                        <div class="option-card">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <span data-i18n="reg_student">Student</span>
+                                        </div>
+                                    </label>
+                                    <label class="occupation-option">
+                                        <input type="radio" name="occupationType" value="job">
+                                        <div class="option-card">
+                                            <i class="fas fa-briefcase"></i>
+                                            <span data-i18n="reg_job">Job</span>
+                                        </div>
+                                    </label>
+                                    <label class="occupation-option">
+                                        <input type="radio" name="occupationType" value="business">
+                                        <div class="option-card">
+                                            <i class="fas fa-store"></i>
+                                            <span data-i18n="reg_business">Business</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Student Details -->
+                            <div id="studentDetails" class="occupation-details" style="display: none;">
+                                <h3><i class="fas fa-graduation-cap"></i> <span data-i18n="reg_student">Student</span>
+                                    Details</h3>
+
+                                <div class="form-group">
+                                    <label for="department"><span data-i18n="student_course">Course/Department</span>
+                                        <span class="required">*</span></label>
+                                    <select id="department" name="department">
+                                        <option value="">Select course/department</option>
+                                    </select>
+                                    <input type="text" id="departmentOther" class="other-input"
+                                        placeholder="Enter your course/department">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="subDepartment"><span
+                                            data-i18n="student_branch">Specialization/Branch</span> <span
+                                            class="required">*</span></label>
+                                    <select id="subDepartment" name="subDepartment">
+                                        <option value="">Select specialization</option>
+                                    </select>
+                                    <input type="text" id="subDepartmentOther" class="other-input"
+                                        placeholder="Enter your specialization/branch">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="collegeCity"><span data-i18n="student_city">College City</span> <span
+                                            class="required">*</span></label>
+                                    <select id="collegeCity" name="collegeCity">
+                                        <option value="">Select city</option>
+                                    </select>
+                                    <input type="text" id="collegeCityOther" class="other-input"
+                                        placeholder="Enter city name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="collegeName"><span data-i18n="student_college">College Name</span> <span
+                                            class="required">*</span></label>
+                                    <select id="collegeName" name="collegeName">
+                                        <option value="">Select college</option>
+                                    </select>
+                                    <input type="text" id="collegeNameOther" class="other-input"
+                                        placeholder="Enter college name">
+                                    <small class="form-hint">Select city first to see colleges, or choose "Other" to
+                                        enter manually</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="yearOfStudy"><span data-i18n="student_year">Year of Study</span> <span
+                                            class="required">*</span></label>
+                                    <select id="yearOfStudy" name="yearOfStudy">
+                                        <option value="">Select year</option>
+                                        <option value="1st Year">1st Year</option>
+                                        <option value="2nd Year">2nd Year</option>
+                                        <option value="3rd Year">3rd Year</option>
+                                        <option value="4th Year">4th Year</option>
+                                        <option value="5th Year">5th Year</option>
+                                        <option value="6th Year">6th Year</option>
+                                        <option value="Final Year">Final Year</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="studentAdditionalInfo">Additional Information</label>
+                                    <textarea id="studentAdditionalInfo" name="studentAdditionalInfo" rows="2"
+                                        placeholder="Any additional information..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Job Details -->
+                            <div id="jobDetails" class="occupation-details" style="display: none;">
+                                <h3><i class="fas fa-briefcase"></i> Job Details</h3>
+
+                                <!-- Graduation Details Section -->
+                                <div
+                                    style="background: var(--gray-100); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <h4 style="margin-bottom: 1rem; color: var(--gray-700);"><i
+                                            class="fas fa-graduation-cap"></i> Graduation Details</h4>
+
+                                    <div class="form-group">
+                                        <label for="jobDepartment">Course/Degree <span class="required">*</span></label>
+                                        <select id="jobDepartment" name="jobDepartment">
+                                            <option value="">Select course/degree</option>
+                                        </select>
+                                        <input type="text" id="jobDepartmentOther" class="other-input"
+                                            placeholder="Enter your course/degree">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jobSubDepartment">Branch/Specialization <span
+                                                class="required">*</span></label>
+                                        <select id="jobSubDepartment" name="jobSubDepartment">
+                                            <option value="">Select specialization</option>
+                                        </select>
+                                        <input type="text" id="jobSubDepartmentOther" class="other-input"
+                                            placeholder="Enter your specialization/branch">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jobCollegeCity">College City <span class="required">*</span></label>
+                                        <select id="jobCollegeCity" name="jobCollegeCity">
+                                            <option value="">Select city</option>
+                                        </select>
+                                        <input type="text" id="jobCollegeCityOther" class="other-input"
+                                            placeholder="Enter city name">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jobCollegeName">College Name <span class="required">*</span></label>
+                                        <select id="jobCollegeName" name="jobCollegeName">
+                                            <option value="">Select college</option>
+                                        </select>
+                                        <input type="text" id="jobCollegeNameOther" class="other-input"
+                                            placeholder="Enter college name">
+                                        <small class="form-hint">Select city first to see colleges, or choose "Other" to
+                                            enter manually</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="graduationYear">Graduation Year <span
+                                                class="required">*</span></label>
+                                        <select id="graduationYear" name="graduationYear">
+                                            <option value="">Select year</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Current Job Details -->
+                                <h4 style="margin-bottom: 1rem; color: var(--gray-700);"><i class="fas fa-building"></i>
+                                    Current Job Details</h4>
+
+                                <div class="form-group">
+                                    <label for="companyName">Company Name <span class="required">*</span></label>
+                                    <input type="text" id="companyName" name="companyName"
+                                        placeholder="Enter company name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="designation">Designation/Position <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="designation" name="designation"
+                                        placeholder="Enter your designation">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobField">Job Field <span class="required">*</span></label>
+                                    <select id="jobField" name="jobField">
+                                        <option value="">Select job field</option>
+                                    </select>
+                                    <input type="text" id="jobFieldOther" class="other-input"
+                                        placeholder="Enter your job field">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="workingCity">Working City <span class="required">*</span></label>
+                                    <select id="workingCity" name="workingCity">
+                                        <option value="">Select city</option>
+                                    </select>
+                                    <input type="text" id="workingCityOther" class="other-input"
+                                        placeholder="Enter city name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="experienceYears">Experience (Years)</label>
+                                    <input type="number" id="experienceYears" name="experienceYears" min="0" max="50"
+                                        placeholder="Years of experience">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobAdditionalInfo">Additional Information</label>
+                                    <textarea id="jobAdditionalInfo" name="jobAdditionalInfo" rows="2"
+                                        placeholder="Any additional information..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Business Details -->
+                            <div id="businessDetails" class="occupation-details" style="display: none;">
+                                <h3><i class="fas fa-store"></i> Business Details</h3>
+
+                                <div class="form-group">
+                                    <label for="businessName">Business Name <span class="required">*</span></label>
+                                    <input type="text" id="businessName" name="businessName"
+                                        placeholder="Enter business name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="businessType">Business Type <span class="required">*</span></label>
+                                    <select id="businessType" name="businessType">
+                                        <option value="">Select business type</option>
+                                    </select>
+                                    <input type="text" id="businessTypeOther" class="other-input"
+                                        placeholder="Enter business type">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="businessField">Business Field <span class="required">*</span></label>
+                                    <select id="businessField" name="businessField">
+                                        <option value="">Select business field</option>
+                                    </select>
+                                    <input type="text" id="businessFieldOther" class="other-input"
+                                        placeholder="Enter business field">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="businessCity">Business City <span class="required">*</span></label>
+                                    <select id="businessCity" name="businessCity">
+                                        <option value="">Select city</option>
+                                    </select>
+                                    <input type="text" id="businessCityOther" class="other-input"
+                                        placeholder="Enter city name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="yearsInBusiness">Years in Business</label>
+                                    <input type="number" id="yearsInBusiness" name="yearsInBusiness" min="0" max="100"
+                                        placeholder="Years in business">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="businessAdditionalInfo">Additional Information</label>
+                                    <textarea id="businessAdditionalInfo" name="businessAdditionalInfo" rows="2"
+                                        placeholder="Any additional information..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                                <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary" style="flex: 1;" onclick="nextStep()">
+                                    Next <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Submit -->
+                        <div class="form-step" data-step="3">
+                            <div class="review-section"
+                                style="background: var(--gray-100); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Review & Submit</h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle"
+                                            style="color: var(--success-color);"></i> Your profile will be submitted for
+                                        admin approval</li>
+                                    <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle"
+                                            style="color: var(--success-color);"></i> Once approved, your profile will
+                                        be visible in the directory</li>
+                                    <li style="padding: 0.5rem 0;"><i class="fas fa-check-circle"
+                                            style="color: var(--success-color);"></i> You can edit your profile later
+                                        from the Profile section</li>
+                                </ul>
+                            </div>
+
+                            <div class="form-actions" style="display: flex; gap: 1rem;">
+                                <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left"></i> Previous
+                                </button>
+                                <button type="submit" class="btn btn-success" style="flex: 1;">
+                                    <i class="fas fa-check"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // ===== Registration Page JavaScript =====
+        let currentStep = 1;
+        const totalSteps = 3;
+        let citiesData = [];
+        let departmentsData = [];
+
+        // Initialize registration page
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup form navigation
+            setupFormNavigation();
+            setupOccupationHandler();
+            setupOtherInputHandlers();
+            document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
+
+            // Mobile nav toggle
+            document.getElementById('navToggle')?.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.toggle('active');
+            });
+
+            // Load data
+            try {
+                await loadCities();
+                loadDepartments();
+                loadJobFields();
+                loadBusinessTypes();
+                loadBusinessFields();
+                loadGraduationYears();
+                loadJobDepartments();
+            } catch (error) {
+                console.error('Error loading form data:', error);
+            }
+
+            // Check session
+            await checkUserSession();
+        });
+
+        // Check if user is logged in
+        async function checkUserSession() {
+            try {
+                const response = await fetch('/api/auth/session', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (!data.loggedIn) {
+                    showNotification('Please login first to complete registration', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+                    return false;
+                }
+
+                if (data.user && data.user.registrationCompleted) {
+                    showNotification('Registration already completed! Redirecting to profile...', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/profile';
+                    }, 1500);
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Session check error:', error);
+                showNotification('Error checking session. Please try again.', 'error');
+                return false;
+            }
+        }
+
+        // Setup "Other" input handlers for select boxes
+        function setupOtherInputHandlers() {
+            // Generic handler for select with other option
+            const selectsWithOther = [
+                { select: 'department', other: 'departmentOther' },
+                { select: 'subDepartment', other: 'subDepartmentOther' },
+                { select: 'collegeCity', other: 'collegeCityOther' },
+                { select: 'collegeName', other: 'collegeNameOther' },
+                { select: 'jobField', other: 'jobFieldOther' },
+                { select: 'workingCity', other: 'workingCityOther' },
+                { select: 'jobDepartment', other: 'jobDepartmentOther' },
+                { select: 'jobCollegeCity', other: 'jobCollegeCityOther' },
+                { select: 'jobCollegeName', other: 'jobCollegeNameOther' },
+                { select: 'businessType', other: 'businessTypeOther' },
+                { select: 'businessField', other: 'businessFieldOther' },
+                { select: 'businessCity', other: 'businessCityOther' }
+            ];
+
+            selectsWithOther.forEach(item => {
+                const select = document.getElementById(item.select);
+                const otherInput = document.getElementById(item.other);
+
+                if (select && otherInput) {
+                    select.addEventListener('change', () => {
+                        if (select.value === 'Other') {
+                            otherInput.classList.add('show');
+                            otherInput.setAttribute('required', '');
+                        } else {
+                            otherInput.classList.remove('show');
+                            otherInput.removeAttribute('required');
+                            otherInput.value = '';
+                        }
+                    });
+                }
+            });
+        }
+
+        // Load villages
+        async function loadVillages() {
+            const select = document.getElementById('village');
+            if (!select) {
+                console.error('Village select not found');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/data/villages');
+                const data = await response.json();
+
+                if (data.success && data.villages && data.villages.length > 0) {
+                    // Clear existing options except first
+                    select.innerHTML = '<option value="">Select your village</option>';
+
+                    // Group by taluka
+                    const grouped = {};
+                    data.villages.forEach(v => {
+                        const key = v.taluka || 'Other';
+                        if (!grouped[key]) grouped[key] = [];
+                        grouped[key].push(v);
+                    });
+
+                    // Add optgroups
+                    Object.keys(grouped).sort().forEach(taluka => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = taluka + ' Taluka';
+
+                        grouped[taluka].forEach(village => {
+                            const option = document.createElement('option');
+                            option.value = village.id;
+                            option.textContent = village.name;
+                            optgroup.appendChild(option);
+                        });
+
+                        select.appendChild(optgroup);
+                    });
+
+                    console.log('Villages loaded:', data.villages.length);
+                }
+            } catch (error) {
+                console.error('Error loading villages:', error);
+            }
+        }
+
+        // Load cities
+        async function loadCities() {
+            try {
+                const response = await fetch('/api/data/cities');
+                const data = await response.json();
+                if (data.success) {
+                    citiesData = data.cities;
+                    const selects = ['collegeCity', 'workingCity', 'businessCity', 'jobCollegeCity'];
+                    selects.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            data.cities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.name;
+                                option.textContent = `${city.name}, ${city.state}`;
+                                select.appendChild(option);
+                            });
+                            // Add "Other" option
+                            const otherOption = document.createElement('option');
+                            otherOption.value = 'Other';
+                            otherOption.textContent = '-- Other (Enter manually) --';
+                            select.appendChild(otherOption);
+                        }
+                    });
+
+                    // Load colleges when city changes
+                    document.getElementById('collegeCity')?.addEventListener('change', loadColleges);
+                    document.getElementById('jobCollegeCity')?.addEventListener('change', loadJobColleges);
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+
+        // Load colleges based on selected city
+        async function loadColleges() {
+            const cityName = document.getElementById('collegeCity')?.value;
+            const courseName = document.getElementById('department')?.value;
+            const collegeSelect = document.getElementById('collegeName');
+            const collegeOther = document.getElementById('collegeNameOther');
+
+            collegeSelect.innerHTML = '<option value="">Select college</option>';
+            collegeOther.classList.remove('show');
+            collegeOther.removeAttribute('required');
+
+            if (cityName === 'Other') {
+                // Show text input for college name when city is "Other"
+                collegeSelect.innerHTML = '<option value="">Select college</option><option value="Other">-- Other (Enter manually) --</option>';
+                collegeSelect.value = 'Other';
+                collegeOther.classList.add('show');
+                collegeOther.setAttribute('required', '');
+                return;
+            }
+
+            // Build query params - filter by city AND/OR course
+            const params = [];
+            if (cityName) {
+                params.push(`cityName=${encodeURIComponent(cityName)}`);
+            }
+            if (courseName && courseName !== 'Other') {
+                params.push(`course=${encodeURIComponent(courseName)}`);
+            }
+
+            if (params.length === 0) {
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                collegeSelect.appendChild(otherOption);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/data/colleges?${params.join('&')}`);
+                const data = await response.json();
+                if (data.success && data.colleges.length > 0) {
+                    data.colleges.forEach(college => {
+                        const option = document.createElement('option');
+                        option.value = college.name;
+                        // Show city if no city is selected
+                        if (college.city_name && !cityName) {
+                            option.textContent = `${college.name} (${college.city_name})`;
+                        } else {
+                            option.textContent = college.name;
+                        }
+                        collegeSelect.appendChild(option);
+                    });
+                }
+                // Always add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                collegeSelect.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading colleges:', error);
+            }
+        }
+
+        // Load colleges for job section based on selected city AND course
+        async function loadJobColleges() {
+            const cityName = document.getElementById('jobCollegeCity')?.value;
+            const courseName = document.getElementById('jobDepartment')?.value;
+            const collegeSelect = document.getElementById('jobCollegeName');
+            const collegeOther = document.getElementById('jobCollegeNameOther');
+
+            collegeSelect.innerHTML = '<option value="">Select college</option>';
+            collegeOther.classList.remove('show');
+            collegeOther.removeAttribute('required');
+
+            if (cityName === 'Other') {
+                collegeSelect.innerHTML = '<option value="">Select college</option><option value="Other">-- Other (Enter manually) --</option>';
+                collegeSelect.value = 'Other';
+                collegeOther.classList.add('show');
+                collegeOther.setAttribute('required', '');
+                return;
+            }
+
+            // Build query params - filter by city AND/OR course
+            const params = [];
+            if (cityName) {
+                params.push(`cityName=${encodeURIComponent(cityName)}`);
+            }
+            if (courseName && courseName !== 'Other') {
+                params.push(`course=${encodeURIComponent(courseName)}`);
+            }
+
+            if (params.length === 0) {
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                collegeSelect.appendChild(otherOption);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/data/colleges?${params.join('&')}`);
+                const data = await response.json();
+                if (data.success && data.colleges.length > 0) {
+                    data.colleges.forEach(college => {
+                        const option = document.createElement('option');
+                        option.value = college.name;
+                        // Show city if no city is selected
+                        if (college.city_name && !cityName) {
+                            option.textContent = `${college.name} (${college.city_name})`;
+                        } else {
+                            option.textContent = college.name;
+                        }
+                        collegeSelect.appendChild(option);
+                    });
+                }
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                collegeSelect.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading job colleges:', error);
+            }
+        }
+
+        // Load sub-departments (branches) for job section based on selected course
+        async function loadJobSubDepartments(department) {
+            const subDeptSelect = document.getElementById('jobSubDepartment');
+            const subDeptOther = document.getElementById('jobSubDepartmentOther');
+
+            if (!subDeptSelect) return;
+
+            subDeptSelect.innerHTML = '<option value="">Select specialization</option>';
+            subDeptOther.classList.remove('show');
+            subDeptOther.removeAttribute('required');
+
+            if (!department || department === 'Other') {
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+                return;
+            }
+
+            // Use courseBranches from translations.js
+            if (typeof courseBranches !== 'undefined' && courseBranches[department]) {
+                const branches = courseBranches[department];
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch;
+                    option.textContent = branch;
+                    subDeptSelect.appendChild(option);
+                });
+                // Always add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+
+                // Handle "Other" selection
+                subDeptSelect.onchange = function () {
+                    if (subDeptSelect.value === 'Other') {
+                        subDeptOther.classList.add('show');
+                        subDeptOther.setAttribute('required', '');
+                    } else {
+                        subDeptOther.classList.remove('show');
+                        subDeptOther.removeAttribute('required');
+                    }
+                };
+                return;
+            }
+
+            // Fallback to API if no local branches defined
+            try {
+                const response = await fetch(`/api/data/sub-departments?departmentName=${encodeURIComponent(department)}`);
+                const data = await response.json();
+                if (data.success && data.subDepartments.length > 0) {
+                    data.subDepartments.forEach(subDept => {
+                        const option = document.createElement('option');
+                        option.value = subDept.name;
+                        option.textContent = subDept.name;
+                        subDeptSelect.appendChild(option);
+                    });
+                }
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading job sub-departments:', error);
+            }
+        }
+
+        // Load departments for job section - using courseBranches from translations.js
+        async function loadJobDepartments() {
+            try {
+                const select = document.getElementById('jobDepartment');
+                if (!select) return;
+
+                // Use courseBranches from translations.js
+                if (typeof courseBranches !== 'undefined') {
+                    // Group courses by category
+                    const courseCategories = {
+                        'Engineering': ['B.Tech', 'M.Tech', 'B.E.', 'Diploma'],
+                        'Computer & IT': ['BCA', 'MCA'],
+                        'Science': ['B.Sc', 'M.Sc'],
+                        'Commerce': ['B.Com', 'M.Com'],
+                        'Management': ['BBA', 'MBA'],
+                        'Medical': ['MBBS', 'BDS', 'B.Pharm', 'Nursing'],
+                        'Architecture': ['B.Arch', 'M.Arch'],
+                        'Law': ['LLB', 'LLM'],
+                        'Education': ['B.Ed', 'M.Ed'],
+                        'Arts': ['BA', 'MA'],
+                        'Other': ['PhD', 'ITI']
+                    };
+
+                    Object.entries(courseCategories).forEach(([category, courseList]) => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = category;
+
+                        courseList.forEach(course => {
+                            if (courseBranches[course]) {
+                                const option = document.createElement('option');
+                                option.value = course;
+                                option.textContent = course;
+                                optgroup.appendChild(option);
+                            }
+                        });
+
+                        if (optgroup.children.length > 0) {
+                            select.appendChild(optgroup);
+                        }
+                    });
+
+                    // Add "Other" option
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+
+                    // Event handler for course change
+                    select.addEventListener('change', () => {
+                        const deptOther = document.getElementById('jobDepartmentOther');
+                        if (select.value === 'Other') {
+                            deptOther.classList.add('show');
+                            deptOther.setAttribute('required', '');
+                            // Clear sub-department and show other input
+                            const subDeptSelect = document.getElementById('jobSubDepartment');
+                            subDeptSelect.innerHTML = '<option value="">Select specialization</option><option value="Other">-- Other (Enter manually) --</option>';
+                            subDeptSelect.value = 'Other';
+                            document.getElementById('jobSubDepartmentOther').classList.add('show');
+                            document.getElementById('jobSubDepartmentOther').setAttribute('required', '');
+                        } else {
+                            deptOther.classList.remove('show');
+                            deptOther.removeAttribute('required');
+                            loadJobSubDepartments(select.value);
+                        }
+                        // Also reload colleges when course changes
+                        loadJobColleges();
+                    });
+                    return;
+                }
+
+                // Fallback to API
+                const response = await fetch('/api/data/departments');
+                const data = await response.json();
+                if (data.success) {
+                    data.departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.name;
+                        option.textContent = dept.name;
+                        select.appendChild(option);
+                    });
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+                }
+            } catch (error) {
+                console.error('Error loading job departments:', error);
+            }
+        }
+
+        // Load graduation years
+        async function loadGraduationYears() {
+            const select = document.getElementById('graduationYear');
+            const currentYear = new Date().getFullYear();
+
+            // Past years for graduation
+            for (let year = currentYear; year >= 1970; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                select.appendChild(option);
+            }
+        }
+
+        // Load departments - using courseBranches from translations.js
+        async function loadDepartments() {
+            try {
+                const select = document.getElementById('department');
+                if (!select) return;
+
+                // Use courseBranches from translations.js
+                if (typeof courseBranches !== 'undefined') {
+                    const courses = Object.keys(courseBranches);
+
+                    // Group courses by category
+                    const courseCategories = {
+                        'Engineering': ['B.Tech', 'M.Tech', 'B.E.', 'Diploma'],
+                        'Computer & IT': ['BCA', 'MCA'],
+                        'Science': ['B.Sc', 'M.Sc'],
+                        'Commerce': ['B.Com', 'M.Com'],
+                        'Management': ['BBA', 'MBA'],
+                        'Medical': ['MBBS', 'BDS', 'B.Pharm', 'Nursing'],
+                        'Architecture': ['B.Arch', 'M.Arch'],
+                        'Law': ['LLB', 'LLM'],
+                        'Education': ['B.Ed', 'M.Ed'],
+                        'Arts': ['BA', 'MA'],
+                        'Other': ['PhD', 'ITI']
+                    };
+
+                    Object.entries(courseCategories).forEach(([category, courseList]) => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = category;
+
+                        courseList.forEach(course => {
+                            if (courseBranches[course]) {
+                                const option = document.createElement('option');
+                                option.value = course;
+                                option.textContent = course;
+                                optgroup.appendChild(option);
+                            }
+                        });
+
+                        if (optgroup.children.length > 0) {
+                            select.appendChild(optgroup);
+                        }
+                    });
+
+                    // Add "Other" option
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+
+                    select.addEventListener('change', () => {
+                        if (select.value === 'Other') {
+                            document.getElementById('departmentOther').classList.add('show');
+                            document.getElementById('departmentOther').setAttribute('required', '');
+                            // Clear sub-department and show other input
+                            const subDeptSelect = document.getElementById('subDepartment');
+                            subDeptSelect.innerHTML = '<option value="">Select specialization</option><option value="Other">-- Other (Enter manually) --</option>';
+                            subDeptSelect.value = 'Other';
+                            document.getElementById('subDepartmentOther').classList.add('show');
+                            document.getElementById('subDepartmentOther').setAttribute('required', '');
+                        } else {
+                            document.getElementById('departmentOther').classList.remove('show');
+                            document.getElementById('departmentOther').removeAttribute('required');
+                            loadSubDepartments(select.value);
+                        }
+                        // Also reload colleges when course changes
+                        loadColleges();
+                    });
+                    return;
+                }
+
+                // Fallback to API
+                const response = await fetch('/api/data/departments');
+                const data = await response.json();
+                if (data.success) {
+                    departmentsData = data.departments;
+                    data.departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.name;
+                        option.textContent = dept.name;
+                        select.appendChild(option);
+                    });
+                    // Add "Other" option
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+
+                    select.addEventListener('change', () => {
+                        if (select.value === 'Other') {
+                            document.getElementById('departmentOther').classList.add('show');
+                            document.getElementById('departmentOther').setAttribute('required', '');
+                            // Clear sub-department and show other input
+                            const subDeptSelect = document.getElementById('subDepartment');
+                            subDeptSelect.innerHTML = '<option value="">Select specialization</option><option value="Other">-- Other (Enter manually) --</option>';
+                            subDeptSelect.value = 'Other';
+                            document.getElementById('subDepartmentOther').classList.add('show');
+                            document.getElementById('subDepartmentOther').setAttribute('required', '');
+                        } else {
+                            document.getElementById('departmentOther').classList.remove('show');
+                            document.getElementById('departmentOther').removeAttribute('required');
+                            loadSubDepartments(select.value);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading departments:', error);
+            }
+        }
+
+        // Load sub-departments based on selected department - uses courseBranches from translations.js
+        async function loadSubDepartments(department) {
+            const subDeptSelect = document.getElementById('subDepartment');
+            const subDeptOther = document.getElementById('subDepartmentOther');
+
+            subDeptSelect.innerHTML = '<option value="">Select specialization</option>';
+            subDeptOther.classList.remove('show');
+            subDeptOther.removeAttribute('required');
+
+            if (!department || department === 'Other') {
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+                return;
+            }
+
+            // Use courseBranches from translations.js
+            if (typeof courseBranches !== 'undefined' && courseBranches[department]) {
+                const branches = courseBranches[department];
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch;
+                    option.textContent = branch;
+                    subDeptSelect.appendChild(option);
+                });
+                // Always add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+
+                // Handle "Other" selection
+                subDeptSelect.addEventListener('change', () => {
+                    if (subDeptSelect.value === 'Other') {
+                        subDeptOther.classList.add('show');
+                        subDeptOther.setAttribute('required', '');
+                    } else {
+                        subDeptOther.classList.remove('show');
+                        subDeptOther.removeAttribute('required');
+                    }
+                });
+                return;
+            }
+
+            // Fallback to API if no local branches defined
+            try {
+                const response = await fetch(`/api/data/sub-departments?departmentName=${encodeURIComponent(department)}`);
+                const data = await response.json();
+                if (data.success && data.subDepartments.length > 0) {
+                    data.subDepartments.forEach(subDept => {
+                        const option = document.createElement('option');
+                        option.value = subDept.name;
+                        option.textContent = subDept.name;
+                        subDeptSelect.appendChild(option);
+                    });
+                }
+                // Always add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = '-- Other (Enter manually) --';
+                subDeptSelect.appendChild(otherOption);
+            } catch (error) {
+                console.error('Error loading sub-departments:', error);
+            }
+        }
+
+        // Load job fields
+        async function loadJobFields() {
+            try {
+                const response = await fetch('/api/data/job-fields');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('jobField');
+                    data.jobFields.forEach(field => {
+                        const option = document.createElement('option');
+                        option.value = field;
+                        option.textContent = field;
+                        select.appendChild(option);
+                    });
+                    // Add "Other" option (if not already present)
+                    if (!data.fields.includes('Other')) {
+                        const otherOption = document.createElement('option');
+                        otherOption.value = 'Other';
+                        otherOption.textContent = '-- Other (Enter manually) --';
+                        select.appendChild(otherOption);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading job fields:', error);
+            }
+        }
+
+        // Load business types
+        async function loadBusinessTypes() {
+            try {
+                const response = await fetch('/api/data/business-types');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('businessType');
+                    data.businessTypes.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        select.appendChild(option);
+                    });
+                    // Add "Other" option
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+                }
+            } catch (error) {
+                console.error('Error loading business types:', error);
+            }
+        }
+
+        // Load business fields
+        async function loadBusinessFields() {
+            try {
+                const response = await fetch('/api/data/business-fields');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('businessField');
+                    data.businessFields.forEach(field => {
+                        const option = document.createElement('option');
+                        option.value = field;
+                        option.textContent = field;
+                        select.appendChild(option);
+                    });
+                    // Add "Other" option
+                    const otherOption = document.createElement('option');
+                    otherOption.value = 'Other';
+                    otherOption.textContent = '-- Other (Enter manually) --';
+                    select.appendChild(otherOption);
+                }
+            } catch (error) {
+                console.error('Error loading business fields:', error);
+            }
+        }
+
+        // Next step function - called by onclick
+        function nextStep() {
+            console.log('Next button clicked, current step:', currentStep);
+            if (validateStep(currentStep)) {
+                console.log('Validation passed, going to step:', currentStep + 1);
+                goToStep(currentStep + 1);
+            } else {
+                console.log('Validation failed');
+            }
+        }
+
+        // Previous step function - called by onclick
+        function prevStep() {
+            console.log('Previous button clicked, going to step:', currentStep - 1);
+            goToStep(currentStep - 1);
+        }
+
+        // Setup form navigation (legacy support)
+        function setupFormNavigation() {
+            console.log('Setting up form navigation');
+        }
+
+        // Go to specific step
+        function goToStep(step) {
+            if (step < 1 || step > totalSteps) return;
+
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+
+            // Update step indicators
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'completed'));
+
+            // Show target step
+            const targetStep = document.querySelector(`.form-step[data-step="${step}"]`);
+            if (targetStep) {
+                targetStep.classList.add('active');
+            }
+
+            // Update step indicators
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepEl = document.querySelector(`.step[data-step="${i}"]`);
+                if (stepEl) {
+                    if (i < step) stepEl.classList.add('completed');
+                    if (i <= step) stepEl.classList.add('active');
+                }
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Validate step
+        function validateStep(step) {
+            let isValid = true;
+
+            if (step === 1) {
+                // Check required fields in step 1
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const gender = document.getElementById('gender').value;
+                const village = document.getElementById('village').value;
+                const currentAddress = document.getElementById('currentAddress').value.trim();
+
+                if (!firstName) {
+                    document.getElementById('firstName').classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('firstName').classList.remove('error');
+                }
+
+                if (!lastName) {
+                    document.getElementById('lastName').classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('lastName').classList.remove('error');
+                }
+
+                if (!gender) {
+                    document.getElementById('gender').classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('gender').classList.remove('error');
+                }
+
+                if (!village) {
+                    document.getElementById('village').classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('village').classList.remove('error');
+                }
+
+                if (!currentAddress) {
+                    document.getElementById('currentAddress').classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('currentAddress').classList.remove('error');
+                }
+
+                if (!isValid) {
+                    showNotification('Please fill in all required fields', 'error');
+                }
+            }
+
+            if (step === 2) {
+                const occupationType = document.querySelector('input[name="occupationType"]:checked');
+                if (!occupationType) {
+                    showNotification('Please select your occupation type', 'error');
+                    return false;
+                }
+
+                const type = occupationType.value;
+                const detailsContainer = document.getElementById(`${type}Details`);
+
+                if (detailsContainer) {
+                    const requiredSelects = detailsContainer.querySelectorAll('select[required]');
+                    requiredSelects.forEach(select => {
+                        const otherInput = document.getElementById(select.id + 'Other');
+                        if (select.value === 'Other' && otherInput) {
+                            if (!otherInput.value.trim()) {
+                                otherInput.classList.add('error');
+                                isValid = false;
+                            } else {
+                                otherInput.classList.remove('error');
+                            }
+                        } else if (!select.value) {
+                            select.classList.add('error');
+                            isValid = false;
+                        } else {
+                            select.classList.remove('error');
+                        }
+                    });
+
+                    const requiredInputs = detailsContainer.querySelectorAll('input[required]:not(.other-input)');
+                    requiredInputs.forEach(input => {
+                        if (!input.value.trim()) {
+                            input.classList.add('error');
+                            isValid = false;
+                        } else {
+                            input.classList.remove('error');
+                        }
+                    });
+                }
+            }
+
+            if (!isValid) {
+                showNotification('Please fill in all required fields', 'error');
+            }
+
+            return isValid;
+        }
+
+        // Setup occupation handler
+        function setupOccupationHandler() {
+            document.querySelectorAll('input[name="occupationType"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    // Hide all details
+                    document.querySelectorAll('.occupation-details').forEach(el => {
+                        el.style.display = 'none';
+                        el.querySelectorAll('input, select, textarea').forEach(field => {
+                            field.removeAttribute('required');
+                        });
+                    });
+
+                    // Show selected details
+                    const selectedType = radio.value;
+                    const detailsEl = document.getElementById(`${selectedType}Details`);
+                    if (detailsEl) {
+                        detailsEl.style.display = 'block';
+
+                        // Add required to important fields
+                        if (selectedType === 'student') {
+                            document.getElementById('department').setAttribute('required', '');
+                            document.getElementById('subDepartment').setAttribute('required', '');
+                            document.getElementById('collegeCity').setAttribute('required', '');
+                            document.getElementById('collegeName').setAttribute('required', '');
+                            document.getElementById('yearOfStudy').setAttribute('required', '');
+                        } else if (selectedType === 'job') {
+                            document.getElementById('companyName').setAttribute('required', '');
+                            document.getElementById('designation').setAttribute('required', '');
+                            document.getElementById('jobField').setAttribute('required', '');
+                            document.getElementById('workingCity').setAttribute('required', '');
+                            document.getElementById('jobDepartment').setAttribute('required', '');
+                            document.getElementById('jobCollegeCity').setAttribute('required', '');
+                            document.getElementById('jobCollegeName').setAttribute('required', '');
+                            document.getElementById('graduationYear').setAttribute('required', '');
+                        } else if (selectedType === 'business') {
+                            document.getElementById('businessName').setAttribute('required', '');
+                            document.getElementById('businessType').setAttribute('required', '');
+                            document.getElementById('businessField').setAttribute('required', '');
+                            document.getElementById('businessCity').setAttribute('required', '');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Get value from select or other input
+        function getValueWithOther(selectId, otherId) {
+            const select = document.getElementById(selectId);
+            const other = document.getElementById(otherId);
+            if (select && select.value === 'Other' && other) {
+                return other.value.trim();
+            }
+            return select ? select.value : '';
+        }
+
+        // Handle registration
+        async function handleRegistration(e) {
+            e.preventDefault();
+
+            console.log('Submitting registration, current step:', currentStep);
+
+            const occupationType = document.querySelector('input[name="occupationType"]:checked')?.value;
+
+            if (!occupationType) {
+                showNotification('Please select your occupation type in Step 2', 'error');
+                goToStep(2);
+                return;
+            }
+
+            const formData = {
+                firstName: document.getElementById('firstName').value.trim(),
+                middleName: document.getElementById('middleName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                gender: document.getElementById('gender').value,
+                villageId: document.getElementById('village').value,
+                currentAddress: document.getElementById('currentAddress').value.trim(),
+                occupationType: occupationType
+            };
+
+            if (!formData.firstName || !formData.lastName || !formData.gender || !formData.villageId || !formData.currentAddress) {
+                showNotification('Please fill in all required fields in Step 1', 'error');
+                goToStep(1);
+                return;
+            }
+
+            // Add occupation-specific details
+            if (occupationType === 'student') {
+                formData.studentDetails = {
+                    department: getValueWithOther('department', 'departmentOther'),
+                    subDepartment: getValueWithOther('subDepartment', 'subDepartmentOther'),
+                    collegeCity: getValueWithOther('collegeCity', 'collegeCityOther'),
+                    collegeName: getValueWithOther('collegeName', 'collegeNameOther'),
+                    yearOfStudy: document.getElementById('yearOfStudy').value,
+                    additionalInfo: document.getElementById('studentAdditionalInfo').value
+                };
+            } else if (occupationType === 'job') {
+                formData.jobDetails = {
+                    department: getValueWithOther('jobDepartment', 'jobDepartmentOther'),
+                    subDepartment: getValueWithOther('jobSubDepartment', 'jobSubDepartmentOther'),
+                    collegeCity: getValueWithOther('jobCollegeCity', 'jobCollegeCityOther'),
+                    collegeName: getValueWithOther('jobCollegeName', 'jobCollegeNameOther'),
+                    graduationYear: document.getElementById('graduationYear').value,
+                    companyName: document.getElementById('companyName').value,
+                    designation: document.getElementById('designation').value,
+                    field: getValueWithOther('jobField', 'jobFieldOther'),
+                    workingCity: getValueWithOther('workingCity', 'workingCityOther'),
+                    experienceYears: document.getElementById('experienceYears').value,
+                    additionalInfo: document.getElementById('jobAdditionalInfo').value
+                };
+            } else if (occupationType === 'business') {
+                formData.businessDetails = {
+                    businessName: document.getElementById('businessName').value,
+                    businessType: getValueWithOther('businessType', 'businessTypeOther'),
+                    businessField: getValueWithOther('businessField', 'businessFieldOther'),
+                    businessCity: getValueWithOther('businessCity', 'businessCityOther'),
+                    yearsInBusiness: document.getElementById('yearsInBusiness').value,
+                    additionalInfo: document.getElementById('businessAdditionalInfo').value
+                };
+            }
+
+            try {
+                console.log('Sending registration request...');
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                console.log('Registration response:', data);
+
+                if (data.success) {
+                    showNotification('Registration completed! Redirecting to home...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    showNotification(data.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

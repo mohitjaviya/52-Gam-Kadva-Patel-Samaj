@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title data-i18n="login_title">Login - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+    <style>
+        @media (max-width: 768px) {
+            .auth-section .auth-container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .auth-card {
+                margin: 0;
+                width: 100%;
+                border-radius: 0;
+            }
+
+            .auth-section {
+                padding: 56px 0 0 0 !important;
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                margin: 0;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 1.5rem 1rem;
+            }
+
+            .auth-section {
+                padding: 52px 0 0 0 !important;
+                margin: 0;
+            }
+
+            .otp-header h3 {
+                font-size: 1.1rem;
+            }
+
+            #otp {
+                font-size: 1.25rem !important;
+                letter-spacing: 0.3rem !important;
+            }
+        }
+
+        /* Validation Styles */
+        .form-group .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-group.has-error input {
+            border-color: #dc3545;
+        }
+
+        .form-group.has-error .error-message {
+            display: block;
+        }
+
+        .form-group.has-success input {
+            border-color: #28a745;
+        }
+
+        /* Password Toggle */
+        .input-icon.password-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .password-input .toggle-password:hover {
+            color: #16A34A;
+        }
+
+        .input-icon.password-input input {
+            padding-right: 45px;
+        }
+
+        /* Hide browser's default password reveal button */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input::-webkit-contacts-auto-fill-button {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/login" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/login" class="active" data-i18n="nav_login">Login</a>
+                <a href="/signup" data-i18n="nav_signup">Sign Up</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Login Form -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1><i class="fas fa-sign-in-alt"></i> <span data-i18n="login_title">Login</span></h1>
+                        <p data-i18n="login_subtitle">Welcome back! Please login to continue</p>
+                    </div>
+
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group" id="emailGroup">
+                            <label for="email" data-i18n="login_email">Email Address</label>
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" required data-i18n="login_email"
+                                    placeholder="Enter your email">
+                            </div>
+                            <span class="error-message" id="emailError">Please enter a valid email address</span>
+                        </div>
+
+                        <div class="form-group" id="passwordGroup">
+                            <label for="password">
+                                <span data-i18n="login_password">Password</span>
+                            </label>
+                            <div class="input-icon password-input">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" required
+                                    placeholder="Enter your password">
+                                <button type="button" class="toggle-password" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </button>
+                            </div>
+                            <span class="error-message" id="passwordError">Password is required</span>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rememberMe">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="forgot-link" onclick="showForgotPassword(); return false;">Forgot
+                                Password?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+
+                    <!-- OTP Verification Section (Hidden initially) -->
+                    <div id="otpSection" class="auth-form" style="display: none;">
+                        <div class="otp-header" style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Verify Your Email</h3>
+                            <p style="color: var(--gray-600);">Enter the OTP sent to<br><strong id="otpEmail"></strong>
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="otp">
+                                <i class="fas fa-key"></i> Enter OTP
+                            </label>
+                            <input type="text" id="otp" name="otp" required pattern="[0-9]{6}" maxlength="6"
+                                placeholder="Enter 6-digit OTP"
+                                style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block" onclick="verifyOTP()">
+                            <i class="fas fa-check"></i> Verify & Login
+                        </button>
+
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <p style="color: var(--gray-600);">Didn't receive OTP?
+                                <button type="button" class="btn-link" onclick="resendOTP()" id="resendBtn">
+                                    Resend OTP
+                                </button>
+                            </p>
+                            <p id="resendTimer" style="color: var(--gray-500); display: none;"></p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <button type="button" class="btn-link" onclick="backToLogin()">
+                                <i class="fas fa-arrow-left"></i> Back to Login
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Forgot Password Section (Hidden initially) -->
+                    <div id="forgotPasswordSection" class="auth-form" style="display: none;">
+                        <!-- Step 1: Enter Email -->
+                        <div id="forgotStep1">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h3>Forgot Password?</h3>
+                                <p style="color: var(--gray-600);">Enter your email address and we'll send you an OTP to
+                                    reset your password.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="forgotEmail"><i class="fas fa-envelope"></i> Email Address</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="forgotEmail" required
+                                        placeholder="Enter your registered email">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-block" onclick="sendForgotOTP()">
+                                <i class="fas fa-paper-plane"></i> Send OTP
+                            </button>
+                        </div>
+
+                        <!-- Step 2: Verify OTP -->
+                        <div id="forgotStep2" style="display: none;">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                                    <i class="fas fa-envelope-open-text"></i>
+                                </div>
+                                <h3>Verify OTP</h3>
+                                <p style="color: var(--gray-600);">Enter the OTP sent to<br><strong
+                                        id="forgotOtpEmail"></strong></p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="forgotOtp"><i class="fas fa-key"></i> Enter OTP</label>
+                                <input type="text" id="forgotOtp" required pattern="[0-9]{6}" maxlength="6"
+                                    placeholder="Enter 6-digit OTP"
+                                    style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: var(--radius);">
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-block" onclick="verifyForgotOTP()">
+                                <i class="fas fa-check"></i> Verify OTP
+                            </button>
+
+                            <div style="text-align: center; margin-top: 1rem;">
+                                <p style="color: var(--gray-600);">Didn't receive OTP?
+                                    <button type="button" class="btn-link" onclick="sendForgotOTP()"
+                                        id="forgotResendBtn">
+                                        Resend OTP
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: New Password -->
+                        <div id="forgotStep3" style="display: none;">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div style="font-size: 3rem; color: var(--success-color); margin-bottom: 1rem;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h3>Set New Password</h3>
+                                <p style="color: var(--gray-600);">Create a strong new password for your account.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newPassword"><i class="fas fa-lock"></i> New Password</label>
+                                <div class="input-icon password-input">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="newPassword" required placeholder="Enter new password"
+                                        minlength="6">
+                                    <button type="button" class="toggle-password"
+                                        onclick="toggleForgotPassword('newPassword', 'newPwdToggleIcon')">
+                                        <i class="fas fa-eye" id="newPwdToggleIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
+                                <div class="input-icon password-input">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="confirmPassword" required
+                                        placeholder="Confirm new password" minlength="6">
+                                    <button type="button" class="toggle-password"
+                                        onclick="toggleForgotPassword('confirmPassword', 'confirmPwdToggleIcon')">
+                                        <i class="fas fa-eye" id="confirmPwdToggleIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-block" onclick="resetPassword()">
+                                <i class="fas fa-save"></i> Reset Password
+                            </button>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <button type="button" class="btn-link" onclick="backToLoginFromForgot()">
+                                <i class="fas fa-arrow-left"></i> Back to Login
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="/signup">Sign Up Now</a></p>
+                    </div>
+
+
+                </div>
+
+                <div class="auth-image">
+                    <img src="https://illustrations.popsy.co/amber/work-from-home.svg" alt="Login">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        let loginData = {};
+        let resendCountdown = 0;
+
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('passwordToggleIcon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Real-time validation functions
+        function validateEmail() {
+            const email = document.getElementById('email').value.trim();
+            const group = document.getElementById('emailGroup');
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+            group.classList.remove('has-error', 'has-success');
+            if (email.length > 0) {
+                group.classList.add(isValid ? 'has-success' : 'has-error');
+            }
+            return isValid;
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const group = document.getElementById('passwordGroup');
+            const isValid = password.length > 0;
+
+            group.classList.remove('has-error', 'has-success');
+            if (password.length > 0) {
+                group.classList.add('has-success');
+            }
+            return isValid;
+        }
+
+        // Add event listeners for real-time validation
+        document.getElementById('email').addEventListener('input', validateEmail);
+        document.getElementById('password').addEventListener('input', validatePassword);
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Validate before submit
+            if (!validateEmail()) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (!validatePassword()) {
+                showNotification('Password is required', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Check if verification is required
+                    if (data.requiresVerification) {
+                        loginData = { email, password, userEmail: data.email };
+
+                        // Show OTP section
+                        document.getElementById('loginForm').style.display = 'none';
+                        document.getElementById('otpSection').style.display = 'block';
+                        document.getElementById('otpEmail').textContent = data.email;
+
+                        showNotification('OTP sent to your email. Please check your inbox.', 'success');
+                        startResendTimer();
+                    } else {
+                        showNotification('Login successful!', 'success');
+                        localStorage.setItem('user', JSON.stringify(data.user));
+
+                        // Redirect based on registration status and role
+                        setTimeout(() => {
+                            if (!data.user.registrationCompleted) {
+                                window.location.href = '/register';
+                            } else if (data.user.isAdmin) {
+                                window.location.href = '/admin';
+                            } else {
+                                window.location.href = '/';
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    showNotification(data.message || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+
+        // Verify OTP
+        async function verifyOTP() {
+            const otp = document.getElementById('otp').value.trim();
+
+            if (!/^[0-9]{6}$/.test(otp)) {
+                showNotification('Please enter a valid 6-digit OTP', 'error');
+                return;
+            }
+
+            try {
+                // First verify OTP
+                const verifyResponse = await fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contact: loginData.userEmail,
+                        otp: otp,
+                        type: 'email'
+                    })
+                });
+
+                const verifyData = await verifyResponse.json();
+
+                if (verifyData.success) {
+                    // Now login again
+                    const loginResponse = await fetch('/api/auth/login-after-verify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: loginData.email,
+                            password: loginData.password
+                        })
+                    });
+
+                    const loginResult = await loginResponse.json();
+
+                    if (loginResult.success) {
+                        showNotification('Email verified! Logging in...', 'success');
+                        localStorage.setItem('user', JSON.stringify(loginResult.user));
+
+                        setTimeout(() => {
+                            if (!loginResult.user.registrationCompleted) {
+                                window.location.href = '/register';
+                            } else if (loginResult.user.isAdmin) {
+                                window.location.href = '/admin';
+                            } else {
+                                window.location.href = '/';
+                            }
+                        }, 1000);
+                    } else {
+                        showNotification('Verification successful but login failed. Please try again.', 'error');
+                        backToLogin();
+                    }
+                } else {
+                    showNotification(verifyData.message || 'Invalid OTP', 'error');
+                }
+            } catch (error) {
+                showNotification('Verification failed. Please try again.', 'error');
+            }
+        }
+
+        // Resend OTP
+        async function resendOTP() {
+            if (resendCountdown > 0) return;
+
+            try {
+                const response = await fetch('/api/auth/resend-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contact: loginData.userEmail,
+                        type: 'email'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('New OTP sent to your email!', 'success');
+                    startResendTimer();
+                } else {
+                    showNotification(data.message || 'Failed to resend OTP', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to resend OTP', 'error');
+            }
+        }
+
+        // Start resend timer
+        function startResendTimer() {
+            resendCountdown = 60;
+            const resendBtn = document.getElementById('resendBtn');
+            const timerEl = document.getElementById('resendTimer');
+
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+            timerEl.style.display = 'block';
+
+            const timer = setInterval(() => {
+                resendCountdown--;
+                timerEl.textContent = `Resend available in ${resendCountdown}s`;
+
+                if (resendCountdown <= 0) {
+                    clearInterval(timer);
+                    resendBtn.disabled = false;
+                    resendBtn.style.opacity = '1';
+                    timerEl.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // Back to login
+        function backToLogin() {
+            document.getElementById('otpSection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('otp').value = '';
+            loginData = {};
+        }
+
+        // === FORGOT PASSWORD FUNCTIONS ===
+        let forgotData = {};
+
+        function showForgotPassword() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('otpSection').style.display = 'none';
+            document.getElementById('forgotPasswordSection').style.display = 'block';
+            document.getElementById('forgotStep1').style.display = 'block';
+            document.getElementById('forgotStep2').style.display = 'none';
+            document.getElementById('forgotStep3').style.display = 'none';
+            forgotData = {};
+        }
+
+        function backToLoginFromForgot() {
+            document.getElementById('forgotPasswordSection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            forgotData = {};
+        }
+
+        async function sendForgotOTP() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    forgotData.email = email;
+                    forgotData.userId = data.userId;
+                    document.getElementById('forgotOtpEmail').textContent = email;
+                    document.getElementById('forgotStep1').style.display = 'none';
+                    document.getElementById('forgotStep2').style.display = 'block';
+                    showNotification('OTP sent! Check your email or server console.', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to send OTP', 'error');
+                }
+            } catch (error) {
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        }
+
+        function verifyForgotOTP() {
+            const otp = document.getElementById('forgotOtp').value.trim();
+            if (!/^[0-9]{6}$/.test(otp)) {
+                showNotification('Please enter a valid 6-digit OTP', 'error');
+                return;
+            }
+
+            // Store OTP and move to password step — actual verification happens in reset-password
+            forgotData.otp = otp;
+            document.getElementById('forgotStep2').style.display = 'none';
+            document.getElementById('forgotStep3').style.display = 'block';
+            showNotification('Now set your new password.', 'success');
+        }
+
+        async function resetPassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: forgotData.email,
+                        otp: forgotData.otp,
+                        newPassword: newPassword
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Password reset successfully! Please login with your new password.', 'success');
+                    setTimeout(() => {
+                        backToLoginFromForgot();
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Failed to reset password', 'error');
+                }
+            } catch (error) {
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        }
+
+        function toggleForgotPassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Mobile nav toggle
+        document.getElementById('navToggle')?.addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Update current language display
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('language') || 'en';
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+        });
+    </script>
+</body>
+
+</html>

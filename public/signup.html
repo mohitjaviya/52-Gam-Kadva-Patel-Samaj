@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title data-i18n="signup_title">Sign Up - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+    <style>
+        @media (max-width: 768px) {
+            .auth-section .auth-container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0 1rem;
+                gap: 1rem;
+            }
+
+            .auth-card {
+                margin: 0;
+                width: 100%;
+                order: 1;
+            }
+
+            .auth-info {
+                order: 2;
+            }
+
+            .auth-section {
+                padding: 56px 0 1rem 0 !important;
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                margin: 0;
+                width: 100%;
+                padding: 1.5rem 1rem;
+            }
+
+            .auth-section {
+                padding: 52px 0 1rem 0 !important;
+                margin: 0;
+            }
+
+            .otp-header h3 {
+                font-size: 1.1rem;
+            }
+
+            #otp {
+                font-size: 1.25rem !important;
+                letter-spacing: 0.3rem !important;
+            }
+        }
+
+        /* Validation Styles */
+        .form-group .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-group.has-error input {
+            border-color: #dc3545;
+        }
+
+        .form-group.has-error .error-message {
+            display: block;
+        }
+
+        .form-group.has-success input {
+            border-color: #28a745;
+        }
+
+        .form-hint {
+            color: #6c757d;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Password Input with Toggle */
+        .password-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input input {
+            padding-right: 45px;
+            width: 100%;
+        }
+
+        .password-input .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .password-input .toggle-password:hover {
+            color: #16A34A;
+        }
+
+        /* Hide browser's default password reveal button */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input::-webkit-contacts-auto-fill-button {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/login" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/login" data-i18n="nav_login">Login</a>
+                <a href="/signup" class="active" data-i18n="nav_signup">Sign Up</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sign Up Section -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2 data-i18n="signup_title">Create Account</h2>
+                        <p data-i18n="signup_subtitle">Join our community of 52 villages</p>
+                    </div>
+
+                    <form id="signupForm" class="auth-form">
+                        <div class="form-group" id="phoneGroup">
+                            <label for="phone">
+                                <i class="fas fa-phone"></i> <span data-i18n="signup_phone">Mobile Number</span>
+                            </label>
+                            <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" maxlength="10"
+                                data-i18n="signup_phone" placeholder="Enter 10-digit mobile number">
+                            <small class="form-hint">Enter 10-digit mobile number</small>
+                            <span class="error-message" id="phoneError">Please enter a valid 10-digit mobile
+                                number</span>
+                        </div>
+
+                        <div class="form-group" id="emailGroup">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> <span data-i18n="signup_email">Email Address</span>
+                            </label>
+                            <input type="email" id="email" name="email" required data-i18n="signup_email"
+                                placeholder="Enter your email">
+                            <span class="error-message" id="emailError">Please enter a valid email address</span>
+                        </div>
+
+                        <div class="form-group" id="passwordGroup">
+                            <label for="password">
+                                <i class="fas fa-lock"></i> <span data-i18n="signup_password">Password</span>
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" required minlength="6"
+                                    data-i18n="signup_password" placeholder="Create a password">
+                                <button type="button" class="toggle-password" onclick="toggleAllPasswords()">
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </button>
+                            </div>
+                            <small class="form-hint">Min 6 characters, 1 number, 1 special character (!@#$%^&*)</small>
+                            <span class="error-message" id="passwordError">Password must have 6+ chars, 1 number, 1
+                                special character</span>
+                        </div>
+
+                        <div class="form-group" id="confirmPasswordGroup">
+                            <label for="confirmPassword">
+                                <i class="fas fa-lock"></i> Confirm Password
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required
+                                    minlength="6" placeholder="Confirm your password">
+                            </div>
+                            <span class="error-message" id="confirmPasswordError">Passwords do not match</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+
+                    <!-- OTP Verification Form (Hidden initially) -->
+                    <div id="otpSection" class="auth-form" style="display: none;">
+                        <div class="otp-header" style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Verify Your Email</h3>
+                            <p style="color: var(--gray-600);">We've sent a 6-digit OTP to<br><strong
+                                    id="otpEmail"></strong></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="otp">
+                                <i class="fas fa-key"></i> Enter OTP
+                            </label>
+                            <input type="text" id="otp" name="otp" required pattern="[0-9]{6}" maxlength="6"
+                                placeholder="Enter 6-digit OTP"
+                                style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block" onclick="verifyOTP()">
+                            <i class="fas fa-check"></i> Verify OTP
+                        </button>
+
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <p style="color: var(--gray-600);">Didn't receive OTP?
+                                <button type="button" class="btn-link" onclick="resendOTP()" id="resendBtn">
+                                    Resend OTP
+                                </button>
+                            </p>
+                            <p id="resendTimer" style="color: var(--gray-500); display: none;"></p>
+                        </div>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="/login">Login here</a></p>
+                    </div>
+                </div>
+
+                <div class="auth-info">
+                    <h3>Join Our Community</h3>
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Connect with 52 villages</li>
+                        <li><i class="fas fa-check-circle"></i> Share your occupation details</li>
+                        <li><i class="fas fa-check-circle"></i> Find people by profession</li>
+                        <li><i class="fas fa-check-circle"></i> Build community network</li>
+                    </ul>
+                    <div class="steps-info">
+                        <h4>How it works:</h4>
+                        <div class="step-item">
+                            <span class="step-number">1</span>
+                            <span>Create account with mobile & email</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">2</span>
+                            <span>Login to your account</span>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">3</span>
+                            <span>Complete your full profile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let signupData = {};
+        let resendCountdown = 0;
+
+        // Toggle password visibility for both fields
+        function toggleAllPasswords() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const icon = document.getElementById('passwordToggleIcon');
+
+            if (password.type === 'password') {
+                password.type = 'text';
+                confirmPassword.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                confirmPassword.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Real-time validation functions
+        function validatePhone() {
+            const phone = document.getElementById('phone').value.trim();
+            const group = document.getElementById('phoneGroup');
+            const isValid = /^[0-9]{10}$/.test(phone);
+
+            group.classList.remove('has-error', 'has-success');
+            if (phone.length > 0) {
+                group.classList.add(isValid ? 'has-success' : 'has-error');
+            }
+            return isValid;
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('email').value.trim();
+            const group = document.getElementById('emailGroup');
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+            group.classList.remove('has-error', 'has-success');
+            if (email.length > 0) {
+                group.classList.add(isValid ? 'has-success' : 'has-error');
+            }
+            return isValid;
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const group = document.getElementById('passwordGroup');
+            const hasMinLength = password.length >= 6;
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+            const isValid = hasMinLength && hasNumber && hasSpecial;
+
+            group.classList.remove('has-error', 'has-success');
+            if (password.length > 0) {
+                group.classList.add(isValid ? 'has-success' : 'has-error');
+            }
+            // Also validate confirm password if it has value
+            validateConfirmPassword();
+            return isValid;
+        }
+
+        function validateConfirmPassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const group = document.getElementById('confirmPasswordGroup');
+            const hasMinLength = password.length >= 6;
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+            const passwordValid = hasMinLength && hasNumber && hasSpecial;
+            const isValid = confirmPassword.length >= 6 && password === confirmPassword && passwordValid;
+
+            group.classList.remove('has-error', 'has-success');
+            if (confirmPassword.length > 0) {
+                group.classList.add(isValid ? 'has-success' : 'has-error');
+            }
+            return isValid;
+        }
+
+        // Add event listeners for real-time validation
+        document.getElementById('phone').addEventListener('input', validatePhone);
+        document.getElementById('email').addEventListener('input', validateEmail);
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validateConfirmPassword);
+
+        // Handle signup form
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate phone
+            if (!/^[0-9]{10}$/.test(phone)) {
+                showNotification('Please enter a valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            // Validate email
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Validate password match
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            // Validate password strength
+            const hasMinLength = password.length >= 6;
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+            if (!hasMinLength || !hasNumber || !hasSpecial) {
+                showNotification('Password must have at least 6 characters, 1 number, and 1 special character', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone, email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.requiresVerification) {
+                        // Store data for verification
+                        signupData = { phone, email, password };
+
+                        // Show OTP section
+                        document.getElementById('signupForm').style.display = 'none';
+                        document.getElementById('otpSection').style.display = 'block';
+                        document.getElementById('otpEmail').textContent = email;
+
+                        showNotification('OTP sent to your email!', 'success');
+                        startResendTimer();
+                    } else {
+                        showNotification('Account created successfully! Please login.', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1500);
+                    }
+                } else {
+                    showNotification(data.message || 'Signup failed', 'error');
+                }
+            } catch (error) {
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+
+        // Verify OTP
+        async function verifyOTP() {
+            const otp = document.getElementById('otp').value.trim();
+
+            if (!/^[0-9]{6}$/.test(otp)) {
+                showNotification('Please enter a valid 6-digit OTP', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contact: signupData.email,
+                        otp: otp,
+                        type: 'email'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Email verified! Logging you in...', 'success');
+
+                    // Auto-login after verification
+                    const loginResponse = await fetch('/api/auth/login-after-verify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: signupData.email,
+                            password: signupData.password
+                        })
+                    });
+
+                    const loginData = await loginResponse.json();
+
+                    if (loginData.success) {
+                        showNotification('Login successful! Complete your registration...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/register';
+                        }, 1500);
+                    } else {
+                        // If auto-login fails, redirect to login page
+                        showNotification('Please login to continue', 'info');
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1500);
+                    }
+                } else {
+                    showNotification(data.message || 'Invalid OTP', 'error');
+                }
+            } catch (error) {
+                showNotification('Verification failed. Please try again.', 'error');
+            }
+        }
+
+        // Resend OTP
+        async function resendOTP() {
+            if (resendCountdown > 0) return;
+
+            try {
+                const response = await fetch('/api/auth/resend-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contact: signupData.email,
+                        type: 'email'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('New OTP sent to your email!', 'success');
+                    startResendTimer();
+                } else {
+                    showNotification(data.message || 'Failed to resend OTP', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to resend OTP', 'error');
+            }
+        }
+
+        // Start resend timer
+        function startResendTimer() {
+            resendCountdown = 60;
+            const resendBtn = document.getElementById('resendBtn');
+            const timerEl = document.getElementById('resendTimer');
+
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+            timerEl.style.display = 'block';
+
+            const timer = setInterval(() => {
+                resendCountdown--;
+                timerEl.textContent = `Resend available in ${resendCountdown}s`;
+
+                if (resendCountdown <= 0) {
+                    clearInterval(timer);
+                    resendBtn.disabled = false;
+                    resendBtn.style.opacity = '1';
+                    timerEl.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // Mobile nav toggle
+        document.getElementById('navToggle').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

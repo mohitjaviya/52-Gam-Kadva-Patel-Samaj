@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Admin Dashboard - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media (max-width: 480px) {
+            .admin-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .stats-cards {
+                gap: 0.5rem;
+            }
+
+            .stats-cards .stat-card {
+                padding: 0.75rem;
+            }
+
+            .admin-table {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/search">Search Directory</a>
+                <a href="/login" id="loginLink" style="display: none;">Login</a>
+                <a href="/register" id="registerLink" style="display: none;">Register</a>
+                <a href="/profile" id="profileLink">My Profile</a>
+                <a href="/admin" class="active" id="adminLink">Admin</a>
+                <a href="#" id="logoutLink" onclick="logout()">Logout</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard -->
+    <section class="admin-section">
+        <div class="container">
+            <div class="admin-header">
+                <h1><i class="fas fa-cog"></i> Admin Dashboard</h1>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" onclick="downloadReport('all', 'csv')">
+                        <i class="fas fa-download"></i> Download Report (CSV)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="totalUsers">0</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="approvedUsers">0</span>
+                        <span class="stat-label">Approved</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="pendingUsers">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="students">0</span>
+                        <span class="stat-label">Students</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="jobs">0</span>
+                        <span class="stat-label">Working</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="businesses">0</span>
+                        <span class="stat-label">Business</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchTab('pending')">
+                    <i class="fas fa-clock"></i> Pending Approvals
+                    <span class="tab-count" id="pendingCount">0</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('approved')">
+                    <i class="fas fa-check"></i> Approved Users
+                </button>
+                <button class="tab-btn" onclick="switchTab('all')">
+                    <i class="fas fa-list"></i> All Users
+                </button>
+                <button class="tab-btn" onclick="switchTab('reports')">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Pending Approvals -->
+                <div id="pendingTab" class="tab-pane active">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Village</th>
+                                    <th>Occupation</th>
+                                    <th>Details</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingTableBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="pendingEmpty" class="empty-state" style="display: none;">
+                        <i class="fas fa-check-double"></i>
+                        <h3>No pending approvals</h3>
+                        <p>All registrations have been reviewed</p>
+                    </div>
+                </div>
+
+                <!-- Approved Users -->
+                <div id="approvedTab" class="tab-pane" style="display: none;">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Village</th>
+                                    <th>Occupation</th>
+                                    <th>Details</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Sensitive Access</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvedTableBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- All Users -->
+                <div id="allTab" class="tab-pane" style="display: none;">
+                    <div class="table-filters">
+                        <select id="filterOccupation" onchange="loadAllUsers()">
+                            <option value="">All Occupations</option>
+                            <option value="student">Students</option>
+                            <option value="job">Working Professionals</option>
+                            <option value="business">Business Owners</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Village</th>
+                                    <th>Occupation</th>
+                                    <th>Details</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allTableBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports -->
+                <div id="reportsTab" class="tab-pane" style="display: none;">
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3><i class="fas fa-graduation-cap"></i> Student Report</h3>
+                            <p>Download list of all students with their college and course details</p>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="downloadReport('student', 'csv')">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadReport('student', 'json')">
+                                    <i class="fas fa-file-code"></i> JSON
+                                </button>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h3><i class="fas fa-briefcase"></i> Working Professionals Report</h3>
+                            <p>Download list of all working professionals with company details</p>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="downloadReport('job', 'csv')">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadReport('job', 'json')">
+                                    <i class="fas fa-file-code"></i> JSON
+                                </button>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h3><i class="fas fa-store"></i> Business Owners Report</h3>
+                            <p>Download list of all business owners with business details</p>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="downloadReport('business', 'csv')">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadReport('business', 'json')">
+                                    <i class="fas fa-file-code"></i> JSON
+                                </button>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h3><i class="fas fa-users"></i> Complete Directory</h3>
+                            <p>Download complete directory of all approved members</p>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="downloadReport('all', 'csv')">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadReport('all', 'json')">
+                                    <i class="fas fa-file-code"></i> JSON
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Village Distribution Chart -->
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-pie"></i> Village-wise Distribution</h3>
+                        <div id="villageChart" class="chart">
+                            <!-- Chart will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="adminPagination" class="pagination" style="display: none;">
+                <button class="page-btn" onclick="changeAdminPage('prev')" id="adminPrevBtn">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <span id="adminPageInfo">Page 1 of 1</span>
+                <button class="page-btn" onclick="changeAdminPage('next')" id="adminNextBtn">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Detail Modal -->
+    <div id="userDetailModal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="userDetailContent">
+                <!-- User details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

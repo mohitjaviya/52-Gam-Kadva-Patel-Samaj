@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title data-i18n="search_title">Search Directory - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+    <style>
+        @media (max-width: 768px) {
+            .search-section .container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .user-card {
+                padding: 0.875rem;
+                width: 100%;
+            }
+
+            .user-avatar {
+                width: 3rem;
+                height: 3rem;
+                font-size: 1.25rem;
+            }
+
+            .results-grid {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/" data-i18n="nav_home">Home</a>
+                <a href="/search" class="active" data-i18n="nav_search">Search Directory</a>
+                <a href="/login" id="loginLink" data-i18n="nav_login">Login</a>
+                <a href="/register" id="registerLink" data-i18n="nav_register">Register</a>
+                <a href="/profile" id="profileLink" style="display: none;" data-i18n="nav_profile">My Profile</a>
+                <a href="/admin" id="adminLink" style="display: none;" data-i18n="nav_admin">Admin</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()" data-i18n="nav_logout">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-header">
+                <h1><i class="fas fa-search"></i> <span data-i18n="search_title">Search Community Directory</span></h1>
+                <p data-i18n="search_subtitle">Find people from your community by village, occupation, or name</p>
+            </div>
+
+            <!-- Search Filters -->
+            <div class="search-filters">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="searchVillage" data-i18n="search_village">Village</label>
+                        <select id="searchVillage">
+                            <option value="" data-i18n="search_all">All Villages</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchOccupation">Occupation</label>
+                        <select id="searchOccupation" onchange="onOccupationChange()">
+                            <option value="">All Occupations</option>
+                            <option value="student">Student</option>
+                            <option value="job">Working Professional</option>
+                            <option value="business">Business Owner</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchName">Name</label>
+                        <input type="text" id="searchName" placeholder="Search by name...">
+                    </div>
+                </div>
+
+                <!-- Dynamic Occupation Filters -->
+                <div class="filter-row" id="occupationFilters" style="display: none;">
+                    <!-- Student Filters -->
+                    <div class="filter-group" id="collegeFilter" style="display: none;">
+                        <label for="searchCollege"><i class="fas fa-university"></i> College/University</label>
+                        <input type="text" id="searchCollege" placeholder="e.g., Adani University...">
+                    </div>
+                    <div class="filter-group" id="courseFilter" style="display: none;">
+                        <label for="searchCourse"><i class="fas fa-graduation-cap"></i> Course/Department</label>
+                        <input type="text" id="searchCourse" placeholder="e.g., Engineering, Commerce...">
+                    </div>
+                    <div class="filter-group" id="specializationFilter" style="display: none;">
+                        <label for="searchSpecialization"><i class="fas fa-code-branch"></i> Specialization</label>
+                        <input type="text" id="searchSpecialization" placeholder="e.g., Computer Science...">
+                    </div>
+
+                    <!-- Job Filters -->
+                    <div class="filter-group" id="companyFilter" style="display: none;">
+                        <label for="searchCompany"><i class="fas fa-building"></i> Company Name</label>
+                        <input type="text" id="searchCompany" placeholder="e.g., TCS, Infosys...">
+                    </div>
+                    <div class="filter-group" id="jobFieldFilter" style="display: none;">
+                        <label for="searchJobField"><i class="fas fa-briefcase"></i> Job Field</label>
+                        <input type="text" id="searchJobField" placeholder="e.g., Software, Banking...">
+                    </div>
+
+                    <!-- Business Filters -->
+                    <div class="filter-group" id="businessTypeFilter" style="display: none;">
+                        <label for="searchBusinessType"><i class="fas fa-store"></i> Business Type</label>
+                        <input type="text" id="searchBusinessType" placeholder="e.g., Retail, Manufacturing...">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group filter-buttons">
+                        <button class="btn btn-primary" onclick="searchUsers()">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Count -->
+            <div class="results-header">
+                <span id="resultsCount">0 members found</span>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid" title="Grid View">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list" title="List View">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Grid -->
+            <div id="resultsContainer" class="results-grid">
+                <!-- Results will be populated by JavaScript -->
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Searching...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No results found</h3>
+                <p>Try adjusting your search filters</p>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination" style="display: none;">
+                <button class="page-btn" onclick="changePage('prev')" id="prevBtn">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button class="page-btn" onclick="changePage('next')" id="nextBtn">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Detail Modal -->
+    <div id="userModal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="userDetailContent">
+                <!-- User details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        // Update current language display
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('language') || 'en';
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+        });
+    </script>
+</body>
+
+</html>

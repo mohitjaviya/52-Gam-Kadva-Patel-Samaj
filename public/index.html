@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="52 ગામ કડવા પટેલ સમાજ - Connecting 52 villages together">
+    <title>52 ગામ કડવા પટેલ સમાજ - Home</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/" data-i18n="nav_home">Home</a>
+                <a href="/search" data-i18n="nav_search">Search Directory</a>
+                <a href="/login" id="loginLink" data-i18n="nav_login">Login</a>
+                <a href="/register" id="registerLink" data-i18n="nav_register">Register</a>
+                <a href="/profile" id="profileLink" style="display: none;" data-i18n="nav_profile">My Profile</a>
+                <a href="/admin" id="adminLink" style="display: none;" data-i18n="nav_admin">Admin</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()" data-i18n="nav_logout">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Connect with Your Community</h1>
+            <p>Find and connect with people from your village. Explore their occupations, businesses, and educational
+                backgrounds.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> <span data-i18n="nav_register">Register Now</span>
+                </a>
+                <a href="/search" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> <span data-i18n="nav_search">Search Directory</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Join Us?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Directory</h3>
+                    <p>Access a comprehensive directory of community members from 52 villages with their occupation
+                        details.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Student Network</h3>
+                    <p>Connect with students pursuing various courses - B.Tech, MBBS, MBA, and more across different
+                        colleges.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Professional Connect</h3>
+                    <p>Find professionals working in various fields and companies. Network for career opportunities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Business Directory</h3>
+                    <p>Discover businesses run by community members. Support local entrepreneurs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search-location"></i>
+                    </div>
+                    <h3>Easy Search</h3>
+                    <p>Search by village, occupation, field, or name to find exactly who you're looking for.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacy Protected</h3>
+                    <p>Personal contact details are protected and visible only to authorized members.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="statVillages">52</div>
+                    <div class="stat-label">Villages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statMembers">0</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statStudents">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statProfessionals">0</div>
+                    <div class="stat-label">Professionals</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Register</h3>
+                    <p>Fill out the registration form with your personal and professional details.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Verify</h3>
+                    <p>Verify your phone number and email through OTP verification.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Get Approved</h3>
+                    <p>Wait for admin approval. Your profile will be reviewed for authenticity.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Connect</h3>
+                    <p>Once approved, your profile goes live and you can search the directory.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-users"></i> 52 ગામ કડવા પટેલ સમાજ</h3>
+                    <p>Connecting our community members across 52 villages. Building bridges, creating opportunities.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/search">Search Directory</a></li>
+                        <li><a href="/register">Register</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> 52gamkps@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById('statMembers').textContent = data.stats.approvedUsers || 0;
+                        document.getElementById('statStudents').textContent = data.stats.students || 0;
+                        document.getElementById('statProfessionals').textContent = (data.stats.jobs || 0) + (data.stats.businesses || 0);
+                    }
+                }
+            } catch (error) {
+                console.log('Stats not available for non-admin users');
+            }
+        }
+        loadStats();
+
+        // Update current language display
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('language') || 'en';
+            const currentLangEl = document.getElementById('currentLang');
+            if (currentLangEl) {
+                currentLangEl.textContent = lang.toUpperCase();
+            }
+        });
+    </script>
+</body>
+
+</html>

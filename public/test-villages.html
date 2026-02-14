@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Villages</title>
+</head>
+<body>
+    <h1>Village Dropdown Test</h1>
+    
+    <select id="village" style="width: 300px; padding: 10px; font-size: 16px;">
+        <option value="">Loading villages...</option>
+    </select>
+    
+    <div id="status" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+    
+    <script>
+        async function loadVillages() {
+            const select = document.getElementById('village');
+            const status = document.getElementById('status');
+            
+            try {
+                status.innerHTML = 'Fetching villages...';
+                
+                const response = await fetch('/api/data/villages');
+                status.innerHTML += '<br>Response status: ' + response.status;
+                
+                const data = await response.json();
+                status.innerHTML += '<br>Success: ' + data.success;
+                status.innerHTML += '<br>Villages count: ' + (data.villages ? data.villages.length : 0);
+                
+                if (data.success && data.villages && data.villages.length > 0) {
+                    // Clear loading option
+                    select.innerHTML = '<option value="">Select your village</option>';
+                    
+                    // Group by taluka
+                    const grouped = {};
+                    data.villages.forEach(v => {
+                        const key = v.taluka || 'Other';
+                        if (!grouped[key]) grouped[key] = [];
+                        grouped[key].push(v);
+                    });
+                    
+                    // Add options
+                    Object.keys(grouped).sort().forEach(taluka => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = taluka + ' Taluka';
+                        
+                        grouped[taluka].forEach(village => {
+                            const option = document.createElement('option');
+                            option.value = village.id;
+                            option.textContent = village.name;
+                            optgroup.appendChild(option);
+                        });
+                        
+                        select.appendChild(optgroup);
+                    });
+                    
+                    status.innerHTML += '<br><span style="color:green">✅ Villages loaded successfully!</span>';
+                } else {
+                    select.innerHTML = '<option value="">No villages found</option>';
+                    status.innerHTML += '<br><span style="color:red">❌ No villages in response</span>';
+                }
+            } catch (error) {
+                select.innerHTML = '<option value="">Error loading</option>';
+                status.innerHTML += '<br><span style="color:red">❌ Error: ' + error.message + '</span>';
+            }
+        }
+        
+        // Load immediately
+        loadVillages();
+    </script>
+</body>
+</html>
