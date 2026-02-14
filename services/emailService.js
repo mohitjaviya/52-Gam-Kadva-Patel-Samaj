@@ -1,52 +1,14 @@
-// Email Service using Nodemailer
-const nodemailer = require('nodemailer');
+// Email Service using Resend (HTTP-based, works on Render/Vercel)
+const { Resend } = require('resend');
 
-// Email Configuration
-// For Gmail: Enable "Less secure app access" or use App Password
-// For production: Use services like SendGrid, Mailgun, or AWS SES
-// Parse port correctly
-const emailPort = parseInt(process.env.EMAIL_PORT) || 465;
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const EMAIL_CONFIG = {
-    service: process.env.EMAIL_SERVICE || 'gmail',
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: emailPort,
-    secure: emailPort === 465, // true for 465, false for 587
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    // Add timeouts to fail fast instead of hanging
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000
-};
+// Sender details - use Resend's default domain or your verified domain
+const FROM_EMAIL = process.env.FROM_EMAIL || '52 ગામ કડવા પટેલ સમાજ <onboarding@resend.dev>';
 
-// Demo mode flag - set to false in production
-const DEMO_MODE = false;
-
-// Sender details
-const FROM_EMAIL = process.env.FROM_EMAIL || 'Community <noreply@example.com>';
-
-let transporter = null;
-
-// Initialize email transporter only if not in demo mode
-if (!DEMO_MODE && EMAIL_CONFIG.auth.user !== 'your-email@gmail.com') {
-    try {
-        transporter = nodemailer.createTransport(EMAIL_CONFIG);
-
-        // Verify connection
-        transporter.verify((error, success) => {
-            if (error) {
-                console.error('❌ Email service error:', error.message);
-            } else {
-                console.log('✅ Email service initialized and ready');
-            }
-        });
-    } catch (error) {
-        console.error('❌ Failed to initialize email service:', error.message);
-    }
-}
+// Demo mode flag
+const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
 /**
  * Send OTP via Email
@@ -69,7 +31,7 @@ async function sendOTPEmail(email, otp, name = 'User') {
     <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
             <tr>
-                <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
+                <td style="padding: 40px 30px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
                     <h1 style="color: #ffffff; margin: 0; font-size: 28px;">52 ગામ કડવા પટેલ સમાજ</h1>
                     <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Connecting Our Villages</p>
                 </td>
@@ -80,7 +42,7 @@ async function sendOTPEmail(email, otp, name = 'User') {
                     <p style="color: #666666; font-size: 16px; line-height: 1.6;">
                         Your verification code for 52 ગામ કડવા પટેલ સમાજ is:
                     </p>
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0;">
+                    <div style="background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0;">
                         <span style="font-size: 36px; font-weight: bold; color: #ffffff; letter-spacing: 8px;">${otp}</span>
                     </div>
                     <p style="color: #666666; font-size: 14px; line-height: 1.6;">
@@ -106,18 +68,6 @@ async function sendOTPEmail(email, otp, name = 'User') {
     </html>
     `;
 
-    const textContent = `
-Hello ${name}!
-
-Your 52 ગામ કડવા પટેલ સમાજ verification code is: ${otp}
-
-This code will expire in 10 minutes.
-
-If you didn't request this code, please ignore this email.
-
-© ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ
-    `;
-
     if (DEMO_MODE) {
         console.log(`📧 [DEMO EMAIL] To: ${email}`);
         console.log(`📧 [DEMO EMAIL] Subject: ${subject}`);
@@ -129,28 +79,35 @@ If you didn't request this code, please ignore this email.
         };
     }
 
-    if (!transporter) {
-        console.error('❌ Email transporter not initialized');
+    if (!process.env.RESEND_API_KEY) {
+        console.error('❌ RESEND_API_KEY not set');
         return {
             success: false,
-            message: 'Email service not configured'
+            message: 'Email service not configured — RESEND_API_KEY missing'
         };
     }
 
     try {
-        const result = await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to: email,
+            to: [email],
             subject: subject,
-            text: textContent,
             html: htmlContent
         });
 
-        console.log(`✅ Email sent to ${email}, Message ID: ${result.messageId}`);
+        if (error) {
+            console.error(`❌ Email sending failed:`, error.message);
+            return {
+                success: false,
+                message: 'Failed to send email: ' + error.message
+            };
+        }
+
+        console.log(`✅ Email sent to ${email}, ID: ${data.id}`);
         return {
             success: true,
             message: 'Email sent successfully',
-            messageId: result.messageId
+            messageId: data.id
         };
     } catch (error) {
         console.error(`❌ Email sending failed:`, error.message);
@@ -163,9 +120,6 @@ If you didn't request this code, please ignore this email.
 
 /**
  * Send Welcome Email
- * @param {string} email - Recipient email
- * @param {string} name - Recipient name
- * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendWelcomeEmail(email, name) {
     const subject = 'Welcome to 52 ગામ કડવા પટેલ સમાજ!';
@@ -173,14 +127,12 @@ async function sendWelcomeEmail(email, name) {
     const htmlContent = `
     <!DOCTYPE html>
     <html>
-    <head>
-        <meta charset="utf-8">
-    </head>
+    <head><meta charset="utf-8"></head>
     <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
             <tr>
-                <td style="padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0;">🎉 Welcome!</h1>
+                <td style="padding: 40px 30px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
+                    <h1 style="color: #fff; margin: 0;">🎉 Welcome!</h1>
                 </td>
             </tr>
             <tr>
@@ -192,9 +144,6 @@ async function sendWelcomeEmail(email, name) {
                     <p style="color: #666; line-height: 1.6;">
                         Your registration is pending approval by our admin team. You'll receive a notification once approved.
                     </p>
-                    <p style="color: #666; line-height: 1.6;">
-                        Once approved, you can:
-                    </p>
                     <ul style="color: #666;">
                         <li>Search our community directory</li>
                         <li>Connect with members from all villages</li>
@@ -204,9 +153,7 @@ async function sendWelcomeEmail(email, name) {
             </tr>
             <tr>
                 <td style="padding: 20px 30px; background-color: #f8f9fa; text-align: center;">
-                    <p style="color: #999; font-size: 12px;">
-                        &copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ
-                    </p>
+                    <p style="color: #999; font-size: 12px;">&copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ</p>
                 </td>
             </tr>
         </table>
@@ -219,17 +166,18 @@ async function sendWelcomeEmail(email, name) {
         return { success: true, message: 'Welcome email sent (Demo Mode)' };
     }
 
-    if (!transporter) {
+    if (!process.env.RESEND_API_KEY) {
         return { success: false, message: 'Email service not configured' };
     }
 
     try {
-        await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to: email,
+            to: [email],
             subject: subject,
             html: htmlContent
         });
+        if (error) throw new Error(error.message);
         return { success: true, message: 'Welcome email sent' };
     } catch (error) {
         console.error('Welcome email failed:', error.message);
@@ -239,10 +187,6 @@ async function sendWelcomeEmail(email, name) {
 
 /**
  * Send Approval Notification Email
- * @param {string} email - Recipient email
- * @param {string} name - Recipient name
- * @param {boolean} approved - Whether user was approved or rejected
- * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendApprovalEmail(email, name, approved = true) {
     const subject = approved
@@ -255,7 +199,7 @@ async function sendApprovalEmail(email, name, approved = true) {
     <body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f4f4f4;">
         <table width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
             <tr>
-                <td style="padding: 40px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); text-align: center;">
+                <td style="padding: 40px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
                     <h1 style="color: #fff; margin: 0;">🎉 Approved!</h1>
                 </td>
             </tr>
@@ -270,9 +214,6 @@ async function sendApprovalEmail(email, name, approved = true) {
                         <li>View other members' profiles</li>
                         <li>Connect with community members</li>
                     </ul>
-                    <a href="http://localhost:3000/login" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 5px; margin-top: 20px;">
-                        Login Now
-                    </a>
                 </td>
             </tr>
         </table>
@@ -307,17 +248,18 @@ async function sendApprovalEmail(email, name, approved = true) {
         return { success: true, message: 'Approval email sent (Demo Mode)' };
     }
 
-    if (!transporter) {
+    if (!process.env.RESEND_API_KEY) {
         return { success: false, message: 'Email service not configured' };
     }
 
     try {
-        await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
-            to: email,
+            to: [email],
             subject: subject,
             html: htmlContent
         });
+        if (error) throw new Error(error.message);
         return { success: true, message: 'Approval email sent' };
     } catch (error) {
         console.error('Approval email failed:', error.message);
