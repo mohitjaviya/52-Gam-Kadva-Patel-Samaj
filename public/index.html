@@ -59,6 +59,34 @@
         </div>
     </section>
 
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number" id="statMembers">0</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="stat-number" id="statStudents">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="stat-number" id="statProfessionals">0</div>
+                    <div class="stat-label">Professionals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="stat-number" id="statVillages">78</div>
+                    <div class="stat-label">Villages</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
@@ -206,6 +234,7 @@
                         document.getElementById('statMembers').textContent = data.stats.totalUsers || 0;
                         document.getElementById('statStudents').textContent = data.stats.totalStudents || 0;
                         document.getElementById('statProfessionals').textContent = (data.stats.totalJobProfessionals || 0) + (data.stats.totalBusinessOwners || 0);
+                        document.getElementById('statVillages').textContent = data.stats.totalVillages || 78;
                     }
                 }
             } catch (error) {
