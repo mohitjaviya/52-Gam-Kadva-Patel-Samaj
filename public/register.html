@@ -1310,7 +1310,7 @@
                         select.appendChild(option);
                     });
                     // Add "Other" option (if not already present)
-                    if (!data.fields.includes('Other')) {
+                    if (!data.jobFields.includes('Other')) {
                         const otherOption = document.createElement('option');
                         otherOption.value = 'Other';
                         otherOption.textContent = '-- Other (Enter manually) --';

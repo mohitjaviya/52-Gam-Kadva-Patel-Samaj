@@ -1285,7 +1285,7 @@
                     const select = document.getElementById('editBusinessType');
                     if (select) {
                         select.innerHTML = '<option value="">Select type</option>';
-                        data.types.forEach(type => {
+                        data.businessTypes.forEach(type => {
                             const option = document.createElement('option');
                             option.value = type;
                             option.textContent = type;
@@ -1311,7 +1311,7 @@
                     const select = document.getElementById('editBusinessField');
                     if (select) {
                         select.innerHTML = '<option value="">Select field</option>';
-                        data.fields.forEach(field => {
+                        data.businessFields.forEach(field => {
                             const option = document.createElement('option');
                             option.value = field;
                             option.textContent = field;
