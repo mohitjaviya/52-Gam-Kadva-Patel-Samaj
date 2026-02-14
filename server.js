@@ -48,6 +48,34 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const dataRoutes = require('./routes/data');
 
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+    const { supabase } = require('./database/init');
+    let supabaseOk = false;
+    let supabaseError = '';
+    try {
+        const { data, error } = await supabase.from('villages').select('id').limit(1);
+        if (error) supabaseError = error.message;
+        else supabaseOk = true;
+    } catch (e) {
+        supabaseError = e.message;
+    }
+    res.json({
+        status: 'running',
+        supabaseConnected: supabaseOk,
+        supabaseError: supabaseError || undefined,
+        envVars: {
+            SUPABASE_URL: !!process.env.SUPABASE_URL,
+            SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+            SUPABASE_ANON_KEY: !!process.env.SUPABASE_ANON_KEY,
+            SESSION_SECRET: !!process.env.SESSION_SECRET,
+            EMAIL_USER: !!process.env.EMAIL_USER,
+            EMAIL_PASS: !!process.env.EMAIL_PASS,
+            NODE_ENV: process.env.NODE_ENV
+        }
+    });
+});
+
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
