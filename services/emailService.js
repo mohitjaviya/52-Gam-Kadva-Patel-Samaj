@@ -1,8 +1,14 @@
 // Email Service using Resend (HTTP-based, works on Render/Vercel)
 const { Resend } = require('resend');
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend lazily (avoid crash if API key not set yet)
+let resend = null;
+function getResend() {
+    if (!resend && process.env.RESEND_API_KEY) {
+        resend = new Resend(process.env.RESEND_API_KEY);
+    }
+    return resend;
+}
 
 // Sender details - use Resend's default domain or your verified domain
 const FROM_EMAIL = process.env.FROM_EMAIL || '52 ગામ કડવા પટેલ સમાજ <onboarding@resend.dev>';
@@ -88,7 +94,7 @@ async function sendOTPEmail(email, otp, name = 'User') {
     }
 
     try {
-        const { data, error } = await resend.emails.send({
+        const { data, error } = await getResend().emails.send({
             from: FROM_EMAIL,
             to: [email],
             subject: subject,
@@ -171,7 +177,7 @@ async function sendWelcomeEmail(email, name) {
     }
 
     try {
-        const { data, error } = await resend.emails.send({
+        const { data, error } = await getResend().emails.send({
             from: FROM_EMAIL,
             to: [email],
             subject: subject,
