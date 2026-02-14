@@ -10,8 +10,8 @@ function getResend() {
     return resend;
 }
 
-// Sender details - use Resend's default domain or your verified domain
-const FROM_EMAIL = process.env.FROM_EMAIL || '52 ગામ કડવા પટેલ સમાજ <onboarding@resend.dev>';
+// Sender — MUST use resend.dev until you verify your own domain at https://resend.com/domains
+const FROM_EMAIL = '52 Gam Kadva Patel Samaj <onboarding@resend.dev>';
 
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
