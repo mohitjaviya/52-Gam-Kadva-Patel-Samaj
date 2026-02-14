@@ -143,6 +143,7 @@ async function loadPublicStats() {
         const statMembers = document.getElementById('statMembers');
         const statStudents = document.getElementById('statStudents');
         const statProfessionals = document.getElementById('statProfessionals');
+        const statVillages = document.getElementById('statVillages');
 
         // Only run on pages with stat elements (home page)
         if (!statMembers && !statStudents && !statProfessionals) {
@@ -152,16 +153,19 @@ async function loadPublicStats() {
         const response = await fetch('/api/data/public-stats');
         const data = await response.json();
 
-        if (data.success) {
-            // Animate counting up
+        if (data.success && data.stats) {
+            // Animate counting up with correct property names
             if (statMembers) {
-                animateCounter(statMembers, data.stats.totalMembers);
+                animateCounter(statMembers, data.stats.totalUsers || 0);
             }
             if (statStudents) {
-                animateCounter(statStudents, data.stats.students);
+                animateCounter(statStudents, data.stats.totalStudents || 0);
             }
             if (statProfessionals) {
-                animateCounter(statProfessionals, data.stats.professionals);
+                animateCounter(statProfessionals, (data.stats.totalJobProfessionals || 0) + (data.stats.totalBusinessOwners || 0));
+            }
+            if (statVillages) {
+                animateCounter(statVillages, data.stats.totalVillages || 78);
             }
         }
     } catch (error) {
@@ -171,6 +175,7 @@ async function loadPublicStats() {
 
 // Animate counter from 0 to target value
 function animateCounter(element, target) {
+    target = parseInt(target) || 0;
     const duration = 1500; // 1.5 seconds
     const start = 0;
     const startTime = performance.now();
