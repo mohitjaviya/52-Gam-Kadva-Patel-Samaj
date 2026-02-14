@@ -4,15 +4,22 @@ const nodemailer = require('nodemailer');
 // Email Configuration
 // For Gmail: Enable "Less secure app access" or use App Password
 // For production: Use services like SendGrid, Mailgun, or AWS SES
+// Parse port correctly
+const emailPort = parseInt(process.env.EMAIL_PORT) || 465;
+
 const EMAIL_CONFIG = {
     service: process.env.EMAIL_SERVICE || 'gmail',
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: process.env.EMAIL_PORT || 587,
-    secure: false, // true for 465, false for other ports
+    port: emailPort,
+    secure: emailPort === 465, // true for 465, false for 587
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    // Add timeouts to fail fast instead of hanging
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
 };
 
 // Demo mode flag - set to false in production
@@ -27,7 +34,7 @@ let transporter = null;
 if (!DEMO_MODE && EMAIL_CONFIG.auth.user !== 'your-email@gmail.com') {
     try {
         transporter = nodemailer.createTransport(EMAIL_CONFIG);
-        
+
         // Verify connection
         transporter.verify((error, success) => {
             if (error) {
@@ -50,7 +57,7 @@ if (!DEMO_MODE && EMAIL_CONFIG.auth.user !== 'your-email@gmail.com') {
  */
 async function sendOTPEmail(email, otp, name = 'User') {
     const subject = 'Your 52 ગામ કડવા પટેલ સમાજ Verification Code';
-    
+
     const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -115,18 +122,18 @@ If you didn't request this code, please ignore this email.
         console.log(`📧 [DEMO EMAIL] To: ${email}`);
         console.log(`📧 [DEMO EMAIL] Subject: ${subject}`);
         console.log(`📧 [DEMO EMAIL] OTP: ${otp}`);
-        return { 
-            success: true, 
+        return {
+            success: true,
             message: 'Email sent (Demo Mode)',
-            demoOTP: otp 
+            demoOTP: otp
         };
     }
 
     if (!transporter) {
         console.error('❌ Email transporter not initialized');
-        return { 
-            success: false, 
-            message: 'Email service not configured' 
+        return {
+            success: false,
+            message: 'Email service not configured'
         };
     }
 
@@ -140,16 +147,16 @@ If you didn't request this code, please ignore this email.
         });
 
         console.log(`✅ Email sent to ${email}, Message ID: ${result.messageId}`);
-        return { 
-            success: true, 
+        return {
+            success: true,
             message: 'Email sent successfully',
             messageId: result.messageId
         };
     } catch (error) {
         console.error(`❌ Email sending failed:`, error.message);
-        return { 
-            success: false, 
-            message: 'Failed to send email: ' + error.message 
+        return {
+            success: false,
+            message: 'Failed to send email: ' + error.message
         };
     }
 }
@@ -162,7 +169,7 @@ If you didn't request this code, please ignore this email.
  */
 async function sendWelcomeEmail(email, name) {
     const subject = 'Welcome to 52 ગામ કડવા પટેલ સમાજ!';
-    
+
     const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -238,10 +245,10 @@ async function sendWelcomeEmail(email, name) {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendApprovalEmail(email, name, approved = true) {
-    const subject = approved 
-        ? '✅ Your 52 ગામ કડવા પટેલ સમાજ Profile is Approved!' 
+    const subject = approved
+        ? '✅ Your 52 ગામ કડવા પટેલ સમાજ Profile is Approved!'
         : '❌ 52 ગામ કડવા પટેલ સમાજ Registration Update';
-    
+
     const htmlContent = approved ? `
     <!DOCTYPE html>
     <html>
