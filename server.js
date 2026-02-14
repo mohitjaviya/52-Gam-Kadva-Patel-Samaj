@@ -76,6 +76,21 @@ app.get('/api/health', async (req, res) => {
     });
 });
 
+// Test email endpoint (temporary - for debugging)
+app.get('/api/test-email', async (req, res) => {
+    try {
+        const emailService = require('./services/emailService');
+        const result = await emailService.sendOTPEmail(
+            process.env.EMAIL_USER || '52gamkps@gmail.com',
+            '123456',
+            'Test'
+        );
+        res.json({ emailResult: result });
+    } catch (err) {
+        res.json({ error: err.message, stack: err.stack });
+    }
+});
+
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
