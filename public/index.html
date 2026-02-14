@@ -199,17 +199,17 @@
         // Load stats
         async function loadStats() {
             try {
-                const response = await fetch('/api/admin/stats');
+                const response = await fetch('/api/data/public-stats');
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        document.getElementById('statMembers').textContent = data.stats.approvedUsers || 0;
-                        document.getElementById('statStudents').textContent = data.stats.students || 0;
-                        document.getElementById('statProfessionals').textContent = (data.stats.jobs || 0) + (data.stats.businesses || 0);
+                        document.getElementById('statMembers').textContent = data.stats.totalUsers || 0;
+                        document.getElementById('statStudents').textContent = data.stats.totalStudents || 0;
+                        document.getElementById('statProfessionals').textContent = (data.stats.totalJobProfessionals || 0) + (data.stats.totalBusinessOwners || 0);
                     }
                 }
             } catch (error) {
-                console.log('Stats not available for non-admin users');
+                console.log('Stats not available');
             }
         }
         loadStats();
