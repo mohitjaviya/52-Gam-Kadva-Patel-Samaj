@@ -93,13 +93,9 @@ router.post('/signup', async (req, res) => {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             await storeOTP(existingUser.id, phone, email, otp, 'email');
 
-            // Send OTP via email
-            try {
-                const emailService = require('../services/emailService');
-                await emailService.sendOTPEmail(email, otp);
-            } catch (emailErr) {
-                console.error('Email send error:', emailErr);
-            }
+            // Send OTP via email (non-blocking to avoid timeout)
+            const emailService = require('../services/emailService');
+            emailService.sendOTPEmail(email, otp).catch(err => console.error('Email send error:', err));
 
             return res.json({
                 success: true,
@@ -139,13 +135,9 @@ router.post('/signup', async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await storeOTP(newUser.id, phone, email, otp, 'email');
 
-        // Send OTP
-        try {
-            const emailService = require('../services/emailService');
-            await emailService.sendOTPEmail(email, otp);
-        } catch (emailErr) {
-            console.error('Email send error:', emailErr);
-        }
+        // Send OTP (non-blocking to avoid timeout)
+        const emailService2 = require('../services/emailService');
+        emailService2.sendOTPEmail(email, otp).catch(err => console.error('Email send error:', err));
 
         res.json({
             success: true,
@@ -234,13 +226,9 @@ router.post('/login', async (req, res) => {
         // Log OTP to console (since nodemailer is not configured)
         console.log(`\n🔑 OTP for ${user.email}: ${otp}\n`);
 
-        // Try sending via email (may fail if nodemailer not configured)
-        try {
-            const emailService = require('../services/emailService');
-            await emailService.sendOTPEmail(user.email, otp);
-        } catch (emailErr) {
-            console.log('⚠️  Email not sent — use OTP from console above');
-        }
+        // Send email (non-blocking to avoid timeout)
+        const emailService = require('../services/emailService');
+        emailService.sendOTPEmail(user.email, otp).catch(err => console.log('⚠️  Email not sent:', err.message));
 
         return res.json({
             success: true,
