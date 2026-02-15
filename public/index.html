@@ -49,7 +49,7 @@
             <p>Find and connect with people from your village. Explore their occupations, businesses, and educational
                 backgrounds.</p>
             <div class="hero-buttons">
-                <a href="/register" class="btn btn-primary">
+                <a href="/register" class="btn btn-primary" id="heroRegisterBtn">
                     <i class="fas fa-user-plus"></i> <span data-i18n="nav_register">Register Now</span>
                 </a>
                 <a href="/search" class="btn btn-secondary">
@@ -200,11 +200,32 @@
 
     <script src="js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const lang = localStorage.getItem('language') || 'en';
             const currentLangEl = document.getElementById('currentLang');
             if (currentLangEl) {
                 currentLangEl.textContent = lang.toUpperCase();
+            }
+
+            // Update hero button based on login & profile status
+            try {
+                const response = await fetch('/api/auth/session', { credentials: 'include' });
+                const data = await response.json();
+                const heroBtn = document.getElementById('heroRegisterBtn');
+
+                if (data.loggedIn && data.user && heroBtn) {
+                    if (data.user.registrationCompleted) {
+                        // Profile completed → show "View Profile"
+                        heroBtn.href = '/profile';
+                        heroBtn.innerHTML = '<i class="fas fa-user"></i> <span>View Profile</span>';
+                    } else {
+                        // Profile not completed → show "Complete Profile"
+                        heroBtn.href = '/register';
+                        heroBtn.innerHTML = '<i class="fas fa-user-edit"></i> <span>Complete Profile</span>';
+                    }
+                }
+            } catch (e) {
+                console.error('Hero button update error:', e);
             }
         });
     </script>
