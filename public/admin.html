@@ -43,12 +43,16 @@
             </a>
             <div class="nav-links" id="navLinks">
                 <a href="/">Home</a>
-                <a href="/search">Search Directory</a>
+                <a href="/search">Search</a>
                 <a href="/login" id="loginLink" style="display: none;">Login</a>
                 <a href="/register" id="registerLink" style="display: none;">Register</a>
-                <a href="/profile" id="profileLink">My Profile</a>
+                <a href="/profile" id="profileLink">Profile</a>
                 <a href="/admin" class="active" id="adminLink">Admin</a>
                 <a href="#" id="logoutLink" onclick="logout()">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
             </div>
             <button class="nav-toggle" id="navToggle">
                 <i class="fas fa-bars"></i>
