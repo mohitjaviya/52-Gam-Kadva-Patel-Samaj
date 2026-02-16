@@ -1,291 +1,199 @@
-// Email Service with Fallback: Gmail SMTP → Resend (HTTP API)
-// Gmail SMTP (500/day) is tried first. If it fails (e.g., on Render where SMTP is blocked),
-// automatically falls back to Resend HTTP API (100/day).
-
-const nodemailer = require('nodemailer');
+// Email Service — Brevo HTTP API (300/day) with Resend fallback (100/day)
+// Both use HTTPS (port 443) — works on all platforms including Render
 
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
-// ============ Gmail SMTP Setup ============
-let smtpAvailable = false;
-let transporter = null;
+// Sender config
+const SENDER_EMAIL = process.env.EMAIL_USER || '52gamkps@gmail.com';
+const SENDER_NAME = '52 Gam Kadva Patel Samaj';
 
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-        connectionTimeout: 8000,
-        greetingTimeout: 8000,
-        socketTimeout: 10000
-    });
+// ============ Brevo HTTP API (Primary — 300/day) ============
+async function sendViaBrevo(to, subject, html) {
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) return { success: false, message: 'Brevo API key not configured' };
 
-    // Test SMTP on startup
-    if (!DEMO_MODE) {
-        transporter.verify()
-            .then(() => {
-                smtpAvailable = true;
-                console.log('✅ Gmail SMTP connected — using SMTP (500/day limit)');
+    try {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'api-key': apiKey,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: html
             })
-            .catch(err => {
-                smtpAvailable = false;
-                console.log('⚠️  Gmail SMTP blocked:', err.message);
-                console.log('📧 Falling back to Resend HTTP API (100/day limit)');
-            });
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log(`✅ Email sent via Brevo to ${to}, ID: ${data.messageId}`);
+            return { success: true, message: 'Email sent via Brevo', messageId: data.messageId };
+        } else {
+            console.error(`❌ Brevo failed for ${to}:`, data.message || JSON.stringify(data));
+            return { success: false, message: 'Brevo error: ' + (data.message || 'Unknown error') };
+        }
+    } catch (error) {
+        console.error(`❌ Brevo error for ${to}:`, error.message);
+        return { success: false, message: 'Brevo error: ' + error.message };
     }
 }
 
-// ============ Resend HTTP API Setup (Fallback) ============
-let resend = null;
-if (process.env.RESEND_API_KEY) {
-    const { Resend } = require('resend');
-    resend = new Resend(process.env.RESEND_API_KEY);
-    console.log('📧 Resend API configured as fallback');
+// ============ Resend HTTP API (Fallback — 100/day) ============
+async function sendViaResend(to, subject, html) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) return { success: false, message: 'Resend API key not configured' };
+
+    try {
+        const { Resend } = require('resend');
+        const resend = new Resend(apiKey);
+
+        const { data, error } = await resend.emails.send({
+            from: `${SENDER_NAME} <noreply@52gamkps.in>`,
+            to: [to],
+            subject: subject,
+            html: html
+        });
+
+        if (error) {
+            console.error(`❌ Resend failed for ${to}:`, error.message);
+            return { success: false, message: 'Resend error: ' + error.message };
+        }
+
+        console.log(`✅ Email sent via Resend to ${to}, ID: ${data.id}`);
+        return { success: true, message: 'Email sent via Resend', messageId: data.id };
+    } catch (error) {
+        console.error(`❌ Resend error for ${to}:`, error.message);
+        return { success: false, message: 'Resend error: ' + error.message };
+    }
 }
 
-// Sender addresses
-const SMTP_FROM = process.env.FROM_EMAIL || `52 ગામ કડવા પટેલ સમાજ <${process.env.EMAIL_USER}>`;
-const RESEND_FROM = '52 Gam Kadva Patel Samaj <noreply@52gamkps.in>';
-
-// ============ Send Email (with fallback) ============
+// ============ Send Email (Brevo → Resend fallback) ============
 async function sendEmail(to, subject, html) {
-    // Try Gmail SMTP first
-    if (smtpAvailable && transporter) {
-        try {
-            const info = await transporter.sendMail({
-                from: SMTP_FROM,
-                to: to,
-                subject: subject,
-                html: html
-            });
-            console.log(`✅ Email sent via SMTP to ${to}, ID: ${info.messageId}`);
-            return { success: true, message: 'Email sent via Gmail SMTP', messageId: info.messageId };
-        } catch (error) {
-            console.error(`⚠️  SMTP failed for ${to}:`, error.message);
-            // Fall through to Resend
-        }
-    }
+    // Try Brevo first (300/day)
+    const brevoResult = await sendViaBrevo(to, subject, html);
+    if (brevoResult.success) return brevoResult;
 
-    // Fallback to Resend HTTP API
-    if (resend) {
-        try {
-            const { data, error } = await resend.emails.send({
-                from: RESEND_FROM,
-                to: [to],
-                subject: subject,
-                html: html
-            });
+    // Fallback to Resend (100/day)
+    console.log('📧 Brevo failed, trying Resend fallback...');
+    const resendResult = await sendViaResend(to, subject, html);
+    if (resendResult.success) return resendResult;
 
-            if (error) {
-                console.error(`❌ Resend failed for ${to}:`, error.message);
-                return { success: false, message: 'Failed to send email: ' + error.message };
-            }
-
-            console.log(`✅ Email sent via Resend to ${to}, ID: ${data.id}`);
-            return { success: true, message: 'Email sent via Resend', messageId: data.id };
-        } catch (error) {
-            console.error(`❌ Resend error for ${to}:`, error.message);
-            return { success: false, message: 'Failed to send email: ' + error.message };
-        }
-    }
-
-    // No email service available
-    console.error('❌ No email service available — both SMTP and Resend failed/unconfigured');
-    return { success: false, message: 'Email service not configured' };
+    // Both failed
+    console.error('❌ All email services failed');
+    return { success: false, message: 'Failed to send email — all services unavailable' };
 }
 
 // ============ Email Templates ============
 
-/**
- * Send OTP via Email
- */
 async function sendOTPEmail(email, otp, name = 'User') {
     const subject = 'Your 52 ગામ કડવા પટેલ સમાજ Verification Code';
-
-    const htmlContent = `
+    const html = `
     <!DOCTYPE html>
     <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Verification Code</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:#f4f4f4;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background-color:#ffffff;">
             <tr>
-                <td style="padding: 40px 30px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 28px;">52 ગામ કડવા પટેલ સમાજ</h1>
-                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Connecting Our Villages</p>
+                <td style="padding:40px 30px;background:linear-gradient(135deg,#16A34A 0%,#064E3B 100%);text-align:center;">
+                    <h1 style="color:#ffffff;margin:0;font-size:28px;">52 ગામ કડવા પટેલ સમાજ</h1>
+                    <p style="color:rgba(255,255,255,0.9);margin:10px 0 0 0;">Connecting Our Villages</p>
                 </td>
             </tr>
             <tr>
-                <td style="padding: 40px 30px;">
-                    <h2 style="color: #333333; margin: 0 0 20px 0;">Hello ${name}!</h2>
-                    <p style="color: #666666; font-size: 16px; line-height: 1.6;">
-                        Your verification code for 52 ગામ કડવા પટેલ સમાજ is:
-                    </p>
-                    <div style="background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0;">
-                        <span style="font-size: 36px; font-weight: bold; color: #ffffff; letter-spacing: 8px;">${otp}</span>
+                <td style="padding:40px 30px;">
+                    <h2 style="color:#333333;margin:0 0 20px 0;">Hello ${name}!</h2>
+                    <p style="color:#666666;font-size:16px;line-height:1.6;">Your verification code for 52 ગામ કડવા પટેલ સમાજ is:</p>
+                    <div style="background:linear-gradient(135deg,#16A34A 0%,#064E3B 100%);padding:20px;border-radius:10px;text-align:center;margin:30px 0;">
+                        <span style="font-size:36px;font-weight:bold;color:#ffffff;letter-spacing:8px;">${otp}</span>
                     </div>
-                    <p style="color: #666666; font-size: 14px; line-height: 1.6;">
-                        This code will expire in <strong>10 minutes</strong>.
-                    </p>
-                    <p style="color: #999999; font-size: 13px; line-height: 1.6; margin-top: 30px;">
-                        If you didn't request this code, please ignore this email. Someone might have entered your email by mistake.
-                    </p>
+                    <p style="color:#666666;font-size:14px;line-height:1.6;">This code will expire in <strong>10 minutes</strong>.</p>
+                    <p style="color:#999999;font-size:13px;line-height:1.6;margin-top:30px;">If you didn't request this code, please ignore this email.</p>
                 </td>
             </tr>
             <tr>
-                <td style="padding: 20px 30px; background-color: #f8f9fa; text-align: center; border-top: 1px solid #eeeeee;">
-                    <p style="color: #999999; font-size: 12px; margin: 0;">
-                        &copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ. All rights reserved.
-                    </p>
-                    <p style="color: #999999; font-size: 12px; margin: 5px 0 0 0;">
-                        Connecting 52 villages for a stronger community.
-                    </p>
+                <td style="padding:20px 30px;background-color:#f8f9fa;text-align:center;border-top:1px solid #eeeeee;">
+                    <p style="color:#999999;font-size:12px;margin:0;">&copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
                 </td>
             </tr>
         </table>
     </body>
-    </html>
-    `;
+    </html>`;
 
     if (DEMO_MODE) {
-        console.log(`📧 [DEMO EMAIL] To: ${email}`);
-        console.log(`📧 [DEMO EMAIL] Subject: ${subject}`);
-        console.log(`📧 [DEMO EMAIL] OTP: ${otp}`);
+        console.log(`📧 [DEMO] To: ${email} | OTP: ${otp}`);
         return { success: true, message: 'Email sent (Demo Mode)', demoOTP: otp };
     }
-
-    return sendEmail(email, subject, htmlContent);
+    return sendEmail(email, subject, html);
 }
 
-/**
- * Send Welcome Email
- */
 async function sendWelcomeEmail(email, name) {
     const subject = 'Welcome to 52 ગામ કડવા પટેલ સમાજ!';
-
-    const htmlContent = `
+    const html = `
     <!DOCTYPE html>
     <html>
     <head><meta charset="utf-8"></head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-            <tr>
-                <td style="padding: 40px 30px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
-                    <h1 style="color: #fff; margin: 0;">🎉 Welcome!</h1>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 40px 30px;">
-                    <h2 style="color: #333;">Hello ${name}!</h2>
-                    <p style="color: #666; line-height: 1.6;">
-                        Welcome to 52 ગામ કડવા પટેલ સમાજ! We're excited to have you join our community of 52 villages.
-                    </p>
-                    <p style="color: #666; line-height: 1.6;">
-                        Your registration is pending approval by our admin team. You'll receive a notification once approved.
-                    </p>
-                    <ul style="color: #666;">
-                        <li>Search our community directory</li>
-                        <li>Connect with members from all villages</li>
-                        <li>Find people by profession</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 20px 30px; background-color: #f8f9fa; text-align: center;">
-                    <p style="color: #999; font-size: 12px;">&copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ</p>
-                </td>
-            </tr>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,sans-serif;background-color:#f4f4f4;">
+        <table width="100%" style="max-width:600px;margin:0 auto;background-color:#ffffff;">
+            <tr><td style="padding:40px 30px;background:linear-gradient(135deg,#16A34A 0%,#064E3B 100%);text-align:center;"><h1 style="color:#fff;margin:0;">🎉 Welcome!</h1></td></tr>
+            <tr><td style="padding:40px 30px;">
+                <h2 style="color:#333;">Hello ${name}!</h2>
+                <p style="color:#666;line-height:1.6;">Welcome to 52 ગામ કડવા પટેલ સમાજ! Your registration is pending approval by our admin team.</p>
+                <ul style="color:#666;"><li>Search our community directory</li><li>Connect with members from all villages</li><li>Find people by profession</li></ul>
+            </td></tr>
+            <tr><td style="padding:20px 30px;background-color:#f8f9fa;text-align:center;"><p style="color:#999;font-size:12px;">&copy; ${new Date().getFullYear()} 52 ગામ કડવા પટેલ સમાજ</p></td></tr>
         </table>
     </body>
-    </html>
-    `;
+    </html>`;
 
     if (DEMO_MODE) {
-        console.log(`📧 [DEMO EMAIL] Welcome email to: ${email}`);
+        console.log(`📧 [DEMO] Welcome email to: ${email}`);
         return { success: true, message: 'Welcome email sent (Demo Mode)' };
     }
-
-    return sendEmail(email, subject, htmlContent);
+    return sendEmail(email, subject, html);
 }
 
-/**
- * Send Approval Notification Email
- */
 async function sendApprovalEmail(email, name, approved = true) {
     const subject = approved
         ? '✅ Your 52 ગામ કડવા પટેલ સમાજ Profile is Approved!'
         : '❌ 52 ગામ કડવા પટેલ સમાજ Registration Update';
 
-    const htmlContent = approved ? `
+    const html = approved ? `
     <!DOCTYPE html>
     <html>
-    <body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f4f4f4;">
-        <table width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-            <tr>
-                <td style="padding: 40px; background: linear-gradient(135deg, #16A34A 0%, #064E3B 100%); text-align: center;">
-                    <h1 style="color: #fff; margin: 0;">🎉 Approved!</h1>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 40px;">
-                    <h2 style="color: #333;">Congratulations ${name}!</h2>
-                    <p style="color: #666; line-height: 1.6;">
-                        Your profile has been approved by our admin team. You can now:
-                    </p>
-                    <ul style="color: #666;">
-                        <li>Search the community directory</li>
-                        <li>View other members' profiles</li>
-                        <li>Connect with community members</li>
-                    </ul>
-                </td>
-            </tr>
+    <body style="margin:0;padding:0;font-family:sans-serif;background-color:#f4f4f4;">
+        <table width="100%" style="max-width:600px;margin:0 auto;background-color:#ffffff;">
+            <tr><td style="padding:40px;background:linear-gradient(135deg,#16A34A 0%,#064E3B 100%);text-align:center;"><h1 style="color:#fff;margin:0;">🎉 Approved!</h1></td></tr>
+            <tr><td style="padding:40px;">
+                <h2 style="color:#333;">Congratulations ${name}!</h2>
+                <p style="color:#666;line-height:1.6;">Your profile has been approved! You can now search the community directory and connect with members.</p>
+            </td></tr>
         </table>
     </body>
-    </html>
-    ` : `
+    </html>` : `
     <!DOCTYPE html>
     <html>
-    <body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f4f4f4;">
-        <table width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-            <tr>
-                <td style="padding: 40px; background: #f5576c; text-align: center;">
-                    <h1 style="color: #fff; margin: 0;">Registration Update</h1>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 40px;">
-                    <h2 style="color: #333;">Hello ${name},</h2>
-                    <p style="color: #666; line-height: 1.6;">
-                        Unfortunately, your registration could not be approved at this time. 
-                        Please contact the admin for more information.
-                    </p>
-                </td>
-            </tr>
+    <body style="margin:0;padding:0;font-family:sans-serif;background-color:#f4f4f4;">
+        <table width="100%" style="max-width:600px;margin:0 auto;background-color:#ffffff;">
+            <tr><td style="padding:40px;background:#f5576c;text-align:center;"><h1 style="color:#fff;margin:0;">Registration Update</h1></td></tr>
+            <tr><td style="padding:40px;">
+                <h2 style="color:#333;">Hello ${name},</h2>
+                <p style="color:#666;line-height:1.6;">Unfortunately, your registration could not be approved at this time. Please contact the admin.</p>
+            </td></tr>
         </table>
     </body>
-    </html>
-    `;
+    </html>`;
 
     if (DEMO_MODE) {
-        console.log(`📧 [DEMO EMAIL] Approval email to: ${email}, Approved: ${approved}`);
+        console.log(`📧 [DEMO] Approval email to: ${email}, Approved: ${approved}`);
         return { success: true, message: 'Approval email sent (Demo Mode)' };
     }
-
-    return sendEmail(email, subject, htmlContent);
+    return sendEmail(email, subject, html);
 }
 
-module.exports = {
-    sendOTPEmail,
-    sendWelcomeEmail,
-    sendApprovalEmail,
-    DEMO_MODE
-};
+module.exports = { sendOTPEmail, sendWelcomeEmail, sendApprovalEmail, DEMO_MODE };
