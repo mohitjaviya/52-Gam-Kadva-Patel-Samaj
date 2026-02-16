@@ -1,14 +1,23 @@
-// Email Service using Resend (HTTP-based, works on Render/Vercel)
-const { Resend } = require('resend');
-
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Sender — using verified domain 52gamkps.in
-const FROM_EMAIL = '52 Gam Kadva Patel Samaj <noreply@52gamkps.in>';
+// Email Service using Nodemailer (Gmail SMTP)
+const nodemailer = require('nodemailer');
 
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
+
+// Create Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Sender address
+const FROM_EMAIL = process.env.FROM_EMAIL || `52 ગામ કડવા પટેલ સમાજ <${process.env.EMAIL_USER}>`;
 
 /**
  * Send OTP via Email
@@ -79,35 +88,27 @@ async function sendOTPEmail(email, otp, name = 'User') {
         };
     }
 
-    if (!process.env.RESEND_API_KEY) {
-        console.error('❌ RESEND_API_KEY not set');
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error('❌ EMAIL_USER or EMAIL_PASS not set');
         return {
             success: false,
-            message: 'Email service not configured — RESEND_API_KEY missing'
+            message: 'Email service not configured — Gmail credentials missing'
         };
     }
 
     try {
-        const { data, error } = await resend.emails.send({
+        const info = await transporter.sendMail({
             from: FROM_EMAIL,
-            to: [email],
+            to: email,
             subject: subject,
             html: htmlContent
         });
 
-        if (error) {
-            console.error(`❌ Email sending failed:`, error.message);
-            return {
-                success: false,
-                message: 'Failed to send email: ' + error.message
-            };
-        }
-
-        console.log(`✅ Email sent to ${email}, ID: ${data.id}`);
+        console.log(`✅ Email sent to ${email}, ID: ${info.messageId}`);
         return {
             success: true,
             message: 'Email sent successfully',
-            messageId: data.id
+            messageId: info.messageId
         };
     } catch (error) {
         console.error(`❌ Email sending failed:`, error.message);
@@ -166,19 +167,18 @@ async function sendWelcomeEmail(email, name) {
         return { success: true, message: 'Welcome email sent (Demo Mode)' };
     }
 
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
         return { success: false, message: 'Email service not configured' };
     }
 
     try {
-        const { data, error } = await resend.emails.send({
+        const info = await transporter.sendMail({
             from: FROM_EMAIL,
-            to: [email],
+            to: email,
             subject: subject,
             html: htmlContent
         });
-        if (error) throw new Error(error.message);
-        return { success: true, message: 'Welcome email sent' };
+        return { success: true, message: 'Welcome email sent', messageId: info.messageId };
     } catch (error) {
         console.error('Welcome email failed:', error.message);
         return { success: false, message: 'Failed to send welcome email' };
@@ -248,19 +248,18 @@ async function sendApprovalEmail(email, name, approved = true) {
         return { success: true, message: 'Approval email sent (Demo Mode)' };
     }
 
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
         return { success: false, message: 'Email service not configured' };
     }
 
     try {
-        const { data, error } = await resend.emails.send({
+        const info = await transporter.sendMail({
             from: FROM_EMAIL,
-            to: [email],
+            to: email,
             subject: subject,
             html: htmlContent
         });
-        if (error) throw new Error(error.message);
-        return { success: true, message: 'Approval email sent' };
+        return { success: true, message: 'Approval email sent', messageId: info.messageId };
     } catch (error) {
         console.error('Approval email failed:', error.message);
         return { success: false, message: 'Failed to send approval email' };
