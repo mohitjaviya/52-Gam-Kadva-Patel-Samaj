@@ -4,17 +4,29 @@ const nodemailer = require('nodemailer');
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
-// Create Gmail SMTP transporter
+// Create Gmail SMTP transporter (Port 465 + SSL for cloud compatibility)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
-    secure: false,
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    logger: false,
+    debug: false
 });
+
+// Verify SMTP connection on startup
+if (!DEMO_MODE && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    transporter.verify()
+        .then(() => console.log('✅ Gmail SMTP connected successfully'))
+        .catch(err => console.error('❌ Gmail SMTP connection failed:', err.message));
+}
 
 // Sender address
 const FROM_EMAIL = process.env.FROM_EMAIL || `52 ગામ કડવા પટેલ સમાજ <${process.env.EMAIL_USER}>`;
