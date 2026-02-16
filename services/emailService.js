@@ -1,42 +1,109 @@
-// Email Service using Nodemailer (Gmail SMTP)
+// Email Service with Fallback: Gmail SMTP → Resend (HTTP API)
+// Gmail SMTP (500/day) is tried first. If it fails (e.g., on Render where SMTP is blocked),
+// automatically falls back to Resend HTTP API (100/day).
+
 const nodemailer = require('nodemailer');
 
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
-// Create Gmail SMTP transporter (Port 465 + SSL for cloud compatibility)
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-    logger: false,
-    debug: false
-});
+// ============ Gmail SMTP Setup ============
+let smtpAvailable = false;
+let transporter = null;
 
-// Verify SMTP connection on startup
-if (!DEMO_MODE && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    transporter.verify()
-        .then(() => console.log('✅ Gmail SMTP connected successfully'))
-        .catch(err => console.error('❌ Gmail SMTP connection failed:', err.message));
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        },
+        connectionTimeout: 8000,
+        greetingTimeout: 8000,
+        socketTimeout: 10000
+    });
+
+    // Test SMTP on startup
+    if (!DEMO_MODE) {
+        transporter.verify()
+            .then(() => {
+                smtpAvailable = true;
+                console.log('✅ Gmail SMTP connected — using SMTP (500/day limit)');
+            })
+            .catch(err => {
+                smtpAvailable = false;
+                console.log('⚠️  Gmail SMTP blocked:', err.message);
+                console.log('📧 Falling back to Resend HTTP API (100/day limit)');
+            });
+    }
 }
 
-// Sender address
-const FROM_EMAIL = process.env.FROM_EMAIL || `52 ગામ કડવા પટેલ સમાજ <${process.env.EMAIL_USER}>`;
+// ============ Resend HTTP API Setup (Fallback) ============
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+    const { Resend } = require('resend');
+    resend = new Resend(process.env.RESEND_API_KEY);
+    console.log('📧 Resend API configured as fallback');
+}
+
+// Sender addresses
+const SMTP_FROM = process.env.FROM_EMAIL || `52 ગામ કડવા પટેલ સમાજ <${process.env.EMAIL_USER}>`;
+const RESEND_FROM = '52 Gam Kadva Patel Samaj <noreply@52gamkps.in>';
+
+// ============ Send Email (with fallback) ============
+async function sendEmail(to, subject, html) {
+    // Try Gmail SMTP first
+    if (smtpAvailable && transporter) {
+        try {
+            const info = await transporter.sendMail({
+                from: SMTP_FROM,
+                to: to,
+                subject: subject,
+                html: html
+            });
+            console.log(`✅ Email sent via SMTP to ${to}, ID: ${info.messageId}`);
+            return { success: true, message: 'Email sent via Gmail SMTP', messageId: info.messageId };
+        } catch (error) {
+            console.error(`⚠️  SMTP failed for ${to}:`, error.message);
+            // Fall through to Resend
+        }
+    }
+
+    // Fallback to Resend HTTP API
+    if (resend) {
+        try {
+            const { data, error } = await resend.emails.send({
+                from: RESEND_FROM,
+                to: [to],
+                subject: subject,
+                html: html
+            });
+
+            if (error) {
+                console.error(`❌ Resend failed for ${to}:`, error.message);
+                return { success: false, message: 'Failed to send email: ' + error.message };
+            }
+
+            console.log(`✅ Email sent via Resend to ${to}, ID: ${data.id}`);
+            return { success: true, message: 'Email sent via Resend', messageId: data.id };
+        } catch (error) {
+            console.error(`❌ Resend error for ${to}:`, error.message);
+            return { success: false, message: 'Failed to send email: ' + error.message };
+        }
+    }
+
+    // No email service available
+    console.error('❌ No email service available — both SMTP and Resend failed/unconfigured');
+    return { success: false, message: 'Email service not configured' };
+}
+
+// ============ Email Templates ============
 
 /**
  * Send OTP via Email
- * @param {string} email - Recipient email address
- * @param {string} otp - 6-digit OTP
- * @param {string} name - Recipient name (optional)
- * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendOTPEmail(email, otp, name = 'User') {
     const subject = 'Your 52 ગામ કડવા પટેલ સમાજ Verification Code';
@@ -93,42 +160,10 @@ async function sendOTPEmail(email, otp, name = 'User') {
         console.log(`📧 [DEMO EMAIL] To: ${email}`);
         console.log(`📧 [DEMO EMAIL] Subject: ${subject}`);
         console.log(`📧 [DEMO EMAIL] OTP: ${otp}`);
-        return {
-            success: true,
-            message: 'Email sent (Demo Mode)',
-            demoOTP: otp
-        };
+        return { success: true, message: 'Email sent (Demo Mode)', demoOTP: otp };
     }
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.error('❌ EMAIL_USER or EMAIL_PASS not set');
-        return {
-            success: false,
-            message: 'Email service not configured — Gmail credentials missing'
-        };
-    }
-
-    try {
-        const info = await transporter.sendMail({
-            from: FROM_EMAIL,
-            to: email,
-            subject: subject,
-            html: htmlContent
-        });
-
-        console.log(`✅ Email sent to ${email}, ID: ${info.messageId}`);
-        return {
-            success: true,
-            message: 'Email sent successfully',
-            messageId: info.messageId
-        };
-    } catch (error) {
-        console.error(`❌ Email sending failed:`, error.message);
-        return {
-            success: false,
-            message: 'Failed to send email: ' + error.message
-        };
-    }
+    return sendEmail(email, subject, htmlContent);
 }
 
 /**
@@ -179,22 +214,7 @@ async function sendWelcomeEmail(email, name) {
         return { success: true, message: 'Welcome email sent (Demo Mode)' };
     }
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        return { success: false, message: 'Email service not configured' };
-    }
-
-    try {
-        const info = await transporter.sendMail({
-            from: FROM_EMAIL,
-            to: email,
-            subject: subject,
-            html: htmlContent
-        });
-        return { success: true, message: 'Welcome email sent', messageId: info.messageId };
-    } catch (error) {
-        console.error('Welcome email failed:', error.message);
-        return { success: false, message: 'Failed to send welcome email' };
-    }
+    return sendEmail(email, subject, htmlContent);
 }
 
 /**
@@ -260,22 +280,7 @@ async function sendApprovalEmail(email, name, approved = true) {
         return { success: true, message: 'Approval email sent (Demo Mode)' };
     }
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        return { success: false, message: 'Email service not configured' };
-    }
-
-    try {
-        const info = await transporter.sendMail({
-            from: FROM_EMAIL,
-            to: email,
-            subject: subject,
-            html: htmlContent
-        });
-        return { success: true, message: 'Approval email sent', messageId: info.messageId };
-    } catch (error) {
-        console.error('Approval email failed:', error.message);
-        return { success: false, message: 'Failed to send approval email' };
-    }
+    return sendEmail(email, subject, htmlContent);
 }
 
 module.exports = {
