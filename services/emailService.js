@@ -5,7 +5,7 @@
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
 // Sender config
-const SENDER_EMAIL = process.env.EMAIL_USER || '52gamkps@gmail.com';
+const SENDER_EMAIL = 'noreply@52gamkps.in';
 const SENDER_NAME = '52 Gam Kadva Patel Samaj';
 
 // ============ Brevo HTTP API (Primary — 300/day) ============
