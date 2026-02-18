@@ -367,4 +367,126 @@ router.get('/stats', async (req, res) => {
     }
 });
 
+// Download report (CSV/JSON) with optional village filter
+router.get('/download-report', async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({ success: false, message: 'Not authenticated.' });
+        }
+
+        // Check if admin
+        const { data: currentUser } = await supabase
+            .from('users')
+            .select('is_admin')
+            .eq('id', req.session.userId)
+            .single();
+
+        if (!currentUser?.is_admin) {
+            return res.status(403).json({ success: false, message: 'Admin access required.' });
+        }
+
+        const { type = 'all', format = 'csv', village } = req.query;
+
+        let query = supabase
+            .from('users')
+            .select(`
+                id, first_name, middle_name, last_name, gender, phone, email,
+                occupation_type, current_address, is_approved, created_at,
+                village_id,
+                villages (name, taluka, district),
+                student_details (department, sub_department, college_city, college_name),
+                job_details (company_name, designation, field, working_city),
+                business_details (business_name, business_type, business_field, business_city)
+            `)
+            .eq('registration_completed', true)
+            .order('created_at', { ascending: false });
+
+        // Filter by occupation type
+        if (type && type !== 'all') {
+            query = query.eq('occupation_type', type);
+        }
+
+        // Filter by village
+        if (village) {
+            query = query.eq('village_id', parseInt(village));
+        }
+
+        const { data: users, error } = await query;
+        if (error) throw error;
+
+        if (format === 'json') {
+            return res.json({ success: true, data: users });
+        }
+
+        // Build CSV
+        const headers = [
+            'ID', 'First Name', 'Middle Name', 'Last Name', 'Gender',
+            'Phone', 'Email', 'Village', 'Taluka', 'District',
+            'Current Address', 'Occupation Type', 'Approved',
+            'Detail 1', 'Detail 2', 'Detail 3', 'Detail 4', 'Created At'
+        ];
+
+        // Add UTF-8 BOM for proper Gujarati text display in Excel
+        let csv = '\ufeff' + headers.join(',') + '\n';
+
+        (users || []).forEach(u => {
+            let d1 = '', d2 = '', d3 = '', d4 = '';
+            const det = Array.isArray(u.student_details) ? u.student_details[0] : u.student_details;
+            const jobDet = Array.isArray(u.job_details) ? u.job_details[0] : u.job_details;
+            const bizDet = Array.isArray(u.business_details) ? u.business_details[0] : u.business_details;
+
+            if (u.occupation_type === 'student' && det) {
+                d1 = det.department || '';
+                d2 = det.sub_department || '';
+                d3 = det.college_name || '';
+                d4 = det.college_city || '';
+            } else if (u.occupation_type === 'job' && jobDet) {
+                d1 = jobDet.company_name || '';
+                d2 = jobDet.designation || '';
+                d3 = jobDet.field || '';
+                d4 = jobDet.working_city || '';
+            } else if (u.occupation_type === 'business' && bizDet) {
+                d1 = bizDet.business_name || '';
+                d2 = bizDet.business_type || '';
+                d3 = bizDet.business_field || '';
+                d4 = bizDet.business_city || '';
+            }
+
+            const villageName = Array.isArray(u.villages) ? (u.villages[0]?.name || '') : (u.villages?.name || '');
+            const taluka = Array.isArray(u.villages) ? (u.villages[0]?.taluka || '') : (u.villages?.taluka || '');
+            const district = Array.isArray(u.villages) ? (u.villages[0]?.district || '') : (u.villages?.district || '');
+
+            const row = [
+                u.id,
+                `"${(u.first_name || '').replace(/"/g, '""')}"`,
+                `"${(u.middle_name || '').replace(/"/g, '""')}"`,
+                `"${(u.last_name || '').replace(/"/g, '""')}"`,
+                u.gender || '',
+                u.phone || '',
+                u.email || '',
+                `"${villageName.replace(/"/g, '""')}"`,
+                `"${taluka.replace(/"/g, '""')}"`,
+                `"${district.replace(/"/g, '""')}"`,
+                `"${(u.current_address || '').replace(/"/g, '""')}"`,
+                u.occupation_type || '',
+                u.is_approved ? 'Yes' : 'No',
+                `"${d1.replace(/"/g, '""')}"`,
+                `"${d2.replace(/"/g, '""')}"`,
+                `"${d3.replace(/"/g, '""')}"`,
+                `"${d4.replace(/"/g, '""')}"`,
+                u.created_at || ''
+            ];
+            csv += row.join(',') + '\n';
+        });
+
+        const filename = village ? `community_report_village_${village}_${Date.now()}.csv` : `community_report_${type}_${Date.now()}.csv`;
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+        res.send(csv);
+    } catch (err) {
+        console.error('Report download error:', err);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
 module.exports = router;

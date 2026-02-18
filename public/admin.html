@@ -202,13 +202,21 @@
 
                 <!-- All Users -->
                 <div id="allTab" class="tab-pane" style="display: none;">
-                    <div class="table-filters">
+                    <div class="table-filters" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                         <select id="filterOccupation" onchange="loadAllUsers()">
                             <option value="">All Occupations</option>
                             <option value="student">Students</option>
                             <option value="job">Working Professionals</option>
                             <option value="business">Business Owners</option>
                         </select>
+                        <select id="filterVillage" onchange="loadAllUsers()">
+                            <option value="">All Villages</option>
+                            <!-- Villages loaded dynamically -->
+                        </select>
+                        <button class="btn btn-primary btn-small" onclick="downloadVillageCSV()"
+                            title="Download CSV for selected filters">
+                            <i class="fas fa-download"></i> Download CSV
+                        </button>
                     </div>
                     <div class="table-container">
                         <table class="admin-table">

@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     loadStats();
     loadPendingApprovals();
+    loadVillageFilter();
 
     // Auto-refresh stats every 30 seconds
     setInterval(() => {
@@ -292,17 +293,44 @@ function displayApprovedUsers(users) {
     }
 }
 
+// Load village filter dropdown
+async function loadVillageFilter() {
+    try {
+        const response = await fetch('/api/data/villages');
+        const data = await response.json();
+        if (data.success) {
+            const select = document.getElementById('filterVillage');
+            if (select) {
+                data.villages.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v.id;
+                    option.textContent = v.name;
+                    select.appendChild(option);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load villages:', error);
+    }
+}
+
 // Load all users
 async function loadAllUsers(page = 1) {
     try {
         const occupation = document.getElementById('filterOccupation')?.value || '';
-        const response = await fetch(`/api/admin/users?approved=all&page=${page}&limit=20`);
+        const village = document.getElementById('filterVillage')?.value || '';
+        let url = `/api/admin/users?approved=all&page=${page}&limit=20`;
+        if (occupation) url += `&occupationType=${occupation}`;
+        const response = await fetch(url);
         const data = await response.json();
 
         if (data.success) {
             let filteredUsers = data.users;
             if (occupation) {
-                filteredUsers = data.users.filter(u => u.occupation_type === occupation);
+                filteredUsers = filteredUsers.filter(u => u.occupation_type === occupation);
+            }
+            if (village) {
+                filteredUsers = filteredUsers.filter(u => String(u.village_id) === village);
             }
 
             displayAllUsers(filteredUsers);
@@ -314,6 +342,15 @@ async function loadAllUsers(page = 1) {
     } catch (error) {
         showNotification('Failed to load users', 'error');
     }
+}
+
+// Download CSV with current filters (village + occupation)
+function downloadVillageCSV() {
+    const occupation = document.getElementById('filterOccupation')?.value || 'all';
+    const village = document.getElementById('filterVillage')?.value || '';
+    let url = `/api/admin/download-report?type=${occupation}&format=csv`;
+    if (village) url += `&village=${village}`;
+    window.open(url, '_blank');
 }
 
 // Display all users
