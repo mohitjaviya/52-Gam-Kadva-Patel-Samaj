@@ -171,9 +171,9 @@ router.get('/users', async (req, res) => {
                 can_view_sensitive, registration_completed, created_at,
                 phone_verified, email_verified, village_id,
                 villages (name, taluka, district),
-                student_details (department, sub_department, college_city, college_name, year_of_study, additional_info),
-                job_details (company_name, designation, field, working_city, experience_years, additional_info),
-                business_details (business_name, business_type, business_field, business_city, business_address, years_in_business, employees_count, website, additional_info)
+                student_details (*),
+                job_details (*),
+                business_details (*)
             `, { count: 'exact' })
             .eq('registration_completed', true)
             .eq('is_admin', false)
