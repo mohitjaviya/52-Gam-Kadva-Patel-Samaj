@@ -171,9 +171,9 @@ router.get('/users', async (req, res) => {
                 can_view_sensitive, registration_completed, created_at,
                 phone_verified, email_verified, village_id,
                 villages (name, taluka, district),
-                student_details (*),
-                job_details (*),
-                business_details (*)
+                student_details (department, sub_department, college_city, college_name, year_of_study, additional_info),
+                job_details (company_name, designation, field, working_city, experience_years, additional_info),
+                business_details (business_name, business_type, business_field, business_city, business_address, years_in_business, employees_count, website, additional_info)
             `, { count: 'exact' })
             .eq('registration_completed', true)
             .eq('is_admin', false)
@@ -196,33 +196,27 @@ router.get('/users', async (req, res) => {
         const { data: users, error, count } = await query;
         if (error) throw error;
 
-        // Debug: Log raw Supabase join data for ALL users
+        // Debug: Log raw Supabase join data for first user
         if (users && users.length > 0) {
-            users.forEach((u, i) => {
-                if (u.occupation_type === 'business') {
-                    console.log(`DEBUG business user #${i} (id=${u.id}):`, JSON.stringify({
-                        business_details_type: typeof u.business_details,
-                        business_details_isArray: Array.isArray(u.business_details),
-                        business_details_value: u.business_details
-                    }, null, 2));
-                }
-            });
+            console.log('DEBUG Admin /users - raw first user join data:', JSON.stringify({
+                occupation_type: users[0].occupation_type,
+                student_details: users[0].student_details,
+                job_details: users[0].job_details,
+                business_details: users[0].business_details
+            }, null, 2));
         }
 
         // Helper to extract occupation details (handles both array and object from Supabase)
         function getOccupationDetail(u) {
-            let raw = null;
+            let detail = null;
             if (u.occupation_type === 'student') {
-                raw = u.student_details;
+                detail = Array.isArray(u.student_details) ? u.student_details[0] : u.student_details;
             } else if (u.occupation_type === 'job') {
-                raw = u.job_details;
+                detail = Array.isArray(u.job_details) ? u.job_details[0] : u.job_details;
             } else if (u.occupation_type === 'business') {
-                raw = u.business_details;
+                detail = Array.isArray(u.business_details) ? u.business_details[0] : u.business_details;
             }
-
-            if (!raw) return null;
-            if (Array.isArray(raw)) return raw.length > 0 ? raw[0] : null;
-            return raw;
+            return detail || null;
         }
 
         // Format — keep snake_case to match what admin.js frontend expects
