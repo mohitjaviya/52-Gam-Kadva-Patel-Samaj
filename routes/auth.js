@@ -454,7 +454,7 @@ router.post('/register', async (req, res) => {
                     company_name: companyName || '',
                     designation: designation || '',
                     field: jobField || '',
-                    experience_years: experienceYears ? parseFloat(experienceYears) : null,
+                    experience_years: experienceYears ? Math.round(parseFloat(experienceYears)) : null,
                     additional_info: jobAdditionalInfo || ''
                 });
 
@@ -473,7 +473,7 @@ router.post('/register', async (req, res) => {
                     business_field: businessField || '',
                     business_city: businessCity || '',
                     business_address: businessAddress || '',
-                    years_in_business: yearsInBusiness ? parseFloat(yearsInBusiness) : null,
+                    years_in_business: yearsInBusiness ? Math.round(parseFloat(yearsInBusiness)) : null,
                     additional_info: businessAdditionalInfo || ''
                 });
 
