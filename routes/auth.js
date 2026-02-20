@@ -367,6 +367,7 @@ router.post('/register', async (req, res) => {
         const collegeCity = studentDetails?.collegeCity;
         const collegeName = studentDetails?.collegeName;
         const yearOfStudy = studentDetails?.yearOfStudy;
+        const studentAdditionalInfo = studentDetails?.additionalInfo;
 
         const graduationYear = jobDetails?.graduationYear;
         const gradCollegeCity = jobDetails?.collegeCity;
@@ -377,12 +378,15 @@ router.post('/register', async (req, res) => {
         const companyName = jobDetails?.companyName;
         const designation = jobDetails?.designation;
         const jobField = jobDetails?.field;
+        const experienceYears = jobDetails?.experienceYears;
+        const jobAdditionalInfo = jobDetails?.additionalInfo;
 
         const businessName = bizDetails?.businessName;
         const businessType = bizDetails?.businessType;
         const businessField = bizDetails?.businessField;
         const businessCity = bizDetails?.businessCity;
         const businessAddress = bizDetails?.businessAddress;
+        const businessAdditionalInfo = bizDetails?.additionalInfo;
 
         // Validate required fields
         if (!firstName || !lastName || !gender || !villageId || !currentAddress || !occupationType) {
@@ -424,7 +428,8 @@ router.post('/register', async (req, res) => {
                     sub_department: subDepartment || '',
                     college_city: collegeCity || '',
                     college_name: collegeName || '',
-                    year_of_study: yearOfStudy || ''
+                    year_of_study: yearOfStudy || '',
+                    additional_info: studentAdditionalInfo || ''
                 });
 
             if (error) console.error('Student details insert error:', error);
@@ -445,7 +450,9 @@ router.post('/register', async (req, res) => {
                     working_city: workingCity || '',
                     company_name: companyName || '',
                     designation: designation || '',
-                    field: jobField || ''
+                    field: jobField || '',
+                    experience_years: experienceYears || 0,
+                    additional_info: jobAdditionalInfo || ''
                 });
 
             if (error) console.error('Job details insert error:', error);
@@ -462,7 +469,8 @@ router.post('/register', async (req, res) => {
                     business_type: businessType || '',
                     business_field: businessField || '',
                     business_city: businessCity || '',
-                    business_address: businessAddress || ''
+                    business_address: businessAddress || '',
+                    additional_info: businessAdditionalInfo || ''
                 });
 
             if (error) console.error('Business details insert error:', error);

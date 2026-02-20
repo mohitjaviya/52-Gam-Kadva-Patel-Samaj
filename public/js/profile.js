@@ -6,7 +6,7 @@ let currentUser = null;
 // Initialize profile page
 document.addEventListener('DOMContentLoaded', async () => {
     const user = await checkSession();
-    
+
     if (!user) {
         showNotification('Please login to view your profile', 'warning');
         setTimeout(() => {
@@ -41,9 +41,9 @@ async function loadProfile() {
 // Display profile
 function displayProfile(user) {
     // Header
-    document.getElementById('profileName').textContent = 
+    document.getElementById('profileName').textContent =
         `${user.first_name} ${user.middle_name || ''} ${user.last_name}`;
-    document.getElementById('profileVillage').innerHTML = 
+    document.getElementById('profileVillage').innerHTML =
         `<i class="fas fa-map-marker-alt"></i> ${user.village_name}`;
 
     // Badges
@@ -66,7 +66,7 @@ function displayProfile(user) {
     document.getElementById('phoneStatus').innerHTML = user.phone_verified === 1
         ? '<span class="verification-status verified"><i class="fas fa-check-circle"></i> Verified</span>'
         : '<span class="verification-status not-verified"><i class="fas fa-exclamation-circle"></i> Not Verified</span>';
-    
+
     document.getElementById('emailStatus').innerHTML = user.email_verified === 1
         ? '<span class="verification-status verified"><i class="fas fa-check-circle"></i> Verified</span>'
         : '<span class="verification-status not-verified"><i class="fas fa-exclamation-circle"></i> Not Verified</span>';
@@ -84,7 +84,7 @@ function displayProfile(user) {
 // Display occupation details
 function displayOccupationDetails(user) {
     const container = document.getElementById('occupationDetails');
-    
+
     if (!user.occupationDetails) {
         container.innerHTML = '<p>No occupation details available</p>';
         return;
@@ -146,7 +146,7 @@ function displayOccupationDetails(user) {
             </div>
             <div class="detail-row">
                 <span class="detail-label">Experience</span>
-                <span class="detail-value">${details.experience_years || 0} years</span>
+                <span class="detail-value">${Math.round(details.experience_years || 0)} years</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Graduation Year</span>
@@ -265,7 +265,7 @@ async function saveProfile() {
 // Cancel edit
 function cancelEdit() {
     toggleEditMode();
-    
+
     // Reset inputs to current values
     if (currentUser) {
         document.getElementById('editFirstName').value = currentUser.first_name;
