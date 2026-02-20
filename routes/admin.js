@@ -196,27 +196,33 @@ router.get('/users', async (req, res) => {
         const { data: users, error, count } = await query;
         if (error) throw error;
 
-        // Debug: Log raw Supabase join data for first user
+        // Debug: Log raw Supabase join data for ALL users
         if (users && users.length > 0) {
-            console.log('DEBUG Admin /users - raw first user join data:', JSON.stringify({
-                occupation_type: users[0].occupation_type,
-                student_details: users[0].student_details,
-                job_details: users[0].job_details,
-                business_details: users[0].business_details
-            }, null, 2));
+            users.forEach((u, i) => {
+                if (u.occupation_type === 'business') {
+                    console.log(`DEBUG business user #${i} (id=${u.id}):`, JSON.stringify({
+                        business_details_type: typeof u.business_details,
+                        business_details_isArray: Array.isArray(u.business_details),
+                        business_details_value: u.business_details
+                    }, null, 2));
+                }
+            });
         }
 
         // Helper to extract occupation details (handles both array and object from Supabase)
         function getOccupationDetail(u) {
-            let detail = null;
+            let raw = null;
             if (u.occupation_type === 'student') {
-                detail = Array.isArray(u.student_details) ? u.student_details[0] : u.student_details;
+                raw = u.student_details;
             } else if (u.occupation_type === 'job') {
-                detail = Array.isArray(u.job_details) ? u.job_details[0] : u.job_details;
+                raw = u.job_details;
             } else if (u.occupation_type === 'business') {
-                detail = Array.isArray(u.business_details) ? u.business_details[0] : u.business_details;
+                raw = u.business_details;
             }
-            return detail || null;
+
+            if (!raw) return null;
+            if (Array.isArray(raw)) return raw.length > 0 ? raw[0] : null;
+            return raw;
         }
 
         // Format — keep snake_case to match what admin.js frontend expects
