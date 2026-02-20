@@ -377,6 +377,7 @@ router.post('/register', async (req, res) => {
         const companyName = jobDetails?.companyName;
         const designation = jobDetails?.designation;
         const jobField = jobDetails?.field;
+        const experienceYears = jobDetails?.experienceYears;
 
         const businessName = bizDetails?.businessName;
         const businessType = bizDetails?.businessType;
@@ -453,6 +454,7 @@ router.post('/register', async (req, res) => {
                     company_name: companyName || '',
                     designation: designation || '',
                     field: jobField || '',
+                    experience_years: experienceYears || null,
                     additional_info: jobAdditionalInfo || ''
                 });
 
