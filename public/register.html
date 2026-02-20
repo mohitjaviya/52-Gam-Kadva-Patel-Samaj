@@ -1517,6 +1517,25 @@
                             input.classList.remove('error');
                         }
                     });
+
+                    // Validate that experience/years fields are integers (no decimals)
+                    const integerFields = [
+                        { id: 'experienceYears', label: 'Experience Years' },
+                        { id: 'yearsInBusiness', label: 'Years in Business' }
+                    ];
+                    integerFields.forEach(({ id, label }) => {
+                        const field = document.getElementById(id);
+                        if (field && field.value !== '') {
+                            const val = parseFloat(field.value);
+                            if (!Number.isInteger(val)) {
+                                field.classList.add('error');
+                                showNotification(`${label} must be a whole number (no decimals)`, 'error');
+                                isValid = false;
+                            } else {
+                                field.classList.remove('error');
+                            }
+                        }
+                    });
                 }
             }
 
