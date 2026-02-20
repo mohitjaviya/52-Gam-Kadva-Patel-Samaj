@@ -473,7 +473,7 @@ router.post('/register', async (req, res) => {
                     business_field: businessField || '',
                     business_city: businessCity || '',
                     business_address: businessAddress || '',
-                    years_in_business: yearsInBusiness || null,
+                    years_in_business: yearsInBusiness ? parseFloat(yearsInBusiness) : null,
                     additional_info: businessAdditionalInfo || ''
                 });
 
