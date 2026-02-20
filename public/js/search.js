@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Setup view toggle buttons
     document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
             e.preventDefault();
             const view = this.getAttribute('data-view');
             if (view) {
@@ -43,7 +43,7 @@ function onOccupationChange() {
     const companyFilter = document.getElementById('companyFilter');
     const jobFieldFilter = document.getElementById('jobFieldFilter');
     const businessTypeFilter = document.getElementById('businessTypeFilter');
-    
+
     // Hide all occupation-specific filters first
     collegeFilter.style.display = 'none';
     courseFilter.style.display = 'none';
@@ -51,7 +51,7 @@ function onOccupationChange() {
     companyFilter.style.display = 'none';
     jobFieldFilter.style.display = 'none';
     businessTypeFilter.style.display = 'none';
-    
+
     // Clear the hidden filter values
     document.getElementById('searchCollege').value = '';
     document.getElementById('searchCourse').value = '';
@@ -59,7 +59,7 @@ function onOccupationChange() {
     document.getElementById('searchCompany').value = '';
     document.getElementById('searchJobField').value = '';
     document.getElementById('searchBusinessType').value = '';
-    
+
     // Show relevant filter based on occupation
     if (occupation === 'student') {
         filtersRow.style.display = 'flex';
@@ -142,7 +142,7 @@ async function searchUsers(page = 1) {
             currentPage = data.pagination.page;
             totalPages = data.pagination.totalPages;
 
-            document.getElementById('resultsCount').textContent = 
+            document.getElementById('resultsCount').textContent =
                 `${data.pagination.total} member${data.pagination.total !== 1 ? 's' : ''} found`;
 
             if (data.users.length === 0) {
@@ -234,7 +234,7 @@ function displayResults(users) {
 // Update pagination
 function updatePagination() {
     const pagination = document.getElementById('pagination');
-    
+
     if (totalPages > 1) {
         pagination.style.display = 'flex';
         document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
@@ -265,7 +265,7 @@ function clearFilters() {
     document.getElementById('searchCompany').value = '';
     document.getElementById('searchJobField').value = '';
     document.getElementById('searchBusinessType').value = '';
-    
+
     // Hide occupation-specific filters
     document.getElementById('occupationFilters').style.display = 'none';
     document.getElementById('collegeFilter').style.display = 'none';
@@ -274,22 +274,22 @@ function clearFilters() {
     document.getElementById('companyFilter').style.display = 'none';
     document.getElementById('jobFieldFilter').style.display = 'none';
     document.getElementById('businessTypeFilter').style.display = 'none';
-    
+
     searchUsers();
 }
 
 // Set view mode
 function setView(view, btn) {
     currentView = view;
-    
+
     document.querySelectorAll('.view-btn').forEach(b => {
         b.classList.remove('active');
     });
-    
+
     if (btn) {
         btn.classList.add('active');
     }
-    
+
     const container = document.getElementById('resultsContainer');
     if (view === 'list') {
         container.classList.remove('results-grid');
@@ -332,7 +332,7 @@ async function showUserDetail(userId) {
                             <p><strong>Designation:</strong> ${user.occupationDetails.designation || '-'}</p>
                             <p><strong>Field:</strong> ${user.occupationDetails.field || '-'}</p>
                             <p><strong>Working City:</strong> ${user.occupationDetails.working_city || '-'}</p>
-                            <p><strong>Experience:</strong> ${user.occupationDetails.experience_years || 0} years</p>
+                            <p><strong>Experience:</strong> ${Math.round(user.occupationDetails.experience_years || 0)} years</p>
                             ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
                         </div>
                     `;
@@ -344,7 +344,7 @@ async function showUserDetail(userId) {
                             <p><strong>Type:</strong> ${user.occupationDetails.business_type || '-'}</p>
                             <p><strong>Field:</strong> ${user.occupationDetails.business_field || '-'}</p>
                             <p><strong>City:</strong> ${user.occupationDetails.business_city || '-'}</p>
-                            <p><strong>Years in Business:</strong> ${user.occupationDetails.years_in_business || 0}</p>
+                            ${user.occupationDetails.years_in_business ? `<p><strong>Years in Business:</strong> ${Math.round(user.occupationDetails.years_in_business)}</p>` : ''}
                             ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${user.occupationDetails.website}" target="_blank">${user.occupationDetails.website}</a></p>` : ''}
                             ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
                         </div>
