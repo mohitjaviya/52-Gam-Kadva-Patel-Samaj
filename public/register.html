@@ -579,6 +579,12 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="businessAddress">Business Address</label>
+                                    <textarea id="businessAddress" name="businessAddress" rows="2"
+                                        placeholder="Enter full business address"></textarea>
+                                </div>
+
+                                <div class="form-group">
                                     <label for="yearsInBusiness">Years in Business</label>
                                     <input type="number" id="yearsInBusiness" name="yearsInBusiness" min="0" max="100"
                                         placeholder="Years in business">
@@ -1636,6 +1642,7 @@
                     businessType: getValueWithOther('businessType', 'businessTypeOther'),
                     businessField: getValueWithOther('businessField', 'businessFieldOther'),
                     businessCity: getValueWithOther('businessCity', 'businessCityOther'),
+                    businessAddress: document.getElementById('businessAddress').value,
                     yearsInBusiness: document.getElementById('yearsInBusiness').value,
                     additionalInfo: document.getElementById('businessAdditionalInfo').value
                 };

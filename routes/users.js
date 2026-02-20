@@ -334,7 +334,7 @@ router.get('/search', async (req, res) => {
             if (user.occupation_type === 'student') {
                 const { data } = await supabase
                     .from('student_details')
-                    .select('department, sub_department, college_name, college_city')
+                    .select('department, sub_department, college_name, college_city, additional_info')
                     .eq('user_id', user.id)
                     .single();
                 details = data;
@@ -349,7 +349,7 @@ router.get('/search', async (req, res) => {
             } else if (user.occupation_type === 'job') {
                 const { data } = await supabase
                     .from('job_details')
-                    .select('company_name, designation, working_city, field, experience_years')
+                    .select('company_name, designation, working_city, field, experience_years, additional_info')
                     .eq('user_id', user.id)
                     .single();
                 details = data;
@@ -362,7 +362,7 @@ router.get('/search', async (req, res) => {
             } else if (user.occupation_type === 'business') {
                 const { data } = await supabase
                     .from('business_details')
-                    .select('business_name, business_type, business_field, business_city')
+                    .select('business_name, business_type, business_field, business_city, business_address, additional_info')
                     .eq('user_id', user.id)
                     .single();
                 details = data;

@@ -344,6 +344,7 @@ async function showUserDetail(userId) {
                             <p><strong>Type:</strong> ${user.occupationDetails.business_type || '-'}</p>
                             <p><strong>Field:</strong> ${user.occupationDetails.business_field || '-'}</p>
                             <p><strong>City:</strong> ${user.occupationDetails.business_city || '-'}</p>
+                            ${user.occupationDetails.business_address ? `<p><strong>Address:</strong> ${user.occupationDetails.business_address}</p>` : ''}
                             <p><strong>Years in Business:</strong> ${user.occupationDetails.years_in_business || 0}</p>
                             ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${user.occupationDetails.website}" target="_blank">${user.occupationDetails.website}</a></p>` : ''}
                             ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
