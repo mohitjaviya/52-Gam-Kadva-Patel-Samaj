@@ -494,7 +494,8 @@ function viewUserDetail(userId) {
             `;
         } else if (user.occupation_type === 'job') {
             occupationHTML = `
-                <div class="detail-section">
+  
+            <div class="detail-section">
                     <h4><i class="fas fa-briefcase"></i> Job Details</h4>
                     <p><strong>Company:</strong> ${user.occupationDetails.company_name || '-'}</p>
                     <p><strong>Designation:</strong> ${user.occupationDetails.designation || '-'}</p>
