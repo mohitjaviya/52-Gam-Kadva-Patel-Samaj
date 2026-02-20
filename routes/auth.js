@@ -386,6 +386,9 @@ router.post('/register', async (req, res) => {
         const businessField = bizDetails?.businessField;
         const businessCity = bizDetails?.businessCity;
         const businessAddress = bizDetails?.businessAddress;
+        const yearsInBusiness = bizDetails?.yearsInBusiness;
+        const employeesCount = bizDetails?.employeesCount;
+        const businessWebsite = bizDetails?.website;
         const businessAdditionalInfo = bizDetails?.additionalInfo;
 
         // Validate required fields
@@ -470,6 +473,9 @@ router.post('/register', async (req, res) => {
                     business_field: businessField || '',
                     business_city: businessCity || '',
                     business_address: businessAddress || '',
+                    years_in_business: yearsInBusiness || 0,
+                    employees_count: employeesCount || 0,
+                    website: businessWebsite || '',
                     additional_info: businessAdditionalInfo || ''
                 });
 
