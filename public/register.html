@@ -579,9 +579,16 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="regBusinessAddress">Business Address <span
+                                            class="required">*</span></label>
+                                    <textarea id="regBusinessAddress" name="regBusinessAddress" rows="2"
+                                        placeholder="Enter full business address"></textarea>
+                                </div>
+
+                                <div class="form-group">
                                     <label for="yearsInBusiness">Years in Business</label>
                                     <input type="number" id="yearsInBusiness" name="yearsInBusiness" min="0" max="100"
-                                        placeholder="Years in business">
+                                        step="0.5" placeholder="Years in business">
                                 </div>
 
                                 <div class="form-group">
@@ -1631,11 +1638,18 @@
                     additionalInfo: document.getElementById('jobAdditionalInfo').value
                 };
             } else if (occupationType === 'business') {
+                const businessAddress = document.getElementById('regBusinessAddress').value.trim();
+                if (!businessAddress) {
+                    showNotification('Please enter your business address', 'error');
+                    goToStep(3);
+                    return;
+                }
                 formData.businessDetails = {
                     businessName: document.getElementById('businessName').value,
                     businessType: getValueWithOther('businessType', 'businessTypeOther'),
                     businessField: getValueWithOther('businessField', 'businessFieldOther'),
                     businessCity: getValueWithOther('businessCity', 'businessCityOther'),
+                    businessAddress: businessAddress,
                     yearsInBusiness: document.getElementById('yearsInBusiness').value,
                     additionalInfo: document.getElementById('businessAdditionalInfo').value
                 };

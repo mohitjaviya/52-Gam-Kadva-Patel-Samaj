@@ -146,7 +146,7 @@ function displayOccupationDetails(user) {
             </div>
             <div class="detail-row">
                 <span class="detail-label">Experience</span>
-                <span class="detail-value">${Math.round(details.experience_years || 0)} years</span>
+                <span class="detail-value">${details.experience_years || 0} years</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Graduation Year</span>
