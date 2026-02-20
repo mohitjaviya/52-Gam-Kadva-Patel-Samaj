@@ -531,7 +531,7 @@
                                 <div class="form-group">
                                     <label for="experienceYears">Experience (Years)</label>
                                     <input type="number" id="experienceYears" name="experienceYears" min="0" max="50"
-                                        placeholder="Years of experience">
+                                        step="1" placeholder="Years of experience">
                                 </div>
 
                                 <div class="form-group">
@@ -1633,7 +1633,7 @@
                     designation: document.getElementById('designation').value,
                     field: getValueWithOther('jobField', 'jobFieldOther'),
                     workingCity: getValueWithOther('workingCity', 'workingCityOther'),
-                    experienceYears: document.getElementById('experienceYears').value,
+                    experienceYears: parseInt(document.getElementById('experienceYears').value) || 0,
                     additionalInfo: document.getElementById('jobAdditionalInfo').value
                 };
             } else if (occupationType === 'business') {
