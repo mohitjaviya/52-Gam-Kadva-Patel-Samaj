@@ -531,7 +531,7 @@
                                 <div class="form-group">
                                     <label for="experienceYears">Experience (Years)</label>
                                     <input type="number" id="experienceYears" name="experienceYears" min="0" max="50"
-                                        step="1" placeholder="Years of experience">
+                                        step="any" placeholder="Years of experience">
                                 </div>
 
                                 <div class="form-group">
@@ -1517,25 +1517,6 @@
                             input.classList.remove('error');
                         }
                     });
-
-                    // Validate that experience/years fields are integers (no decimals)
-                    const integerFields = [
-                        { id: 'experienceYears', label: 'Experience Years' },
-                        { id: 'yearsInBusiness', label: 'Years in Business' }
-                    ];
-                    integerFields.forEach(({ id, label }) => {
-                        const field = document.getElementById(id);
-                        if (field && field.value !== '') {
-                            const val = parseFloat(field.value);
-                            if (!Number.isInteger(val)) {
-                                field.classList.add('error');
-                                showNotification(`${label} must be a whole number (no decimals)`, 'error');
-                                isValid = false;
-                            } else {
-                                field.classList.remove('error');
-                            }
-                        }
-                    });
                 }
             }
 
@@ -1652,7 +1633,7 @@
                     designation: document.getElementById('designation').value,
                     field: getValueWithOther('jobField', 'jobFieldOther'),
                     workingCity: getValueWithOther('workingCity', 'workingCityOther'),
-                    experienceYears: parseInt(document.getElementById('experienceYears').value) || 0,
+                    experienceYears: document.getElementById('experienceYears').value,
                     additionalInfo: document.getElementById('jobAdditionalInfo').value
                 };
             } else if (occupationType === 'business') {
