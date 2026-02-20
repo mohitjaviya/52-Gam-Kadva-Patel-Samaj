@@ -500,7 +500,7 @@ function viewUserDetail(userId) {
                     <p><strong>Designation:</strong> ${user.occupationDetails.designation || '-'}</p>
                     <p><strong>Field:</strong> ${user.occupationDetails.field || '-'}</p>
                     <p><strong>Working City:</strong> ${user.occupationDetails.working_city || '-'}</p>
-                    <p><strong>Experience:</strong> ${Math.round(user.occupationDetails.experience_years || 0)} years</p>
+                    <p><strong>Experience:</strong> ${user.occupationDetails.experience_years || 0} years</p>
                     ${user.occupationDetails.graduation_year ? `<p><strong>Graduation Year:</strong> ${user.occupationDetails.graduation_year}</p>` : ''}
                     ${user.occupationDetails.college_name ? `<p><strong>College:</strong> ${user.occupationDetails.college_name}</p>` : ''}
                     ${user.occupationDetails.department ? `<p><strong>Department:</strong> ${user.occupationDetails.department}</p>` : ''}
@@ -516,7 +516,8 @@ function viewUserDetail(userId) {
                     <p><strong>Type:</strong> ${user.occupationDetails.business_type || '-'}</p>
                     <p><strong>Field:</strong> ${user.occupationDetails.business_field || '-'}</p>
                     <p><strong>City:</strong> ${user.occupationDetails.business_city || '-'}</p>
-                    <p><strong>Years in Business:</strong> ${Math.round(user.occupationDetails.years_in_business || 0)}</p>
+                    <p><strong>Address:</strong> ${user.occupationDetails.business_address || '-'}</p>
+                    <p><strong>Years in Business:</strong> ${user.occupationDetails.years_in_business || 0}</p>
                     ${user.occupationDetails.employees_count ? `<p><strong>Employees:</strong> ${user.occupationDetails.employees_count}</p>` : ''}
                     ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${user.occupationDetails.website}" target="_blank">${user.occupationDetails.website}</a></p>` : ''}
                     ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
