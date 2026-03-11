@@ -302,18 +302,17 @@ router.get('/search', async (req, res) => {
             .select(`
                 id, first_name, middle_name, last_name, gender,
                 current_address, occupation_type, is_approved,
-                phone, email,
+                phone, email, village_id,
                 villages (name)
             `, { count: 'exact' })
             .eq('is_approved', true);
 
         if (village) {
-            // Look up village ID(s) by name for proper filtering
-            // (ilike on a joined relation doesn't filter parent rows in Supabase)
+            // Look up village ID by exact name for proper filtering
             const { data: villageData } = await supabase
                 .from('villages')
                 .select('id')
-                .ilike('name', `%${village}%`);
+                .eq('name', village);
             if (villageData && villageData.length > 0) {
                 const villageIds = villageData.map(v => v.id);
                 query = query.in('village_id', villageIds);
@@ -345,7 +344,7 @@ router.get('/search', async (req, res) => {
         // Get occupation details for each user
         const usersWithDetails = await Promise.all((users || []).map(async (user) => {
             let details = null;
-            const { villages, ...userData } = user;
+            const { villages, village_id, ...userData } = user;
 
             if (user.occupation_type === 'student') {
                 const { data } = await supabase
