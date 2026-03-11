@@ -308,7 +308,23 @@ router.get('/search', async (req, res) => {
             .eq('is_approved', true);
 
         if (village) {
-            query = query.ilike('villages.name', `%${village}%`);
+            // Look up village ID(s) by name for proper filtering
+            // (ilike on a joined relation doesn't filter parent rows in Supabase)
+            const { data: villageData } = await supabase
+                .from('villages')
+                .select('id')
+                .ilike('name', `%${village}%`);
+            if (villageData && villageData.length > 0) {
+                const villageIds = villageData.map(v => v.id);
+                query = query.in('village_id', villageIds);
+            } else {
+                // No matching village found — return empty results
+                return res.json({
+                    success: true,
+                    users: [],
+                    pagination: { total: 0, page: parseInt(page), limit: parseInt(limit), totalPages: 0 }
+                });
+            }
         }
 
         if (occupation) {
