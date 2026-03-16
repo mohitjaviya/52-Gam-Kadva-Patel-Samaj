@@ -295,7 +295,11 @@ router.put('/change-password', requireAuth, async (req, res) => {
 router.get('/search', async (req, res) => {
     try {
         const { village, occupation, department, field, name, college, course, specialization, company, jobField, businessType, page = 1, limit = 20 } = req.query;
-        const offset = (page - 1) * parseInt(limit);
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+
+        // Check if sub-filters are active (these filter on occupation details, not on users table)
+        const hasSubFilters = college || course || specialization || company || jobField || businessType || department || field;
 
         let query = supabase
             .from('users')
@@ -321,7 +325,7 @@ router.get('/search', async (req, res) => {
                 return res.json({
                     success: true,
                     users: [],
-                    pagination: { total: 0, page: parseInt(page), limit: parseInt(limit), totalPages: 0 }
+                    pagination: { total: 0, page: pageNum, limit: limitNum, totalPages: 0 }
                 });
             }
         }
@@ -334,8 +338,14 @@ router.get('/search', async (req, res) => {
             query = query.or(`first_name.ilike.%${name}%,middle_name.ilike.%${name}%,last_name.ilike.%${name}%`);
         }
 
-        query = query.order('created_at', { ascending: false })
-            .range(offset, offset + parseInt(limit) - 1);
+        query = query.order('created_at', { ascending: false });
+
+        // Only apply DB-level pagination if there are NO sub-filters
+        // When sub-filters are active, we need all users to filter and count correctly
+        if (!hasSubFilters) {
+            const offset = (pageNum - 1) * limitNum;
+            query = query.range(offset, offset + limitNum - 1);
+        }
 
         const { data: users, count: total, error } = await query;
 
@@ -356,10 +366,13 @@ router.get('/search', async (req, res) => {
 
                 // Filter by college
                 if (college && details && !details.college_name?.toLowerCase().includes(college.toLowerCase())) return null;
+                if (college && !details) return null;
                 // Filter by course
                 if (course && details && !details.department?.toLowerCase().includes(course.toLowerCase())) return null;
+                if (course && !details) return null;
                 // Filter by specialization
                 if (specialization && details && !details.sub_department?.toLowerCase().includes(specialization.toLowerCase())) return null;
+                if (specialization && !details) return null;
 
             } else if (user.occupation_type === 'job') {
                 const { data } = await supabase
@@ -371,8 +384,10 @@ router.get('/search', async (req, res) => {
 
                 // Filter by company
                 if (company && details && !details.company_name?.toLowerCase().includes(company.toLowerCase())) return null;
+                if (company && !details) return null;
                 // Filter by jobField
                 if (jobField && details && !details.field?.toLowerCase().includes(jobField.toLowerCase())) return null;
+                if (jobField && !details) return null;
 
             } else if (user.occupation_type === 'business') {
                 const { data } = await supabase
@@ -384,6 +399,7 @@ router.get('/search', async (req, res) => {
 
                 // Filter by businessType
                 if (businessType && details && !details.business_type?.toLowerCase().includes(businessType.toLowerCase())) return null;
+                if (businessType && !details) return null;
             }
 
             // Filter by department/field
@@ -407,14 +423,27 @@ router.get('/search', async (req, res) => {
 
         const filteredUsers = usersWithDetails.filter(u => u !== null);
 
+        // When sub-filters are active, paginate the filtered results manually
+        let paginatedUsers, finalTotal, finalTotalPages;
+        if (hasSubFilters) {
+            finalTotal = filteredUsers.length;
+            finalTotalPages = Math.ceil(finalTotal / limitNum);
+            const startIdx = (pageNum - 1) * limitNum;
+            paginatedUsers = filteredUsers.slice(startIdx, startIdx + limitNum);
+        } else {
+            paginatedUsers = filteredUsers;
+            finalTotal = total || 0;
+            finalTotalPages = Math.ceil(finalTotal / limitNum);
+        }
+
         res.json({
             success: true,
-            users: filteredUsers,
+            users: paginatedUsers,
             pagination: {
-                total: total || 0,
-                page: parseInt(page),
-                limit: parseInt(limit),
-                totalPages: Math.ceil((total || 0) / parseInt(limit))
+                total: finalTotal,
+                page: pageNum,
+                limit: limitNum,
+                totalPages: finalTotalPages
             }
         });
 
