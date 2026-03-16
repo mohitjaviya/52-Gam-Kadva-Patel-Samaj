@@ -1,5 +1,6 @@
-// Email Service — Brevo HTTP API (300/day) with Resend fallback (100/day)
-// Both use HTTPS (port 443) — works on all platforms including Render
+// Email Service — AWS SES (Primary) + Brevo (Fallback) + Resend (Fallback)
+// SES: 200/day sandbox, 50,000+/day production
+// Brevo: 300/day | Resend: 100/day
 
 // Demo mode flag
 const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
@@ -8,7 +9,56 @@ const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 const SENDER_EMAIL = 'noreply@52gamkps.in';
 const SENDER_NAME = '52 Gam Kadva Patel Samaj';
 
-// ============ Brevo HTTP API (Primary — 300/day) ============
+// ============ AWS SES (Primary — 50,000+/day in production) ============
+async function sendViaSES(to, subject, html) {
+    const region = process.env.AWS_SES_REGION;
+    const accessKey = process.env.AWS_SES_ACCESS_KEY;
+    const secretKey = process.env.AWS_SES_SECRET_KEY;
+
+    if (!region || !accessKey || !secretKey) {
+        return { success: false, message: 'AWS SES credentials not configured' };
+    }
+
+    try {
+        const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
+
+        const client = new SESClient({
+            region: region,
+            credentials: {
+                accessKeyId: accessKey,
+                secretAccessKey: secretKey
+            }
+        });
+
+        const command = new SendEmailCommand({
+            Source: `${SENDER_NAME} <${SENDER_EMAIL}>`,
+            Destination: {
+                ToAddresses: [to]
+            },
+            Message: {
+                Subject: {
+                    Data: subject,
+                    Charset: 'UTF-8'
+                },
+                Body: {
+                    Html: {
+                        Data: html,
+                        Charset: 'UTF-8'
+                    }
+                }
+            }
+        });
+
+        const result = await client.send(command);
+        console.log(`✅ Email sent via AWS SES to ${to}, ID: ${result.MessageId}`);
+        return { success: true, message: 'Email sent via AWS SES', messageId: result.MessageId };
+    } catch (error) {
+        console.error(`❌ AWS SES error for ${to}:`, error.message);
+        return { success: false, message: 'AWS SES error: ' + error.message };
+    }
+}
+
+// ============ Brevo HTTP API (Fallback — 300/day) ============
 async function sendViaBrevo(to, subject, html) {
     const apiKey = process.env.BREVO_API_KEY;
     if (!apiKey) return { success: false, message: 'Brevo API key not configured' };
@@ -44,7 +94,7 @@ async function sendViaBrevo(to, subject, html) {
     }
 }
 
-// ============ Resend HTTP API (Fallback — 100/day) ============
+// ============ Resend HTTP API (Last Fallback — 100/day) ============
 async function sendViaResend(to, subject, html) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) return { success: false, message: 'Resend API key not configured' };
@@ -73,18 +123,23 @@ async function sendViaResend(to, subject, html) {
     }
 }
 
-// ============ Send Email (Brevo → Resend fallback) ============
+// ============ Send Email (SES → Brevo → Resend fallback) ============
 async function sendEmail(to, subject, html) {
-    // Try Brevo first (300/day)
+    // Try AWS SES first (50,000+/day in production)
+    const sesResult = await sendViaSES(to, subject, html);
+    if (sesResult.success) return sesResult;
+
+    // Fallback to Brevo (300/day)
+    console.log('📧 SES failed, trying Brevo fallback...');
     const brevoResult = await sendViaBrevo(to, subject, html);
     if (brevoResult.success) return brevoResult;
 
-    // Fallback to Resend (100/day)
+    // Last fallback to Resend (100/day)
     console.log('📧 Brevo failed, trying Resend fallback...');
     const resendResult = await sendViaResend(to, subject, html);
     if (resendResult.success) return resendResult;
 
-    // Both failed
+    // All failed
     console.error('❌ All email services failed');
     return { success: false, message: 'Failed to send email — all services unavailable' };
 }

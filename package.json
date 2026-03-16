@@ -9,6 +9,7 @@
     "seed": "node database/seed_data.js"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1010.0",
     "@supabase/supabase-js": "^2.95.3",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
