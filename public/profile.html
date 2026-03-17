@@ -808,6 +808,14 @@
             }
 
             loadProfile();
+
+            // Show pending approval message if redirected from search
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('pending') === 'true') {
+                showNotification('Your profile is pending admin approval. You can access Search after approval.', 'warning');
+                // Clean URL
+                window.history.replaceState({}, '', '/profile');
+            }
         });
 
         // Load profile

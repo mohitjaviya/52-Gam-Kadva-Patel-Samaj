@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const path = require('path');
-const { initDatabase, getDb } = require('./database/init');
+const { initDatabase, getDb, supabase } = require('./database/init');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -126,6 +126,30 @@ const requireRegistration = (req, res, next) => {
     }
 };
 
+// Middleware to require admin-approved profile
+const requireApproved = async (req, res, next) => {
+    if (!req.session || !req.session.userId) {
+        return res.redirect('/login');
+    }
+    if (!req.session.registrationCompleted) {
+        return res.redirect('/register');
+    }
+    try {
+        const { data: user } = await supabase
+            .from('users')
+            .select('is_approved')
+            .eq('id', req.session.userId)
+            .single();
+        if (user && user.is_approved) {
+            next();
+        } else {
+            res.redirect('/profile?pending=true');
+        }
+    } catch (error) {
+        res.redirect('/profile?pending=true');
+    }
+};
+
 // Public pages (no login required)
 app.get('/login', (req, res) => {
     if (req.session && req.session.userId) {
@@ -163,7 +187,7 @@ app.get('/', requireRegistration, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/search', requireAuth, (req, res) => {
+app.get('/search', requireApproved, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search.html'));
 });
 
