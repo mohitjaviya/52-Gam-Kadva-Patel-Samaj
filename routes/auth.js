@@ -74,7 +74,7 @@ router.post('/signup', async (req, res) => {
         // Check if user already exists
         const { data: existingUser } = await supabase
             .from('users')
-            .select('id, phone_verified, email_verified, registration_completed')
+            .select('id, first_name, phone_verified, email_verified, registration_completed')
             .or(`email.eq.${email},phone.eq.${phone}`)
             .single();
 
@@ -95,7 +95,7 @@ router.post('/signup', async (req, res) => {
 
             // Send OTP via email (non-blocking to avoid timeout)
             const emailService = require('../services/emailService');
-            emailService.sendOTPEmail(email, otp).catch(err => console.error('Email send error:', err));
+            emailService.sendOTPEmail(email, otp, existingUser.first_name || 'User').catch(err => console.error('Email send error:', err));
 
             return res.json({
                 success: true,
@@ -228,7 +228,7 @@ router.post('/login', async (req, res) => {
 
         // Send email (non-blocking to avoid timeout)
         const emailService = require('../services/emailService');
-        emailService.sendOTPEmail(user.email, otp).catch(err => console.log('⚠️  Email not sent:', err.message));
+        emailService.sendOTPEmail(user.email, otp, user.first_name || 'User').catch(err => console.log('⚠️  Email not sent:', err.message));
 
         return res.json({
             success: true,
@@ -311,7 +311,7 @@ router.post('/resend-otp', async (req, res) => {
 
         const { data: user, error } = await supabase
             .from('users')
-            .select('id, phone, email')
+            .select('id, phone, email, first_name')
             .eq('id', userId)
             .single();
 
@@ -326,7 +326,7 @@ router.post('/resend-otp', async (req, res) => {
         if (otpType === 'email') {
             try {
                 const emailService = require('../services/emailService');
-                await emailService.sendOTPEmail(user.email, otp);
+                await emailService.sendOTPEmail(user.email, otp, user.first_name || 'User');
             } catch (emailErr) {
                 console.error('Email send error:', emailErr);
             }
@@ -565,7 +565,7 @@ router.post('/forgot-password', async (req, res) => {
         // Look up user by email
         const { data: user, error } = await supabase
             .from('users')
-            .select('id, phone, email')
+            .select('id, phone, email, first_name')
             .eq('email', email)
             .single();
 
@@ -583,7 +583,7 @@ router.post('/forgot-password', async (req, res) => {
         // Send via email
         try {
             const emailService = require('../services/emailService');
-            await emailService.sendOTPEmail(user.email, otp);
+            await emailService.sendOTPEmail(user.email, otp, user.first_name || 'User');
         } catch (emailErr) {
             console.log('⚠️  Email not sent — use OTP from console above');
         }
