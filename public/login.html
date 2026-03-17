@@ -437,6 +437,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ email, password })
                 });
 
@@ -493,6 +494,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         contact: loginData.userEmail,
                         otp: otp,
@@ -509,6 +511,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
+                        credentials: 'include',
                         body: JSON.stringify({
                             email: loginData.email,
                             password: loginData.password
@@ -552,6 +555,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         contact: loginData.userEmail,
                         type: 'email'
@@ -632,6 +636,7 @@
                 const response = await fetch('/api/auth/forgot-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ email })
                 });
                 const data = await response.json();
@@ -682,6 +687,7 @@
                 const response = await fetch('/api/auth/reset-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({
                         email: forgotData.email,
                         otp: forgotData.otp,
