@@ -135,7 +135,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <a href="/register" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-users"></i>
                 <span>52 ગામ કડવા પટેલ સમાજ</span>
             </a>
@@ -640,8 +640,7 @@
         </div>
     </section>
 
-    <!-- Notification Container -->
-    <div id="notification" class="notification"></div>
+
 
     <script src="js/main.js"></script>
     <script>
@@ -659,10 +658,7 @@
             setupOtherInputHandlers();
             document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
 
-            // Mobile nav toggle
-            document.getElementById('navToggle')?.addEventListener('click', () => {
-                document.getElementById('navLinks').classList.toggle('active');
-            });
+
 
             // Load data
             try {

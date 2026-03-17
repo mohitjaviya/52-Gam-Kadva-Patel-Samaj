@@ -1,5 +1,13 @@
 // ===== Main JavaScript - Common functionality =====
 
+// HTML sanitizer to prevent XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 // Check session and update navigation
 async function checkSession() {
     try {
@@ -66,14 +74,11 @@ async function logout() {
 
 // Show notification
 function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existing = document.querySelector('.notification');
-    if (existing) {
-        existing.remove();
-    }
+    // Remove any existing dynamically-created notifications
+    document.querySelectorAll('.notification.dynamic-notification').forEach(el => el.remove());
 
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = `notification dynamic-notification ${type}`;
 
     let icon = 'fas fa-info-circle';
     if (type === 'success') icon = 'fas fa-check-circle';
@@ -127,6 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
                 navLinks.classList.remove('active');
             }
+        });
+
+        // Close nav menu when clicking a link (mobile)
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
         });
     }
 

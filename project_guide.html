@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52 ગામ કડવા પટેલ સમાજ — Project Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            background: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 50px;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; color: #0f172a; }
+
+        /* Cover / Title */
+        .cover {
+            text-align: center;
+            padding: 60px 20px 40px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #16a34a, #059669);
+            color: white;
+            border-radius: 16px;
+        }
+        .cover h1 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .cover .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        .cover .tagline {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin: 36px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #16a34a;
+            color: #16a34a;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 24px 0 10px;
+            color: #334155;
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 16px 0 8px;
+            color: #475569;
+        }
+
+        p { margin-bottom: 12px; }
+
+        hr {
+            border: none;
+            border-top: 2px dashed #e2e8f0;
+            margin: 30px 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 20px;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #f0fdf4;
+            color: #16a34a;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 14px;
+            border: 1px solid #d1fae5;
+        }
+        td {
+            padding: 9px 14px;
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        tr:nth-child(even) td { background: #f8fafc; }
+
+        /* Ordered Lists */
+        ol {
+            padding-left: 24px;
+            margin: 10px 0 16px;
+        }
+        ol li {
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        /* Unordered Lists */
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 10px 0 16px;
+        }
+        ul li {
+            padding: 4px 0 4px 20px;
+            position: relative;
+        }
+        ul li::before {
+            content: "•";
+            color: #16a34a;
+            font-weight: bold;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Callout boxes */
+        .callout {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+        }
+        .callout.info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+        .callout strong { color: #16a34a; }
+        .callout.info strong { color: #3b82f6; }
+
+        /* Step boxes */
+        .step-box {
+            background: #fafafa;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .step-box h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 0;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #16a34a;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Print styles */
+        @media print {
+            body { padding: 20px 30px; max-width: 100%; }
+            .cover { break-after: page; }
+            .step-box { break-inside: avoid; }
+            table { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cover -->
+    <div class="cover">
+        <h1>52 ગામ કડવા પટેલ સમાજ</h1>
+        <p class="subtitle">Community Directory — User Guide</p>
+        <p class="tagline">Connecting 78 villages across 9 talukas<br>Students • Professionals • Business Owners</p>
+    </div>
+
+    <!-- What is this software -->
+    <h2>📌 What is This Software?</h2>
+    <p>This is a <strong>Community Directory</strong> web application for the <strong>52 Gam Kadva Patel Samaj</strong>. It connects community members from <strong>78 villages</strong> across multiple talukas — Amreli, Babra, Lathi, Liliya, Kunkavav, Bhavnagar, Jasdan, Gondal, and Junagadh.</p>
+    <p>Members can register their profile with personal and professional details, making it easy for the community to <strong>find students, working professionals, and business owners</strong> from their villages.</p>
+
+    <hr>
+
+    <!-- Key Features -->
+    <h2>✨ Key Features</h2>
+    <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr><td>🏘️ Community Directory</td><td>Browse all registered members from 78 villages</td></tr>
+        <tr><td>🎓 Student Network</td><td>Find students by college, course, specialization</td></tr>
+        <tr><td>💼 Professional Connect</td><td>Find working professionals by company, field, city</td></tr>
+        <tr><td>🏪 Business Directory</td><td>Discover businesses run by community members</td></tr>
+        <tr><td>🔍 Smart Search</td><td>Filter by village + occupation + name combined</td></tr>
+        <tr><td>🔒 Privacy Protected</td><td>Female members' phone/email are hidden from public</td></tr>
+        <tr><td>🌐 Multi-Language</td><td>Supports English and Gujarati</td></tr>
+        <tr><td>📱 Mobile Friendly</td><td>Works on phones, tablets, and computers</td></tr>
+        <tr><td>📊 Admin Dashboard</td><td>Manage users, approve registrations, download reports</td></tr>
+    </table>
+
+    <hr>
+
+    <!-- How to Use -->
+    <h2>📋 How to Use — Step by Step Guide</h2>
+
+    <!-- Step 1 -->
+    <div class="step-box">
+        <h3><span class="step-number">1</span> Sign Up (Create Account)</h3>
+        <ol>
+            <li>Go to the website and click <strong>"Sign Up"</strong></li>
+            <li>Enter your <strong>phone number</strong> and <strong>email address</strong></li>
+            <li>Create a <strong>password</strong> (minimum 6 characters)</li>
+            <li>You will receive an <strong>OTP (One-Time Password)</strong> on your email</li>
+            <li>Enter the 6-digit OTP to verify your account</li>
+            <li>✅ Account created! You will be redirected to complete your profile</li>
+        </ol>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-box">
+        <h3><span class="step-number">2</span> Complete Registration (Fill Your Profile)</h3>
+        <p>After sign up, you need to fill your profile in <strong>3 simple steps</strong>:</p>
+
+        <h4>Step 2.1 — Personal Information</h4>
+        <ul>
+            <li>Select your <strong>Village</strong> from the dropdown (78 villages available)</li>
+            <li>Enter your <strong>First Name</strong>, <strong>Middle Name</strong>, <strong>Last Name</strong></li>
+            <li>Select <strong>Gender</strong> (Male / Female / Other)</li>
+            <li>Enter your <strong>Current Address</strong></li>
+        </ul>
+
+        <h4>Step 2.2 — Occupation Details</h4>
+        <p>Choose one of three categories:</p>
+        <table>
+            <tr><th>🎓 Student</th><th>💼 Job / Working</th><th>🏪 Business Owner</th></tr>
+            <tr>
+                <td>
+                    Course/Department<br>
+                    Specialization/Branch<br>
+                    College City & Name<br>
+                    Year of Study<br>
+                    Additional Info
+                </td>
+                <td>
+                    Graduation Details<br>
+                    Company Name<br>
+                    Designation/Position<br>
+                    Job Field & Working City<br>
+                    Experience (Years)
+                </td>
+                <td>
+                    Business Name<br>
+                    Business Type<br>
+                    Business Field<br>
+                    Business City & Address<br>
+                    Years in Business
+                </td>
+            </tr>
+        </table>
+
+        <h4>Step 2.3 — Review & Submit</h4>
+        <ul>
+            <li>Review all your details</li>
+            <li>Click <strong>"Submit"</strong> to send your profile for admin approval</li>
+            <li>✅ Your profile is submitted!</li>
+        </ul>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-box">
+        <h3><span class="step-number">3</span> Wait for Admin Approval</h3>
+        <ul>
+            <li>After submitting your registration, the <strong>admin will review</strong> your profile</li>
+            <li>You will receive an <strong>email notification</strong> when your profile is approved</li>
+            <li>⏳ Until approved, your profile will <strong>not appear</strong> in the search directory</li>
+        </ul>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-box">
+        <h3><span class="step-number">4</span> Login (After Approval)</h3>
+        <ol>
+            <li>Go to the <strong>Login</strong> page</li>
+            <li>Enter your <strong>Email</strong> and <strong>Password</strong></li>
+            <li>You may need to verify with an <strong>OTP</strong> sent to your email</li>
+            <li>✅ Once logged in, you can view your profile and search the directory</li>
+        </ol>
+        <div class="callout info">
+            <strong>💡 Forgot Password?</strong> Click "Forgot Password" on the login page → Enter your email → Receive OTP → Set a new password.
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-box">
+        <h3><span class="step-number">5</span> Search the Directory</h3>
+        <p>This is the <strong>main feature</strong>! You can search for community members using filters:</p>
+        <ol>
+            <li>Go to <strong>"Search Directory"</strong> from the navigation menu</li>
+            <li>Use the filter options:</li>
+        </ol>
+        <table>
+            <tr><th>Filter</th><th>What it does</th></tr>
+            <tr><td><strong>Village</strong></td><td>Select a specific village to see only that village's members</td></tr>
+            <tr><td><strong>Occupation</strong></td><td>Choose Student, Working Professional, or Business Owner</td></tr>
+            <tr><td><strong>Name</strong></td><td>Search by first, middle, or last name</td></tr>
+        </table>
+        <p>When you select an occupation, extra filters appear:</p>
+        <ul>
+            <li><strong>Student:</strong> College/University, Course/Department, Specialization</li>
+            <li><strong>Working Professional:</strong> Company Name, Job Field</li>
+            <li><strong>Business Owner:</strong> Business Type</li>
+        </ul>
+        <p>Click <strong>"Search"</strong> to get results. Click on any member card to view full details.</p>
+        <div class="callout">
+            <strong>🔑 Important:</strong> All filters work together! If you select a village AND occupation, only members matching BOTH will appear.
+        </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-box">
+        <h3><span class="step-number">6</span> View & Edit Your Profile</h3>
+        <ol>
+            <li>Click <strong>"My Profile"</strong> in the navigation</li>
+            <li>View all your registered details</li>
+            <li>Click <strong>"Edit Profile"</strong> to update your information</li>
+            <li>You can also <strong>change your password</strong> from the profile page</li>
+            <li>You can <strong>change your occupation type</strong> if it changes (e.g., student → job)</li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <!-- Admin Panel -->
+    <h2>🛡️ For Admins — Admin Panel Guide</h2>
+    <p>If you are an <strong>admin</strong>, you have access to the Admin Panel with these features:</p>
+
+    <h3>Dashboard Stats</h3>
+    <ul>
+        <li>Total registered users, approved users, pending approvals</li>
+        <li>Count of students, working professionals, business owners</li>
+        <li>Village-wise distribution chart</li>
+    </ul>
+
+    <h3>Managing Users</h3>
+    <table>
+        <tr><th>Tab</th><th>Purpose</th></tr>
+        <tr><td><strong>Pending</strong></td><td>View and approve/reject new registrations</td></tr>
+        <tr><td><strong>Approved</strong></td><td>View all approved members, toggle sensitive data access</td></tr>
+        <tr><td><strong>All Users</strong></td><td>View everyone with village and occupation filters</td></tr>
+    </table>
+
+    <h3>Admin Actions</h3>
+    <table>
+        <tr><th>Action</th><th>Description</th></tr>
+        <tr><td>✅ Approve</td><td>Approve a pending registration (sends approval email)</td></tr>
+        <tr><td>❌ Reject</td><td>Reject and delete a registration (sends rejection email)</td></tr>
+        <tr><td>👁️ View Details</td><td>See full profile of any user</td></tr>
+        <tr><td>🔐 Toggle Access</td><td>Grant/revoke access to view sensitive data</td></tr>
+        <tr><td>📥 Download CSV</td><td>Export user data filtered by village and occupation</td></tr>
+    </table>
+
+    <hr>
+
+    <!-- Privacy -->
+    <h2>🔒 Privacy & Security</h2>
+    <ul>
+        <li>Passwords are <strong>encrypted</strong> (bcrypt hashing)</li>
+        <li>Email verification via <strong>OTP</strong> required for login</li>
+        <li>Female members' <strong>phone and email are hidden</strong> from public search</li>
+        <li>Every registration requires <strong>admin approval</strong> before going live</li>
+        <li>Sensitive data access is <strong>controlled by admin</strong></li>
+    </ul>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>52 ગામ કડવા પટેલ સમાજ</strong></p>
+        <p>📧 52gamkps@gmail.com</p>
+        <p>© 2025 All rights reserved.</p>
+    </div>
+
+</body>
+</html>

@@ -395,6 +395,9 @@
                 <button class="btn" id="editBtn" onclick="toggleEditMode()">
                     <i class="fas fa-edit"></i> Edit
                 </button>
+                <button class="btn" onclick="showChangePasswordModal()" style="background: var(--gray-700);">
+                    <i class="fas fa-key"></i> Password
+                </button>
             </div>
         </div>
 
@@ -674,7 +677,7 @@
                         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <div class="form-group">
                             <label>Experience (Years)</label>
-                            <input type="number" id="editExperienceYears" class="form-control" min="0" placeholder="0">
+                            <input type="number" id="editExperienceYears" class="form-control" min="0" step="any" placeholder="0">
                         </div>
                     </div>
                     <div class="form-group">
@@ -729,7 +732,7 @@
                         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
                         <div class="form-group">
                             <label>Years in Business</label>
-                            <input type="number" id="editYearsInBusiness" class="form-control" min="0" placeholder="0">
+                            <input type="number" id="editYearsInBusiness" class="form-control" min="0" step="any" placeholder="0">
                         </div>
                         <div class="form-group">
                             <label>Number of Employees</label>
@@ -759,8 +762,37 @@
         </div>
     </div>
 
-    <!-- Notification Container -->
-    <div id="notification" class="notification"></div>
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closePasswordModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-key"></i> Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" class="form-control" required placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" class="form-control" required minlength="6" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" class="form-control" required minlength="6" placeholder="Confirm new password">
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
     <script>
@@ -1421,7 +1453,7 @@
                 const card = selectedRadio.closest('.occupation-option').querySelector('.occupation-card');
                 if (card) {
                     card.style.borderColor = 'var(--primary-color)';
-                    card.style.background = 'rgba(99, 102, 241, 0.05)';
+                    card.style.background = 'rgba(22, 163, 74, 0.05)';
                 }
             }
         }
@@ -1463,21 +1495,16 @@
                 if (type === 'student') {
                     // Set course first, then load specializations
                     setSelectValue('editCourse', 'editCourseOther', details.department);
-                    setTimeout(() => {
-                        loadSpecializations(details.department, 'editSpecialization', 'editSpecializationOther');
-                        setTimeout(() => {
-                            setSelectValue('editSpecialization', 'editSpecializationOther', details.sub_department);
-                        }, 100);
-                    }, 100);
+                    loadSpecializations(details.department, 'editSpecialization', 'editSpecializationOther');
+                    // Wait for specializations to populate, then set value
+                    requestAnimationFrame(() => {
+                        setSelectValue('editSpecialization', 'editSpecializationOther', details.sub_department);
+                    });
 
                     // Set city and load colleges
                     setSelectValue('editStudentCity', 'editStudentCityOther', details.college_city);
-                    setTimeout(() => {
-                        loadColleges(details.college_city, 'editCollegeName', 'editCollegeNameOther', details.department);
-                        setTimeout(() => {
-                            setSelectValue('editCollegeName', 'editCollegeNameOther', details.college_name);
-                        }, 300);
-                    }, 300);
+                    await loadColleges(details.college_city, 'editCollegeName', 'editCollegeNameOther', details.department);
+                    setSelectValue('editCollegeName', 'editCollegeNameOther', details.college_name);
 
                     document.getElementById('editYearOfStudy').value = details.year_of_study || '';
                     document.getElementById('editExpectedGraduation').value = details.expected_graduation || '';
@@ -1488,12 +1515,8 @@
                     document.getElementById('editGradYear').value = details.graduation_year || '';
 
                     setSelectValue('editJobCollegeCity', 'editJobCollegeCityOther', details.college_city);
-                    setTimeout(() => {
-                        loadColleges(details.college_city, 'editJobCollegeName', 'editJobCollegeNameOther', details.department);
-                        setTimeout(() => {
-                            setSelectValue('editJobCollegeName', 'editJobCollegeNameOther', details.college_name);
-                        }, 300);
-                    }, 300);
+                    await loadColleges(details.college_city, 'editJobCollegeName', 'editJobCollegeNameOther', details.department);
+                    setSelectValue('editJobCollegeName', 'editJobCollegeNameOther', details.college_name);
 
                     // Job details
                     document.getElementById('editCompanyName').value = details.company_name || '';
@@ -1639,6 +1662,60 @@
         // Hide radio buttons but keep labels clickable
         document.querySelectorAll('.occupation-option input[type="radio"]').forEach(radio => {
             radio.style.display = 'none';
+        });
+
+        // ===== Change Password Functions =====
+        function showChangePasswordModal() {
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('show');
+            document.getElementById('changePasswordForm').reset();
+        }
+
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (newPassword !== confirmNewPassword) {
+                showNotification('New passwords do not match', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/change-password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Password changed successfully', 'success');
+                    closePasswordModal();
+                } else {
+                    showNotification(data.message || 'Failed to change password', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to change password', 'error');
+            }
+        });
+
+        // Close password modal on outside click
+        document.getElementById('passwordModal').addEventListener('click', (e) => {
+            if (e.target.id === 'passwordModal') {
+                closePasswordModal();
+            }
         });
     </script>
 </body>

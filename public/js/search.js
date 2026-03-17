@@ -177,33 +177,33 @@ function displayResults(users) {
                 detailsHTML = `
                     <div class="user-detail">
                         <i class="fas fa-book"></i>
-                        <span>${user.occupationDetails.department || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.department) || '-'}</span>
                     </div>
                     <div class="user-detail">
                         <i class="fas fa-university"></i>
-                        <span>${user.occupationDetails.college_name || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.college_name) || '-'}</span>
                     </div>
                 `;
             } else if (user.occupation_type === 'job') {
                 detailsHTML = `
                     <div class="user-detail">
                         <i class="fas fa-building"></i>
-                        <span>${user.occupationDetails.company_name || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.company_name) || '-'}</span>
                     </div>
                     <div class="user-detail">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>${user.occupationDetails.working_city || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.working_city) || '-'}</span>
                     </div>
                 `;
             } else if (user.occupation_type === 'business') {
                 detailsHTML = `
                     <div class="user-detail">
                         <i class="fas fa-store"></i>
-                        <span>${user.occupationDetails.business_name || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.business_name) || '-'}</span>
                     </div>
                     <div class="user-detail">
                         <i class="fas fa-tag"></i>
-                        <span>${user.occupationDetails.business_type || '-'}</span>
+                        <span>${escapeHtml(user.occupationDetails.business_type) || '-'}</span>
                     </div>
                 `;
             }
@@ -215,8 +215,8 @@ function displayResults(users) {
                     <i class="fas fa-user"></i>
                 </div>
                 <div>
-                    <div class="user-name">${user.first_name} ${user.middle_name || ''} ${user.last_name}</div>
-                    <div class="user-village"><i class="fas fa-map-marker-alt"></i> ${user.village_name}</div>
+                    <div class="user-name">${escapeHtml(user.first_name)} ${escapeHtml(user.middle_name) || ''} ${escapeHtml(user.last_name)}</div>
+                    <div class="user-village"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(user.village_name)}</div>
                 </div>
             </div>
             <div class="user-card-body">
@@ -316,38 +316,38 @@ async function showUserDetail(userId) {
                     occupationHTML = `
                         <div class="detail-section">
                             <h4><i class="fas fa-graduation-cap"></i> Education</h4>
-                            <p><strong>Course:</strong> ${user.occupationDetails.department || '-'}</p>
-                            <p><strong>Specialization:</strong> ${user.occupationDetails.sub_department || '-'}</p>
-                            <p><strong>College:</strong> ${user.occupationDetails.college_name || '-'}</p>
-                            <p><strong>City:</strong> ${user.occupationDetails.college_city || '-'}</p>
-                            <p><strong>Year:</strong> ${user.occupationDetails.year_of_study || '-'}</p>
-                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
+                            <p><strong>Course:</strong> ${escapeHtml(user.occupationDetails.department) || '-'}</p>
+                            <p><strong>Specialization:</strong> ${escapeHtml(user.occupationDetails.sub_department) || '-'}</p>
+                            <p><strong>College:</strong> ${escapeHtml(user.occupationDetails.college_name) || '-'}</p>
+                            <p><strong>City:</strong> ${escapeHtml(user.occupationDetails.college_city) || '-'}</p>
+                            <p><strong>Year:</strong> ${escapeHtml(user.occupationDetails.year_of_study) || '-'}</p>
+                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${escapeHtml(user.occupationDetails.additional_info)}</p>` : ''}
                         </div>
                     `;
                 } else if (user.occupation_type === 'job') {
                     occupationHTML = `
                         <div class="detail-section">
                             <h4><i class="fas fa-briefcase"></i> Work</h4>
-                            <p><strong>Company:</strong> ${user.occupationDetails.company_name || '-'}</p>
-                            <p><strong>Designation:</strong> ${user.occupationDetails.designation || '-'}</p>
-                            <p><strong>Field:</strong> ${user.occupationDetails.field || '-'}</p>
-                            <p><strong>Working City:</strong> ${user.occupationDetails.working_city || '-'}</p>
+                            <p><strong>Company:</strong> ${escapeHtml(user.occupationDetails.company_name) || '-'}</p>
+                            <p><strong>Designation:</strong> ${escapeHtml(user.occupationDetails.designation) || '-'}</p>
+                            <p><strong>Field:</strong> ${escapeHtml(user.occupationDetails.field) || '-'}</p>
+                            <p><strong>Working City:</strong> ${escapeHtml(user.occupationDetails.working_city) || '-'}</p>
                             <p><strong>Experience:</strong> ${user.occupationDetails.experience_years || 0} years</p>
-                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
+                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${escapeHtml(user.occupationDetails.additional_info)}</p>` : ''}
                         </div>
                     `;
                 } else if (user.occupation_type === 'business') {
                     occupationHTML = `
                         <div class="detail-section">
                             <h4><i class="fas fa-store"></i> Business</h4>
-                            <p><strong>Business Name:</strong> ${user.occupationDetails.business_name || '-'}</p>
-                            <p><strong>Type:</strong> ${user.occupationDetails.business_type || '-'}</p>
-                            <p><strong>Field:</strong> ${user.occupationDetails.business_field || '-'}</p>
-                            <p><strong>City:</strong> ${user.occupationDetails.business_city || '-'}</p>
-                            ${user.occupationDetails.business_address ? `<p><strong>Address:</strong> ${user.occupationDetails.business_address}</p>` : ''}
+                            <p><strong>Business Name:</strong> ${escapeHtml(user.occupationDetails.business_name) || '-'}</p>
+                            <p><strong>Type:</strong> ${escapeHtml(user.occupationDetails.business_type) || '-'}</p>
+                            <p><strong>Field:</strong> ${escapeHtml(user.occupationDetails.business_field) || '-'}</p>
+                            <p><strong>City:</strong> ${escapeHtml(user.occupationDetails.business_city) || '-'}</p>
+                            ${user.occupationDetails.business_address ? `<p><strong>Address:</strong> ${escapeHtml(user.occupationDetails.business_address)}</p>` : ''}
                             <p><strong>Years in Business:</strong> ${user.occupationDetails.years_in_business || 0}</p>
-                            ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${user.occupationDetails.website}" target="_blank">${user.occupationDetails.website}</a></p>` : ''}
-                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${user.occupationDetails.additional_info}</p>` : ''}
+                            ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${escapeHtml(user.occupationDetails.website)}" target="_blank">${escapeHtml(user.occupationDetails.website)}</a></p>` : ''}
+                            ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${escapeHtml(user.occupationDetails.additional_info)}</p>` : ''}
                         </div>
                     `;
                 }
@@ -359,18 +359,18 @@ async function showUserDetail(userId) {
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="user-detail-info">
-                        <h2>${user.first_name} ${user.middle_name || ''} ${user.last_name}</h2>
-                        <p><i class="fas fa-map-marker-alt"></i> ${user.village_name}</p>
+                        <h2>${escapeHtml(user.first_name)} ${escapeHtml(user.middle_name) || ''} ${escapeHtml(user.last_name)}</h2>
+                        <p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(user.village_name)}</p>
                         ${getOccupationBadge(user.occupation_type)}
                     </div>
                 </div>
                 <div class="user-detail-body">
                     <div class="detail-section">
                         <h4><i class="fas fa-user"></i> Personal Details</h4>
-                        <p><strong>Gender:</strong> ${user.gender}</p>
-                        <p><strong>Address:</strong> ${user.current_address}</p>
-                        ${user.phone ? `<p><strong>Phone:</strong> ${user.phone}</p>` : ''}
-                        ${user.email ? `<p><strong>Email:</strong> ${user.email}</p>` : ''}
+                        <p><strong>Gender:</strong> ${escapeHtml(user.gender)}</p>
+                        <p><strong>Address:</strong> ${escapeHtml(user.current_address)}</p>
+                        ${user.phone ? `<p><strong>Phone:</strong> ${escapeHtml(user.phone)}</p>` : ''}
+                        ${user.email ? `<p><strong>Email:</strong> ${escapeHtml(user.email)}</p>` : ''}
                     </div>
                     ${occupationHTML}
                 </div>
@@ -391,6 +391,13 @@ function closeModal() {
 // Close modal on outside click
 document.getElementById('userModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'userModal') {
+        closeModal();
+    }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
         closeModal();
     }
 });
