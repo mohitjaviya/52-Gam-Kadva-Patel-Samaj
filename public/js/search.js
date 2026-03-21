@@ -362,8 +362,8 @@ async function showUserDetail(userId) {
             const isMe = currentUser.id === user.id;
             const messageActionHTML = !isMe ? `
                 <div class="user-card-actions">
-                    <a href="/messages?to=${user.id}" class="btn btn-primary btn-block" style="margin-top: 1rem;">
-                        <i class="fas fa-paper-plane"></i> Send Message
+                    <a href="/messages?to=${user.id}" class="btn btn-message btn-block" style="margin-top: 1rem;">
+                        <i class="fas fa-comment-dots"></i> Send Message
                     </a>
                 </div>
             ` : '';
