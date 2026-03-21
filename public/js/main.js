@@ -21,6 +21,8 @@ async function checkSession() {
         const profileLink = document.getElementById('profileLink');
         const adminLink = document.getElementById('adminLink');
         const logoutLink = document.getElementById('logoutLink');
+        const messagesLink = document.getElementById('messagesLink');
+        const messageFab = document.getElementById('messageFab');
 
         if (data.loggedIn && data.user) {
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -29,10 +31,15 @@ async function checkSession() {
             if (loginLink) loginLink.style.display = 'none';
             if (profileLink) profileLink.style.display = 'block';
             if (logoutLink) logoutLink.style.display = 'block';
+            if (messagesLink) messagesLink.style.display = 'block';
+            if (messageFab) messageFab.style.display = 'flex';
 
             if (data.user.isAdmin && adminLink) {
                 adminLink.style.display = 'block';
             }
+
+            // Load unread messages count
+            loadUnreadCount();
 
             return data.user;
         } else {
@@ -43,6 +50,8 @@ async function checkSession() {
             if (profileLink) profileLink.style.display = 'none';
             if (adminLink) adminLink.style.display = 'none';
             if (logoutLink) logoutLink.style.display = 'none';
+            if (messagesLink) messagesLink.style.display = 'none';
+            if (messageFab) messageFab.style.display = 'none';
 
             return null;
         }
@@ -147,6 +156,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load public stats on home page
     loadPublicStats();
+
+    // Prevent FAB from overlapping footer
+    window.addEventListener('scroll', () => {
+        const fab = document.getElementById('messageFab');
+        const footer = document.querySelector('.footer');
+        
+        if (fab && footer && fab.style.display !== 'none') {
+            const footerRect = footer.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            if (footerRect.top < viewportHeight) {
+                const overlap = viewportHeight - footerRect.top;
+                fab.style.bottom = `calc(2rem + ${overlap}px)`;
+            } else {
+                fab.style.bottom = '2rem';
+            }
+        }
+    });
 });
 
 // Load public stats for home page
@@ -256,4 +283,26 @@ function getInitials(firstName, lastName) {
     const first = firstName ? firstName.charAt(0).toUpperCase() : '';
     const last = lastName ? lastName.charAt(0).toUpperCase() : '';
     return first + last;
+}
+
+// Load unread messages count
+async function loadUnreadCount() {
+    try {
+        const response = await fetch('/api/messages/unread-count', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        const badges = document.querySelectorAll('.nav-unread-badge');
+        badges.forEach(badge => {
+            if (data.success && data.unreadCount > 0) {
+                badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        });
+    } catch (error) {
+        console.error('Error loading unread count:', error);
+    }
 }
