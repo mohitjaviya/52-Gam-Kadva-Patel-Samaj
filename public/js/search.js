@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadVillages();
     searchUsers(); // Load initial results
 
+    const params = new URLSearchParams(window.location.search);
+    const viewUserId = params.get('view');
+    if (viewUserId) {
+        showUserDetail(parseInt(viewUserId));
+    }
+
     // Setup search on Enter key for all search inputs
     ['searchName', 'searchCollege', 'searchCourse', 'searchSpecialization', 'searchCompany', 'searchJobField', 'searchBusinessType'].forEach(id => {
         const el = document.getElementById(id);
@@ -352,6 +358,15 @@ async function showUserDetail(userId) {
                     `;
                 }
             }
+            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            const isMe = currentUser.id === user.id;
+            const messageActionHTML = !isMe ? `
+                <div class="user-card-actions">
+                    <a href="/messages?to=${user.id}" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </a>
+                </div>
+            ` : '';
 
             content.innerHTML = `
                 <div class="user-detail-header">
@@ -364,6 +379,7 @@ async function showUserDetail(userId) {
                         ${getOccupationBadge(user.occupation_type)}
                     </div>
                 </div>
+                ${messageActionHTML}
                 <div class="user-detail-body">
                     <div class="detail-section">
                         <h4><i class="fas fa-user"></i> Personal Details</h4>

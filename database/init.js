@@ -315,6 +315,35 @@ const createTables = () => {
         )
     `);
 
+    // Messages table for user-to-user messaging
+    dbWrapper.exec(`
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sender_id INTEGER NOT NULL,
+            receiver_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            is_read INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Conversation status table for message requests
+    dbWrapper.exec(`
+        CREATE TABLE IF NOT EXISTS conversation_status (
+            user1_id INTEGER NOT NULL,
+            user2_id INTEGER NOT NULL,
+            status TEXT NOT NULL CHECK(status IN ('pending', 'accepted', 'denied')),
+            action_user_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (user1_id, user2_id),
+            FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `);
+
     console.log('All tables created successfully!');
 };
 

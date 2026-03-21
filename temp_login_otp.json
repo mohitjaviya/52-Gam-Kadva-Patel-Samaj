@@ -1,0 +1,13 @@
+[
+  {
+    "id": 378,
+    "user_id": 85,
+    "phone": "9999999999",
+    "email": "test1@example.com",
+    "otp": "949236",
+    "type": "email",
+    "expires_at": "2026-03-21T14:32:28.571+00:00",
+    "is_used": false,
+    "created_at": "2026-03-21T14:22:28.684257+00:00"
+  }
+]

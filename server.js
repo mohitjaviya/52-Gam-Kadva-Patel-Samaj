@@ -47,6 +47,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const dataRoutes = require('./routes/data');
+const messageRoutes = require('./routes/messages');
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
@@ -96,6 +97,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Authentication middleware - require login for protected pages
 const requireAuth = (req, res, next) => {
@@ -189,6 +191,10 @@ app.get('/', requireRegistration, (req, res) => {
 
 app.get('/search', requireApproved, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search.html'));
+});
+
+app.get('/messages', requireApproved, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'messages.html'));
 });
 
 app.get('/profile', requireRegistration, (req, res) => {

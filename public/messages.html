@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#16A34A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Messages - 52 ગામ કડવા પટેલ સમાજ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/translations.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-users"></i>
+                <span>52 ગામ કડવા પટેલ સમાજ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/" data-i18n="nav_home">Home</a>
+                <a href="/search" data-i18n="nav_search">Search Directory</a>
+                <a href="/login" id="loginLink" data-i18n="nav_login">Login</a>
+                <a href="/register" id="registerLink" data-i18n="nav_register">Register</a>
+                <a href="/profile" id="profileLink" style="display: none;" data-i18n="nav_profile">My Profile</a>
+                <a href="/messages" class="active">Messages <span class="nav-unread-badge" id="navUnreadBadge" style="display:none;">0</span></a>
+                <a href="/admin" id="adminLink" style="display: none;" data-i18n="nav_admin">Admin</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()" data-i18n="nav_logout">Logout</a>
+                <button class="lang-switcher" onclick="showLanguageModal()">
+                    <i class="fas fa-globe"></i>
+                    <span class="current-lang" id="currentLang">EN</span>
+                </button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Messages Section -->
+    <section class="messages-section">
+        <div class="messaging-container">
+            <!-- Conversations List (Left Panel) -->
+            <div class="conversations-panel" id="conversationsPanel">
+                <div class="conversations-header">
+                    <h2><i class="fas fa-comments"></i> Messages</h2>
+                </div>
+                <div class="messages-tabs">
+                    <button class="message-tab active" id="tabConversations" onclick="switchMessageTab('conversations')">Messages</button>
+                    <button class="message-tab" id="tabRequests" onclick="switchMessageTab('requests')">Requests <span id="requestsCountBadge" class="tab-badge" style="display:none;">0</span></button>
+                </div>
+                <div class="conversations-list" id="conversationsList">
+                    <!-- Conversations loaded by JS -->
+                </div>
+                <div class="conversations-empty" id="conversationsEmpty" style="display: none;">
+                    <i class="fas fa-envelope-open"></i>
+                    <p>No conversations yet</p>
+                    <span>Search the directory and send a message to start a conversation!</span>
+                    <a href="/search" class="btn btn-primary" style="margin-top: 1rem;"><i class="fas fa-search"></i> Search Directory</a>
+                </div>
+            </div>
+
+            <!-- Chat View (Right Panel) -->
+            <div class="chat-panel" id="chatPanel">
+                <!-- Placeholder when no chat is selected -->
+                <div class="chat-placeholder" id="chatPlaceholder">
+                    <i class="fas fa-comments"></i>
+                    <h3>Select a conversation</h3>
+                    <p>Choose a conversation from the list or search the directory to start a new one</p>
+                </div>
+
+                <!-- Active Chat -->
+                <div class="chat-active" id="chatActive" style="display: none;">
+                    <div class="chat-header" id="chatHeader">
+                        <button class="chat-back-btn" id="chatBackBtn" onclick="showConversations()">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-user-info">
+                            <div class="chat-user-avatar" id="chatUserAvatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="chat-user-name" id="chatUserName"></div>
+                                <div class="chat-user-occupation" id="chatUserOccupation"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages populated by JS -->
+                    </div>
+                    
+                    <!-- Request Actions (Allow / Deny) -->
+                    <div class="chat-request-actions" id="chatRequestActions" style="display: none;">
+                        <p>Do you want to accept message requests from this person?</p>
+                        <div class="request-btn-group">
+                            <button class="btn btn-secondary" onclick="handleMessageRequest('deny')">Deny</button>
+                            <button class="btn btn-primary" onclick="handleMessageRequest('allow')">Allow</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-compose" id="chatComposeArea">
+                        <form id="messageForm" onsubmit="sendMessage(event)">
+                            <div class="compose-input-wrapper">
+                                <textarea id="messageInput" placeholder="Type your message..." rows="1"
+                                    maxlength="2000" onkeydown="handleMessageKeydown(event)"></textarea>
+                                <button type="submit" class="compose-send-btn" id="sendBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 52 ગામ કડવા પટેલ સમાજ. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/messages.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('language') || 'en';
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+        });
+    </script>
+</body>
+
+</html>
