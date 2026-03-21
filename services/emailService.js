@@ -3,7 +3,6 @@
 // Brevo: 300/day | Resend: 100/day
 
 // Demo mode flag
-const DEMO_MODE = process.env.EMAIL_DEMO_MODE === 'true';
 
 // Sender config
 const SENDER_EMAIL = 'noreply@52gamkps.in';
@@ -180,10 +179,7 @@ async function sendOTPEmail(email, otp, name = 'User') {
     </body>
     </html>`;
 
-    if (DEMO_MODE) {
-        console.log(`📧 [DEMO] To: ${email} | OTP: ${otp}`);
-        return { success: true, message: 'Email sent (Demo Mode)', demoOTP: otp };
-    }
+
     return sendEmail(email, subject, html);
 }
 
@@ -206,10 +202,7 @@ async function sendWelcomeEmail(email, name) {
     </body>
     </html>`;
 
-    if (DEMO_MODE) {
-        console.log(`📧 [DEMO] Welcome email to: ${email}`);
-        return { success: true, message: 'Welcome email sent (Demo Mode)' };
-    }
+
     return sendEmail(email, subject, html);
 }
 
@@ -244,11 +237,8 @@ async function sendApprovalEmail(email, name, approved = true) {
     </body>
     </html>`;
 
-    if (DEMO_MODE) {
-        console.log(`📧 [DEMO] Approval email to: ${email}, Approved: ${approved}`);
-        return { success: true, message: 'Approval email sent (Demo Mode)' };
-    }
+
     return sendEmail(email, subject, html);
 }
 
-module.exports = { sendOTPEmail, sendWelcomeEmail, sendApprovalEmail, DEMO_MODE };
+module.exports = { sendOTPEmail, sendWelcomeEmail, sendApprovalEmail };

@@ -90,7 +90,7 @@ router.post('/signup', async (req, res) => {
                 .eq('id', existingUser.id);
 
             // Generate and store OTP
-            const otp = process.env.EMAIL_DEMO_MODE === 'true' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
             await storeOTP(existingUser.id, phone, email, otp, 'email');
 
             // Send OTP via email (non-blocking to avoid timeout)
@@ -132,7 +132,7 @@ router.post('/signup', async (req, res) => {
         }
 
         // Generate OTP
-        const otp = process.env.EMAIL_DEMO_MODE === 'true' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await storeOTP(newUser.id, phone, email, otp, 'email');
 
         // Send OTP (non-blocking to avoid timeout)
@@ -220,7 +220,7 @@ router.post('/login', async (req, res) => {
 
         // OTP verification required for login
         // Generate and send OTP
-        const otp = process.env.EMAIL_DEMO_MODE === 'true' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await storeOTP(user.id, user.phone, user.email, otp, 'email');
 
         // Log OTP to console (since nodemailer is not configured)
@@ -319,7 +319,7 @@ router.post('/resend-otp', async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found.' });
         }
 
-        const otp = process.env.EMAIL_DEMO_MODE === 'true' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpType = type || 'email';
         await storeOTP(user.id, user.phone, user.email, otp, otpType);
 
@@ -575,7 +575,7 @@ router.post('/forgot-password', async (req, res) => {
         }
 
         // Generate OTP
-        const otp = process.env.EMAIL_DEMO_MODE === 'true' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await storeOTP(user.id, user.phone, user.email, otp, 'email');
 
         console.log(`\n🔑 Password Reset OTP for ${user.email}: ${otp}\n`);

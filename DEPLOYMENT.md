@@ -18,7 +18,6 @@
    EMAIL_USER=<your-email@gmail.com>
    EMAIL_PASS=<your-app-password>
    FROM_EMAIL=Your Community <your-email@gmail.com>
-   EMAIL_DEMO_MODE=false
    SMS_DEMO_MODE=true
    ADMIN_EMAIL=<admin@yourdomain.com>
    ADMIN_PASSWORD=<your-secure-password>
@@ -83,7 +82,6 @@ sudo apt install nginx
 | SESSION_SECRET | 64+ char random string | abc123... |
 | EMAIL_USER | Gmail address | your-email@gmail.com |
 | EMAIL_PASS | Gmail App Password | xxxx xxxx xxxx xxxx |
-| EMAIL_DEMO_MODE | Enable real emails | false |
 | SMS_DEMO_MODE | SMS (keep true unless Twilio setup) | true |
 | ADMIN_EMAIL | Admin login email | admin@community.com |
 | ADMIN_PASSWORD | Admin password | YourSecurePassword123 |
