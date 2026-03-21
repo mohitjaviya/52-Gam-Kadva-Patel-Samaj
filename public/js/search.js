@@ -361,8 +361,8 @@ async function showUserDetail(userId) {
             const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
             const isMe = currentUser.id === user.id;
             const messageActionHTML = !isMe ? `
-                <div class="user-card-actions" style="margin-bottom: 1.5rem;">
-                    <a href="/messages?to=${user.id}" class="btn btn-message btn-block" style="margin-top: 1rem;">
+                <div class="user-card-actions" style="padding: 1rem 0 1.5rem 0;">
+                    <a href="/messages?to=${user.id}" class="btn btn-message btn-block">
                         <i class="fas fa-comment-dots"></i> Send Message
                     </a>
                 </div>
