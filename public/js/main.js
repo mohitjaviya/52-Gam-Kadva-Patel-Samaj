@@ -31,8 +31,14 @@ async function checkSession() {
             if (loginLink) loginLink.style.display = 'none';
             if (profileLink) profileLink.style.display = 'block';
             if (logoutLink) logoutLink.style.display = 'block';
-            if (messagesLink) messagesLink.style.display = 'block';
-            if (messageFab) messageFab.style.display = 'flex';
+            
+            // Only show messages if registration is completed
+            if (messagesLink) {
+                messagesLink.style.display = data.user.registrationCompleted ? 'block' : 'none';
+            }
+            if (messageFab) {
+                messageFab.style.display = data.user.registrationCompleted ? 'flex' : 'none';
+            }
 
             if (data.user.isAdmin && adminLink) {
                 adminLink.style.display = 'block';
