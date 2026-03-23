@@ -1803,7 +1803,8 @@ input::-webkit-textfield-decoration-container button {
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
@@ -1833,6 +1834,7 @@ input::-webkit-textfield-decoration-container button {
 .admin-table .actions {
     display: flex;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .table-filters {
