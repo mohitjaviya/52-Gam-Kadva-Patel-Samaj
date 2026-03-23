@@ -16,7 +16,9 @@ if (supabaseUrl && supabaseKey) {
     console.warn('⚠️  Supabase credentials not found in .env — Supabase client not initialized');
 }
 
-const dbPath = path.join(__dirname, 'community.db');
+// On Vercel, the filesystem is read-only except for the /tmp directory
+const basePath = process.env.VERCEL ? '/tmp' : __dirname;
+const dbPath = path.join(basePath, 'community.db');
 
 let db = null;
 let SQL = null;
@@ -994,7 +996,7 @@ const createTestUsers = () => {
 const initDatabase = async () => {
     SQL = await initSqlJs();
 
-    // Try to load existing database
+    // Load from file if exists (or create new if in /tmp on Vercel)
     if (fs.existsSync(dbPath)) {
         const fileBuffer = fs.readFileSync(dbPath);
         db = new SQL.Database(fileBuffer);
