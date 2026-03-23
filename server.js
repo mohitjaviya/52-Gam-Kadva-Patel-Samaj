@@ -18,7 +18,12 @@ initDatabase().then(() => {
 
     // Start automated cleanup services (e.g. 3-month message auto-delete)
     const { startCleanupJob } = require('./services/cleanupService');
-    startCleanupJob();
+    // Only run the continuous loop if NOT on Vercel (Vercel uses Cron endpoint below)
+    if (!process.env.VERCEL) {
+        startCleanupJob();
+    } else {
+        console.log('⚡ Vercel environment detected. Background cleanup loop disabled in favor of Cron API.');
+    }
 }).catch(err => {
     console.error('Failed to initialize database:', err);
     process.exit(1);
@@ -110,6 +115,22 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/messages', messageRoutes);
+
+// Vercel Cron Endpoint for automated cleanup
+app.get('/api/cron/cleanup', async (req, res) => {
+    // Check Authorization header for Vercel's secure cron request
+    if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+        return res.status(401).json({ success: false, message: 'Unauthorized execution' });
+    }
+    
+    try {
+        const { cleanupOldMessages } = require('./services/cleanupService');
+        const result = await cleanupOldMessages();
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // Authentication middleware - require login for protected pages
 const requireAuth = (req, res, next) => {

@@ -30,12 +30,14 @@ async function cleanupOldMessages() {
 
         if (error) {
             console.error('❌ Failed to clean up old messages:', error.message);
-            return;
+            return { success: false, error: error.message };
         }
 
         console.log(`✅ Cleanup complete. Deleted ${count || 0} messages older than 3 months.`);
+        return { success: true, deletedCount: count || 0 };
     } catch (error) {
         console.error('❌ Unexpected error during msg cleanup:', error);
+        return { success: false, error: error.message };
     }
 }
 
