@@ -15,6 +15,10 @@ let dbReady = false;
 initDatabase().then(() => {
     dbReady = true;
     console.log('Database ready!');
+
+    // Start automated cleanup services (e.g. 3-month message auto-delete)
+    const { startCleanupJob } = require('./services/cleanupService');
+    startCleanupJob();
 }).catch(err => {
     console.error('Failed to initialize database:', err);
     process.exit(1);
