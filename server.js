@@ -65,6 +65,10 @@ app.get('/api/health', async (req, res) => {
     } catch (e) {
         supabaseError = e.message;
     }
+    
+    // Print a tiny heartbeat log so you can see UptimeRobot working in Render logs!
+    console.log(`[${new Date().toLocaleTimeString()}] 💓 Health check pinged!`);
+    
     res.json({
         status: 'running',
         supabaseConnected: supabaseOk,
