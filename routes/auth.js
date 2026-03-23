@@ -93,9 +93,13 @@ router.post('/signup', async (req, res) => {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             await storeOTP(existingUser.id, phone, email, otp, 'email');
 
-            // Send OTP via email (non-blocking to avoid timeout)
+            // Send email (blocking on Vercel to ensure it sends)
             const emailService = require('../services/emailService');
-            emailService.sendOTPEmail(email, otp, existingUser.first_name || 'User').catch(err => console.error('Email send error:', err));
+            try {
+                await emailService.sendOTPEmail(email, otp, existingUser.first_name || 'User');
+            } catch (err) {
+                console.error('Email send error:', err);
+            }
 
             return res.json({
                 success: true,
@@ -135,9 +139,13 @@ router.post('/signup', async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await storeOTP(newUser.id, phone, email, otp, 'email');
 
-        // Send OTP (non-blocking to avoid timeout)
+        // Send OTP (blocking on Vercel to ensure it sends before function shuts down)
         const emailService2 = require('../services/emailService');
-        emailService2.sendOTPEmail(email, otp).catch(err => console.error('Email send error:', err));
+        try {
+            await emailService2.sendOTPEmail(email, otp);
+        } catch (err) {
+            console.error('Email send error:', err);
+        }
 
         res.json({
             success: true,
@@ -226,9 +234,13 @@ router.post('/login', async (req, res) => {
         // Log OTP to console (since nodemailer is not configured)
         console.log(`\n🔑 OTP for ${user.email}: ${otp}\n`);
 
-        // Send email (non-blocking to avoid timeout)
+        // Send email (blocking on Vercel to avoid timeout/early exit)
         const emailService = require('../services/emailService');
-        emailService.sendOTPEmail(user.email, otp, user.first_name || 'User').catch(err => console.log('⚠️  Email not sent:', err.message));
+        try {
+            await emailService.sendOTPEmail(user.email, otp, user.first_name || 'User');
+        } catch (err) {
+            console.log('⚠️  Email not sent:', err.message);
+        }
 
         return res.json({
             success: true,
