@@ -33,8 +33,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Trust proxy for Render/Heroku (needed for secure cookies behind HTTPS)
 app.set('trust proxy', 1);
 
+// Import custom Supabase session store
+const SupabaseStore = require('./services/supabaseSessionStore');
+
 // Session configuration
 app.use(session({
+    store: new SupabaseStore(),
     secret: process.env.SESSION_SECRET || 'dev-only-change-in-production',
     resave: false,
     saveUninitialized: false,
