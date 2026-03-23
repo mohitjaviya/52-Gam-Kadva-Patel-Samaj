@@ -333,13 +333,25 @@ img {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--gray-900);
+    margin-bottom: 0.75rem;
+}
+
+.section-header {
+    text-align: center;
     margin-bottom: 3rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--gray-500);
+    margin-top: 0.5rem;
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: 1.75rem;
 }
 
 .feature-card {
@@ -347,25 +359,89 @@ img {
     border: 1px solid var(--gray-200);
     border-radius: var(--radius-lg);
     padding: 2rem;
-    text-align: center;
+    text-align: left;
     transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
 }
 
 .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgb(0 0 0 / 0.08);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgb(0 0 0 / 0.1);
     border-color: var(--primary-light);
 }
 
+.feature-card-wide {
+    grid-column: span 1;
+}
+
+/* Icon wrap holds icon + badge side by side */
+.feature-icon-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
+}
+
 .feature-icon {
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    min-width: 3.5rem;
     background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    transition: transform var(--transition-base);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.08);
+}
+
+.feature-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+}
+
+.feature-badge-new {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    color: var(--white);
+    border: none;
+    animation: pulse-badge 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(22, 163, 74, 0); }
 }
 
 .feature-icon i {
@@ -383,6 +459,33 @@ img {
 .feature-card p {
     color: var(--gray-600);
     font-size: 0.95rem;
+    flex: 1;
+}
+
+.feature-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--gray-100);
+}
+
+.feature-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-full);
+}
+
+.feature-tag i {
+    font-size: 0.65rem;
+    color: var(--primary-color);
 }
 
 /* ===== Stats Section ===== */
