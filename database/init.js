@@ -992,8 +992,14 @@ const createTestUsers = () => {
     console.log('Test users created! Password for all: test123');
 };
 
-// Initialize database (async)
+// Initialize database
 const initDatabase = async () => {
+    // Completely skip SQLite initialization on Vercel because the app only uses Supabase
+    if (process.env.VERCEL) {
+        console.log('⚡ Vercel detected. Skipping local SQLite db creation. Using Supabase natively.');
+        return null;
+    }
+
     SQL = await initSqlJs();
 
     // Load from file if exists (or create new if in /tmp on Vercel)
