@@ -113,6 +113,9 @@ async function loadCities() {
                     otherOption.value = 'other';
                     otherOption.textContent = 'Other (Enter manually)';
                     select.appendChild(otherOption);
+
+                    // Make city searchable
+                    if (typeof makeSearchable === 'function') makeSearchable(select);
                 }
             });
 
@@ -205,6 +208,9 @@ async function loadCollegesFiltered() {
         collegeSelect.onchange = function() {
             handleOtherOption(this, 'collegeNameOther');
         };
+
+        // Make college searchable
+        if (typeof makeSearchable === 'function') makeSearchable(collegeSelect);
         
     } catch (error) {
         console.error('Error loading colleges:', error);
@@ -254,6 +260,9 @@ async function loadCollegesForJob() {
         collegeSelect.onchange = function() {
             handleOtherOption(this, 'jobCollegeNameOther');
         };
+
+        // Make college searchable
+        if (typeof makeSearchable === 'function') makeSearchable(collegeSelect);
         
     } catch (error) {
         console.error('Error loading colleges:', error);
@@ -319,6 +328,9 @@ async function loadDepartments() {
                     otherOption.value = 'other';
                     otherOption.textContent = 'Other (Enter manually)';
                     select.appendChild(otherOption);
+
+                    // Make department searchable
+                    if (typeof makeSearchable === 'function') makeSearchable(select);
                 }
             });
 
@@ -424,6 +436,9 @@ async function loadSubDepartments(departmentName) {
             select.onchange = function() {
                 handleOtherOption(this, 'subDepartmentOther');
             };
+
+            // Make sub-department searchable
+            if (typeof makeSearchable === 'function') makeSearchable(select);
             return;
         }
 
@@ -470,6 +485,7 @@ async function loadJobFields() {
                     option.textContent = field;
                     select.appendChild(option);
                 });
+                if (typeof makeSearchable === 'function') makeSearchable(select);
             }
         }
     } catch (error) {
@@ -492,6 +508,7 @@ async function loadBusinessTypes() {
                     option.textContent = type;
                     select.appendChild(option);
                 });
+                if (typeof makeSearchable === 'function') makeSearchable(select);
             }
         }
     } catch (error) {
@@ -514,6 +531,7 @@ async function loadBusinessFields() {
                     option.textContent = field;
                     select.appendChild(option);
                 });
+                if (typeof makeSearchable === 'function') makeSearchable(select);
             }
         }
     } catch (error) {
