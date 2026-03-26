@@ -3,6 +3,8 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const path = require('path');
 const { initDatabase, getDb, supabase } = require('./database/init');
@@ -30,6 +32,7 @@ initDatabase().then(() => {
 });
 
 // Middleware
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -109,8 +112,15 @@ app.get('/api/test-email', async (req, res) => {
     }
 });
 
+// Rate limiting specifically for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20, // limit each IP to 20 requests per windowMs
+    message: { success: false, message: 'Too many requests from this IP, please try again after 15 minutes.' }
+});
+
 // Use routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/data', dataRoutes);

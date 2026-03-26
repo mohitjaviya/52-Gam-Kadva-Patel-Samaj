@@ -71,12 +71,13 @@ router.post('/signup', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Phone, email, and password are required.' });
         }
 
-        // Check if user already exists
-        const { data: existingUser } = await supabase
-            .from('users')
-            .select('id, first_name, phone_verified, email_verified, registration_completed')
-            .or(`email.eq.${email},phone.eq.${phone}`)
-            .single();
+        // Check if user already exists securely without .or() injection vectors
+        const [emailMatch, phoneMatch] = await Promise.all([
+            supabase.from('users').select('id, first_name, phone_verified, email_verified, registration_completed').eq('email', email).limit(1),
+            supabase.from('users').select('id, first_name, phone_verified, email_verified, registration_completed').eq('phone', phone).limit(1)
+        ]);
+        
+        const existingUser = (emailMatch.data && emailMatch.data[0]) || (phoneMatch.data && phoneMatch.data[0]);
 
         if (existingUser) {
             if (existingUser.registration_completed) {
@@ -165,12 +166,13 @@ router.post('/verify-otp', async (req, res) => {
     try {
         let { userId, contact, otp, type } = req.body;
 
-        // If contact was sent instead of userId, look up the user
+        // If contact was sent instead of userId, look up the user securely
         if (!userId && contact) {
+            const isEmail = contact.includes('@');
             const { data: foundUser } = await supabase
                 .from('users')
                 .select('id')
-                .or(`email.eq.${contact},phone.eq.${contact}`)
+                .eq(isEmail ? 'email' : 'phone', contact)
                 .single();
             if (foundUser) userId = foundUser.id;
         }
@@ -210,11 +212,12 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Email/Phone and password are required.' });
         }
 
-        // Find user
+        // Find user securely
+        const isEmail = emailOrPhone.includes('@');
         const { data: user, error } = await supabase
             .from('users')
             .select('id, email, phone, password, is_admin, is_moderator, registration_completed, is_approved, first_name, email_verified, phone_verified')
-            .or(`email.eq.${emailOrPhone},phone.eq.${emailOrPhone}`)
+            .eq(isEmail ? 'email' : 'phone', emailOrPhone)
             .single();
 
         if (error || !user) {
@@ -273,7 +276,8 @@ router.post('/login-after-verify', async (req, res) => {
         if (userId) {
             query = query.eq('id', userId);
         } else {
-            query = query.or(`email.eq.${identifier},phone.eq.${identifier}`);
+            const isEmail = identifier.includes('@');
+            query = query.eq(isEmail ? 'email' : 'phone', identifier);
         }
 
         const { data: user, error } = await query.single();
