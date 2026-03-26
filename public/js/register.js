@@ -81,6 +81,9 @@ async function loadVillages() {
                 
                 select.appendChild(optgroup);
             });
+
+            // Make village searchable after population
+            if (typeof makeSearchable === 'function') makeSearchable(select);
         }
     } catch (error) {
         console.error('Error loading villages:', error);
