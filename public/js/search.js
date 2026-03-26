@@ -211,6 +211,11 @@ function displayResults(users) {
                         <i class="fas fa-tag"></i>
                         <span>${escapeHtml(user.occupationDetails.business_type) || '-'}</span>
                     </div>
+                    ${user.occupationDetails.website ? `
+                    <div class="user-detail">
+                        <i class="fas fa-globe"></i>
+                        <span><a href="${escapeHtml(user.occupationDetails.website)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${escapeHtml(user.occupationDetails.website)}</a></span>
+                    </div>` : ''}
                 `;
             }
         }
@@ -352,7 +357,8 @@ async function showUserDetail(userId) {
                             <p><strong>City:</strong> ${escapeHtml(user.occupationDetails.business_city) || '-'}</p>
                             ${user.occupationDetails.business_address ? `<p><strong>Address:</strong> ${escapeHtml(user.occupationDetails.business_address)}</p>` : ''}
                             <p><strong>Years in Business:</strong> ${user.occupationDetails.years_in_business || 0}</p>
-                            ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${escapeHtml(user.occupationDetails.website)}" target="_blank">${escapeHtml(user.occupationDetails.website)}</a></p>` : ''}
+                            ${user.occupationDetails.employees_count ? `<p><strong>Number of Employees:</strong> ${user.occupationDetails.employees_count}</p>` : ''}
+                            ${user.occupationDetails.website ? `<p><strong>Website:</strong> <a href="${escapeHtml(user.occupationDetails.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.occupationDetails.website)}</a></p>` : ''}
                             ${user.occupationDetails.additional_info ? `<p><strong>Additional Info:</strong> ${escapeHtml(user.occupationDetails.additional_info)}</p>` : ''}
                         </div>
                     `;

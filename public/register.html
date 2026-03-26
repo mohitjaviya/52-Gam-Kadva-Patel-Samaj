@@ -595,6 +595,18 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="employeesCount">Number of Employees</label>
+                                    <input type="number" id="employeesCount" name="employeesCount" min="0"
+                                        placeholder="e.g. 10">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="businessWebsite">Website</label>
+                                    <input type="url" id="businessWebsite" name="businessWebsite"
+                                        placeholder="https://your-website.com">
+                                </div>
+
+                                <div class="form-group">
                                     <label for="businessAdditionalInfo">Additional Information</label>
                                     <textarea id="businessAdditionalInfo" name="businessAdditionalInfo" rows="2"
                                         placeholder="Any additional information..."></textarea>
@@ -1644,6 +1656,8 @@
                     businessCity: getValueWithOther('businessCity', 'businessCityOther'),
                     businessAddress: document.getElementById('businessAddress').value,
                     yearsInBusiness: document.getElementById('yearsInBusiness').value,
+                    employeesCount: document.getElementById('employeesCount').value,
+                    website: document.getElementById('businessWebsite').value,
                     additionalInfo: document.getElementById('businessAdditionalInfo').value
                 };
             }
