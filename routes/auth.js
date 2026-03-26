@@ -122,6 +122,7 @@ router.post('/signup', async (req, res) => {
                 registration_completed: false,
                 is_approved: false,
                 is_admin: false,
+                is_moderator: false,
                 can_view_sensitive: false
             })
             .select('id')
@@ -212,7 +213,7 @@ router.post('/login', async (req, res) => {
         // Find user
         const { data: user, error } = await supabase
             .from('users')
-            .select('id, email, phone, password, is_admin, registration_completed, is_approved, first_name, email_verified, phone_verified')
+            .select('id, email, phone, password, is_admin, is_moderator, registration_completed, is_approved, first_name, email_verified, phone_verified')
             .or(`email.eq.${emailOrPhone},phone.eq.${emailOrPhone}`)
             .single();
 
@@ -267,7 +268,7 @@ router.post('/login-after-verify', async (req, res) => {
 
         let query = supabase
             .from('users')
-            .select('id, email, phone, is_admin, registration_completed, is_approved, first_name');
+            .select('id, email, phone, is_admin, is_moderator, registration_completed, is_approved, first_name');
 
         if (userId) {
             query = query.eq('id', userId);
@@ -284,6 +285,7 @@ router.post('/login-after-verify', async (req, res) => {
         // Set session
         req.session.userId = user.id;
         req.session.isAdmin = user.is_admin;
+        req.session.isModerator = user.is_moderator;
         req.session.registrationCompleted = user.registration_completed;
 
         req.session.save((err) => {
@@ -301,6 +303,7 @@ router.post('/login-after-verify', async (req, res) => {
                     id: user.id,
                     firstName: user.first_name,
                     isAdmin: user.is_admin,
+                    isModerator: user.is_moderator,
                     registrationCompleted: user.registration_completed,
                     isApproved: user.is_approved
                 }
@@ -519,7 +522,7 @@ router.get('/session', async (req, res) => {
             .from('users')
             .select(`
                 id, first_name, middle_name, last_name, email, phone,
-                is_admin, registration_completed, is_approved, can_view_sensitive,
+                is_admin, is_moderator, registration_completed, is_approved, can_view_sensitive,
                 occupation_type, profile_photo,
                 villages (name, taluka, district)
             `)
@@ -541,6 +544,7 @@ router.get('/session', async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 isAdmin: user.is_admin,
+                isModerator: user.is_moderator,
                 registrationCompleted: user.registration_completed,
                 isApproved: user.is_approved,
                 canViewSensitive: user.can_view_sensitive,

@@ -2,8 +2,30 @@ const express = require('express');
 const router = express.Router();
 const { supabase } = require('../database/init');
 
+// Middleware to ensure user is Admin or Moderator
+const requireAdminOrModeratorApi = (req, res, next) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'Not authenticated.' });
+    }
+    if (!req.session.isAdmin && !req.session.isModerator) {
+        return res.status(403).json({ success: false, message: 'Not authorized.' });
+    }
+    next();
+};
+
+// Middleware to ensure user is strictly Admin
+const requireAdminApi = (req, res, next) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'Not authenticated.' });
+    }
+    if (!req.session.isAdmin) {
+        return res.status(403).json({ success: false, message: 'Admin access required.' });
+    }
+    next();
+};
+
 // GET Pending Approvals
-router.get('/pending', async (req, res) => {
+router.get('/pending', requireAdminOrModeratorApi, async (req, res) => {
     try {
         const { data: users, error } = await supabase
             .from('users')
@@ -72,7 +94,7 @@ router.get('/pending', async (req, res) => {
 });
 
 // APPROVE User
-router.post('/approve/:id', async (req, res) => {
+router.post('/approve/:id', requireAdminOrModeratorApi, async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
 
@@ -107,8 +129,8 @@ router.post('/approve/:id', async (req, res) => {
 });
 
 // REJECT (Delete) User — accept both POST and DELETE
-router.post('/reject/:id', rejectHandler);
-router.delete('/reject/:id', rejectHandler);
+router.post('/reject/:id', requireAdminOrModeratorApi, rejectHandler);
+router.delete('/reject/:id', requireAdminOrModeratorApi, rejectHandler);
 
 async function rejectHandler(req, res) {
     try {
@@ -158,7 +180,7 @@ async function rejectHandler(req, res) {
 }
 
 // GET All Users (Admin)
-router.get('/users', async (req, res) => {
+router.get('/users', requireAdminApi, async (req, res) => {
     try {
         const { page = 1, limit = 20, search, occupationType, approved } = req.query;
         const offset = (parseInt(page) - 1) * parseInt(limit);
@@ -263,7 +285,7 @@ router.get('/users', async (req, res) => {
 });
 
 // TOGGLE Sensitive Access
-router.post('/toggle-sensitive-access/:id', async (req, res) => {
+router.post('/toggle-sensitive-access/:id', requireAdminApi, async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
 
@@ -296,7 +318,7 @@ router.post('/toggle-sensitive-access/:id', async (req, res) => {
 });
 
 // ADMIN Stats
-router.get('/stats', async (req, res) => {
+router.get('/stats', requireAdminApi, async (req, res) => {
     try {
         const { count: totalUsers } = await supabase
             .from('users')
@@ -369,7 +391,7 @@ router.get('/stats', async (req, res) => {
 });
 
 // Download report (CSV/JSON) with optional village filter
-router.get('/download-report', async (req, res) => {
+router.get('/download-report', requireAdminApi, async (req, res) => {
     try {
         if (!req.session.userId) {
             return res.status(401).json({ success: false, message: 'Not authenticated.' });

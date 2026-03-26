@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS users (
     registration_completed BOOLEAN DEFAULT false,
     is_approved BOOLEAN DEFAULT false,
     is_admin BOOLEAN DEFAULT false,
+    is_moderator BOOLEAN DEFAULT false,
     can_view_sensitive BOOLEAN DEFAULT false,
     phone_verified BOOLEAN DEFAULT false,
     email_verified BOOLEAN DEFAULT false,

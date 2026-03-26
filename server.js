@@ -150,6 +150,15 @@ const requireAdmin = (req, res, next) => {
     }
 };
 
+// Admin or Moderator authentication middleware
+const requireModeratorOrAdmin = (req, res, next) => {
+    if (req.session && req.session.userId && (req.session.isAdmin || req.session.isModerator)) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
+
 // Middleware to require registration completed
 const requireRegistration = (req, res, next) => {
     if (req.session && req.session.userId && req.session.registrationCompleted) {
@@ -242,6 +251,10 @@ app.get('/admin', requireAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+app.get('/moderator', requireModeratorOrAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'moderator.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -254,6 +267,7 @@ app.listen(PORT, () => {
     console.log(`📝 Sign Up at: http://localhost:${PORT}/signup`);
     console.log(`🔐 Login at: http://localhost:${PORT}/login`);
     console.log(`👤 Admin at: http://localhost:${PORT}/admin`);
+    console.log(`🛡️  Moderator at: http://localhost:${PORT}/moderator`);
 });
 
 module.exports = app;

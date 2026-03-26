@@ -20,6 +20,7 @@ async function checkSession() {
         const loginLink = document.getElementById('loginLink');
         const profileLink = document.getElementById('profileLink');
         const adminLink = document.getElementById('adminLink');
+        const moderatorLink = document.getElementById('moderatorLink');
         const logoutLink = document.getElementById('logoutLink');
         const messagesLink = document.getElementById('messagesLink');
         const messageFab = document.getElementById('messageFab');
@@ -43,6 +44,9 @@ async function checkSession() {
             if (data.user.isAdmin && adminLink) {
                 adminLink.style.display = 'block';
             }
+            if (data.user.isModerator && moderatorLink) {
+                moderatorLink.style.display = 'block';
+            }
 
             // Load unread messages count
             loadUnreadCount();
@@ -55,6 +59,7 @@ async function checkSession() {
             if (loginLink) loginLink.style.display = 'block';
             if (profileLink) profileLink.style.display = 'none';
             if (adminLink) adminLink.style.display = 'none';
+            if (moderatorLink) moderatorLink.style.display = 'none';
             if (logoutLink) logoutLink.style.display = 'none';
             if (messagesLink) messagesLink.style.display = 'none';
             if (messageFab) messageFab.style.display = 'none';
