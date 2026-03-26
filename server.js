@@ -185,7 +185,11 @@ const requireApproved = async (req, res, next) => {
     }
 };
 
-// Public pages (no login required)
+// Public "About Us" page
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+
 app.get('/login', (req, res) => {
     if (req.session && req.session.userId) {
         if (!req.session.registrationCompleted) {
