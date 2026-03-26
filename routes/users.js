@@ -392,7 +392,7 @@ router.get('/search', async (req, res) => {
             } else if (user.occupation_type === 'business') {
                 const { data } = await supabase
                     .from('business_details')
-                    .select('business_name, business_type, business_field, business_city, business_address, additional_info')
+                    .select('business_name, business_type, business_field, business_city, business_address, employees_count, website, additional_info')
                     .eq('user_id', user.id)
                     .single();
                 details = data;

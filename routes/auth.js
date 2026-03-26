@@ -397,6 +397,8 @@ router.post('/register', async (req, res) => {
         const businessCity = bizDetails?.businessCity;
         const businessAddress = bizDetails?.businessAddress;
         const yearsInBusiness = bizDetails?.yearsInBusiness;
+        const employeesCount = bizDetails?.employeesCount;
+        const website = bizDetails?.website;
 
         // Additional info for all types
         const studentAdditionalInfo = studentDetails?.additionalInfo;
@@ -486,6 +488,8 @@ router.post('/register', async (req, res) => {
                     business_city: businessCity || '',
                     business_address: businessAddress || '',
                     years_in_business: yearsInBusiness ? Math.round(parseFloat(yearsInBusiness)) : null,
+                    employees_count: employeesCount ? parseInt(employeesCount) : null,
+                    website: website || '',
                     additional_info: businessAdditionalInfo || ''
                 });
 
