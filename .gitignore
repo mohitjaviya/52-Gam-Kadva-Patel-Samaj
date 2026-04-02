@@ -27,3 +27,6 @@ Thumbs.db
 # Build outputs
 dist/
 build/
+
+# Nested repositories
+Lichtor-Website/
